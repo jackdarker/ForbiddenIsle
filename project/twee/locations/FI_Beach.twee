@@ -1,0 +1,133 @@
+:: FI_Entry
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+You and your companion find yourself left on this island. 
+2 hours ago you set foot on this beach to climb a hill on this island to get 
+a better overview. The GPS on the boat is messed up and your friends arent that familiar navigating a ship with compass and map. 
+Your hope was to spot the main land or a settlement where you could ask for help.
+Now you just returned to the beach to find the rubber dhingy missing as well as the yacht anchoring further out.
+<p><%=window.gm.printGoto('FI_BeachStart',0,0,'What now?')%></p>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachStart
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+
+Panic.
+Maybe this is the wrong place on the beach? You werent really careful when walking down the hill. Maybe you took a wrong path.
+
+<p>Maybe you should return to the <%=window.gm.printGoto('FI_HillStart',0,0,'hill')%> and look around more carefully?</p>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_HillStart
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+You made your way back to the hill.
+</br>The isle extends further up northwest, guessing the direction by the sun, for at least 10miles. There is a line of steep mountains there.  
+</br>You cant be sure but is that a building near the top of the second biggest mountain? Some clouds cover up your sight before you can decide what it is.
+</br>The direct way to the mountains would lead through dense jungle and the area seems quite hilly. Try as you might but you dont see anything that would tell you if this island is inhabitated. 
+
+</br>So what should we do?
+<p><%=window.gm.printGoto('FI_BeachCamp',0,0,'Wait at the beach for return of your comrades.')%></p>
+
+</br>[[Follow the shoreline.]] You will be able to see if the ship is returning but will also move along the isle and possibly find a settlement close to the beach.
+
+</br>[[Make your way toward the mountain.]]
+
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachCamp
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+You are at the beach where you landed. Its <%="TIME_OF_DAY"%>
+
+There is a [[fireplace|FI_BeachFire]] and a windscreen made from palm branches.
+
+[[Eric]] is here.
+<%=window.story.render("FI_NeedsPlayer")%>
+
+Coconut palms are scattered around. Maybe you could [[get some coconut|FI_BeachCoconut]]?
+
+Maybe you should look around the <%=window.gm.printGoto('FI_BeachForest',0,0,'sparse forest')%> around the hill, or make your <%=window.gm.printGoto('FI_BeachHill',0,0,'way up')%> again. 
+You could also walk the sandy beach in <%=window.gm.printGoto('FI_BeachWalkNorth',0,0,'northern')%> or [[eastern]] direction.
+
+<p>Maybe you should return to the <%=window.gm.printGoto('FI_BeachHill',0,0,'hill')%> and look around more carefully?</p>
+
+FORWARDTIME:  [[at morning|FI_BeachCampWake]] | [[at midday]] | [[at afternoon]] | [[at night|FI_BeachCampSleep]]
+</br>[[Guide|FI_Help]]
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_Wakeup
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+
+A new day arise and wakes you from your slumber.
+
+You are greeted by some morning wood. [[Just ignore and stuff it into your pants]] [[Give it some strokes]]
+
+<%=window.gm.printGoto("FI_Breakfast",0,0,'Breakfast')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_Breakfast
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+
+"Anything left for breakfast? I could kill for some coffee and toast."
+As you arrived late today, you have to eat whats left.
+Eric already ate some XYZ.
+
+<%=window.gm.printGoto("FI_Breakfast",0,0,'Breakfast')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachCoconut
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+
+Some of the palm trees bear coconuts. But you dont think you can climb that high. Maybe you could throw a branch and try to hit one to make it fall down?
+
+<%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachForest
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+The forest close to the hill is sparse. The trees arent as big as the coconut palms close to the beach. A lot of bushes and plant are growing here.
+</br<<%=window.story.render("FI_ChooseActivity")%>
+<%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachHill
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+
+Climbing on top of the hill. 
+You notice that the top of the hill is solid stone, possibly volcanic origins.
+
+<%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_ScavengeWood
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+
+You got wood.
+
+<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+</article><article id="LogPanel"></article></section>
+
+:: FI_ScavengeFruit
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+
+<div id='select1' >A smaller tree picks your interest. Some bananas are growing on it, at least you guess those are bananas. Did they grow as single fruits? Either way <a0 onclick='window.gm.printTalkLink("div#select1","div#choice1a");window.gm.player.Inv.addItem(window.gm.ItemsLib.StraightBanana(),2)'>collect it.</a>
+</div><div id='choice1a' hidden> Got some bananas.
+</div>
+<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+</article><article id="LogPanel"></article></section>

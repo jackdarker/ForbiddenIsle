@@ -1,0 +1,27 @@
+:: FI_NeedsPlayer
+You are not thirsty/hungry
+
+
+
+:: FI_ChooseActivity
+[[Scavenge]]</br>
+<%if(window.passage.name=="FI_BeachForest"){%>
+[[get fruits|FI_ScavengeFruit]]</br>
+[[get firewood|FI_ScavengeWood]]</br>
+<%}%>
+</br>[[Sleep]]</br>
+
+
+:: FI_Help [_back_]
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%></br>[[Back|_back_]]</br>
+</br>- You need to eat and drink. If you dont, you get weak and might do stupid things if getting desparate.
+</br>- Look around if you can find some food or other useful things. Some of the snackbars you start with you better save for later.
+<a0 onclick='(function($event){document.querySelector("#"+id+"~p").toggleAttribute("hidden");})(this);'>Spoiler !</a>
+<p hidden>Somehow that isle is tainted and when eating or drinking something it might change you. Not immediatly, but on a longtime range. So you better not eat everything you find.</p>
+</br>- Your chances to scavenge something increase if you get more familiar with your surrounding. However, resources migth need some time to regrow, so you better move on at a point. 
+</br>- a bonfire keeps you warm and animals away. Gather some wood.
+<a0 onclick='(function($event){document.querySelector("#"+id+"~p").toggleAttribute("hidden");})(this);'>Spoiler !</a>
+<p hidden>...but also attract interest of - visitors.</p>
+</br>- spend some time to fix your clothing before it falls apart. You dont want to run around nude, do you?
+</br>[[Back|_back_]]</br>
+</article><article id="LogPanel"></article></section>

@@ -1,0 +1,27 @@
+:: StoryTitle
+ForbiddenIsle
+
+
+:: StoryData
+{
+	"ifid": "19BBDE76-3ABE-45CB-96B4-93BA376663D7",	"ifid_name":"ForbiddenIsle",
+	"format": "Snowman",
+	"format-version": "2.0.2",
+	"Start": "Intro",
+	"tag-colors": {
+		"template": "orange",
+		"_back_": "gray",
+		"_nosave_": "yellow",
+		"_nodeffered_": "yellow",
+		"_isdeffered_": "brown",
+		"_noshortkey_": "brown"
+	},
+	"zoom": 1
+}
+
+:: Story JavaScript [script]
+
+:: NewGamePlus
+You finished the game in some way but maybe you have missed something. </br>
+Would you like to start a new game while taking some of your equipment/skills with you?</br>
+<a0 onclick='window.gm.newGamePlus()'>Start new game plus</a></br>
