@@ -101,6 +101,7 @@ dialog::backdrop, #backdrop {
   left: -6px;
   top: 6px;
 }
+.done  {text-decoration: line-through;}
 .popup {
   position: relative;
   display: inline-block;

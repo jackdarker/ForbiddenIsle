@@ -441,7 +441,7 @@ window.gm.MutationsLib['growPenis'] = function(char,magnitude=1){
                 msg+= "Your member is straining but your body doesnt seem to support a bigger one !</br>";
             } else {
                 item.data.growth=Math.min(1.0,item.data.growth+0.25);
-                msg+= "Your member swell proudly an gains in girth and length?</br>";
+                msg+= "Your member swell proudly and gains in girth and length?</br>";
             }
         } else { //shrink
             if(item.data.growth<0.05){
@@ -453,6 +453,13 @@ window.gm.MutationsLib['growPenis'] = function(char,magnitude=1){
         }
         msg += "</br>"+item.descLong(window.gm.util.descFixer(char))+"</br>";
     }
+    if(char===window.gm.player){
+        window.gm.pushDeferredEvent("GenericDeffered",[msg]);
+    }
+};
+window.gm.MutationsLib['growHeadHair'] = function(char,magnitude=1){ //Todo
+    let msg = 'Everything is ok, nothing unusual.</br>', _TF="PenisHuman";
+    //todo
     if(char===window.gm.player){
         window.gm.pushDeferredEvent("GenericDeffered",[msg]);
     }
@@ -485,3 +492,26 @@ window.gm.MutationsLib['changeSavage'] = function(char,value=1,min=0,max=10){
     }
 };
 //todo grow/shrinkHips
+//remove body/-pubes hair
+{
+window.gm.Mutators = window.gm.Mutators || {};
+window.gm.Mutators['averageBreast'] = (function(){
+        let data={m:effMutator.mutatorDataProto(),req:null};
+        data.m.Chest=0.5,data.m.F=0.5;
+        data.f=window.gm.MutationsLib['growBreast'];data.mag=1;
+        data.req=function(char){let _res={OK:true,msg:''};return(_res);};
+    return(data);})();
+window.gm.Mutators['bigBreast'] = (function(){
+        let data={m:effMutator.mutatorDataProto(),req:null};
+        data.m.Chest=0.7,data.m.F=0.5;
+        data.f=window.gm.MutationsLib['growBreast'];data.mag=2;
+        data.req=function(char){let _res={OK:true,msg:''};return(_res);};
+    return(data);})();
+window.gm.Mutators['averageCock'] = (function(){
+        let data={m:effMutator.mutatorDataProto(),req:null};
+        data.m.Genital=0.4,data.m.M=0.5;
+        data.f=window.gm.MutationsLib['growPenis'];data.mag=1;
+        data.req=function(char){let _res={OK:true,msg:''};return(_res);};
+    return(data);})();
+//smallCock
+}

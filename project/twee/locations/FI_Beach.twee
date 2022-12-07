@@ -1,11 +1,27 @@
 :: FI_Entry
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
-You and your companion find yourself left on this island. 
+
+<h2>Setting:</h2> 
+<p class="done">You and your companion find yourself left on this island. 
 2 hours ago you set foot on this beach to climb a hill on this island to get 
 a better overview. The GPS on the boat is messed up and your friends arent that familiar navigating a ship with compass and map. 
 Your hope was to spot the main land or a settlement where you could ask for help.
-Now you just returned to the beach to find the rubber dhingy missing as well as the yacht anchoring further out.
+Now you just returned to the beach to find the rubber dhingy missing as well as the yacht anchoring further out.</p>
+
+<p> Mit ein paar Freunden hast du einen Urlaub in einem subtropischen Inselreich machen. Auf der örtlichen Partymeile bist du in einen Streit geraten als ein einheimischer Schnösel deine Fräulein anmacht.
+Scheinbar war das aber der Nachwuchs von einer wichtigen Persönlichkeit den du und deine Begleiter werde in Gewahrsam genommen und in ein Flugzeug verfrachtet.
+Die Cops erscheinen dir Zwielichtig den das Flugzeug ist eine Transportmaschine mit noch anderer Fracht und das Ziel deiner Reise ist unklar.
+Der Ausfall eines Motors führt zu einem Streit zwischen deinen Aufsehern. Einer schnappt sich den einzig funktionsfähig erscheinenden Fallschirm un döffnet die Heckklappe. Als ihn der andere droht anzuschwärzen setzt er ihn mit einem Taser außer Gefecht.
+Da geht ein Ruck durch das Flugzeug als auch der 2. Motor ausfällt und der Cop stolpert mitsamt Falschirm aus der Frachtluke. Mit einem Brecheisen das in Reichweite gerutscht ist stemmst du den Griff auf an den du gefesselt bist und befreist die anderen.
+Was nun? Flaschirme keine mehr da aber da stehen noch 2 Fracht-Paletten die aus irgendeinem Grund mit Schwimmern und Lastfalschirm ausgestattet sind.
+Eine Gruppe Freunde retten sich (hoffentlich) mit der ersten Palette. Die 2. hängt und dadurch springst du später und tiefer ab und verlierst die Freunde aus den Augen.
+Mit Eric, dem Freund eines Freundes, landest du im Wasser nahe des Inselstrands. Die Schwimmer der Palette gehen nicht auf und du rettest dich an den Strand.
+Wahrscheinlich wird bald eine Suchmannschaft eintreffen aber wäre es gut von der gefunden zu werden. Die Cops und die Ladung schienen sehr Zwielichtig zu sein: Eric hatte von der Palette eines der Paket mitgenommen und es besteht aus gepressten weißen Pulver. 
+Vielleicht solltest du lieber nach deinen Freunden suchen und herausfinden ob jemand auf der Insel lebt der dich wegbringen kann.
+</p>
+
+
 <p><%=window.gm.printGoto('FI_BeachStart',0,0,'What now?')%></p>
 </article><article id="LogPanel"></article></section>
 
@@ -14,17 +30,19 @@ Now you just returned to the beach to find the rubber dhingy missing as well as 
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
 
-Panic.
+<p class="done">Panic.
 Maybe this is the wrong place on the beach? You werent really careful when walking down the hill. Maybe you took a wrong path.
+Maybe you should return to the <%=window.gm.printGoto('FI_HillStart',0,0,'hill')%> and look around more carefully?</p>
 
-<p>Maybe you should return to the <%=window.gm.printGoto('FI_HillStart',0,0,'hill')%> and look around more carefully?</p>
+<p>There is a hill close to the beach with just few trees growing on it. It would be a good idea to <%=window.gm.printGoto('FI_HillStart',0,0,'walk up')%> there to get a better overview.</p> 
+
 </article><article id="LogPanel"></article></section>
 
 
 :: FI_HillStart
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
-You made your way back to the hill.
+You made your way up the hill.
 </br>The isle extends further up northwest, guessing the direction by the sun, for at least 10miles. There is a line of steep mountains there.  
 </br>You cant be sure but is that a building near the top of the second biggest mountain? Some clouds cover up your sight before you can decide what it is.
 </br>The direct way to the mountains would lead through dense jungle and the area seems quite hilly. Try as you might but you dont see anything that would tell you if this island is inhabitated. 
@@ -32,9 +50,9 @@ You made your way back to the hill.
 </br>So what should we do?
 <p><%=window.gm.printGoto('FI_BeachCamp',0,0,'Wait at the beach for return of your comrades.')%></p>
 
-</br>[[Follow the shoreline.]] You will be able to see if the ship is returning but will also move along the isle and possibly find a settlement close to the beach.
+</br>[[Follow the shoreline.]] Try to move along the isle's coast and possibly find a settlement. Maybe you spot a ship that could pick you up.
 
-</br>[[Make your way toward the mountain.]]
+</br>[[Make your way toward the mountain.]] There is a dense jungle in between. Might dangerous or though at its best. You have no reason to go there.
 
 </article><article id="LogPanel"></article></section>
 
@@ -42,19 +60,19 @@ You made your way back to the hill.
 :: FI_BeachCamp
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
-You are at the beach where you landed. Its <%="TIME_OF_DAY"%>
+You are at the beach where you landed. Its <%=window.gm.getTimeStruct().daytime%>.
 
 There is a [[fireplace|FI_BeachFire]] and a windscreen made from palm branches.
 
-[[Eric]] is here.
+[[Eric|TalkEric]] is here.
 <%=window.story.render("FI_NeedsPlayer")%>
 
 Coconut palms are scattered around. Maybe you could [[get some coconut|FI_BeachCoconut]]?
 
 Maybe you should look around the <%=window.gm.printGoto('FI_BeachForest',0,0,'sparse forest')%> around the hill, or make your <%=window.gm.printGoto('FI_BeachHill',0,0,'way up')%> again. 
-You could also walk the sandy beach in <%=window.gm.printGoto('FI_BeachWalkNorth',0,0,'northern')%> or [[eastern]] direction.
+You could also walk the sandy beach in <%=window.gm.printGoto('FI_BeachWalkNorth',0,0,'northern')%> or <%=window.gm.printGoto('FI_BeachWalkEast',0,0,'eastern')%> direction.
 
-<p>Maybe you should return to the <%=window.gm.printGoto('FI_BeachHill',0,0,'hill')%> and look around more carefully?</p>
+<p>You could simply [[relax]] here instead of running around and wasting energy.</p>
 
 FORWARDTIME:  [[at morning|FI_BeachCampWake]] | [[at midday]] | [[at afternoon]] | [[at night|FI_BeachCampSleep]]
 </br>[[Guide|FI_Help]]
@@ -79,9 +97,10 @@ You are greeted by some morning wood. [[Just ignore and stuff it into your pants
 
 "Anything left for breakfast? I could kill for some coffee and toast."
 As you arrived late today, you have to eat whats left.
-Eric already ate some XYZ.
+Eric already ate some XYZ. | Suggest that Eric eats XYZ
+Eric forces you to eat XYZ
 
-<%=window.gm.printGoto("FI_Breakfast",0,0,'Breakfast')%>
+<%=window.gm.printGoto("FI_BeachCamp",0,0,'Next')%>
 </article><article id="LogPanel"></article></section>
 
 
@@ -89,7 +108,9 @@ Eric already ate some XYZ.
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
 
-Some of the palm trees bear coconuts. But you dont think you can climb that high. Maybe you could throw a branch and try to hit one to make it fall down?
+Some of the palm trees bear coconuts. Maybe you could throw a branch and try to hit one to make it fall down?
+Didn't you see in some documentation what technique they used to climb those sleek trunks? You fruitlessly try to remenber that trick. 
+You dont think you can climb that high. 
 
 <%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach')%>
 </article><article id="LogPanel"></article></section>
@@ -99,8 +120,33 @@ Some of the palm trees bear coconuts. But you dont think you can climb that high
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
 The forest close to the hill is sparse. The trees arent as big as the coconut palms close to the beach. A lot of bushes and plant are growing here.
-</br<<%=window.story.render("FI_ChooseActivity")%>
+</br><%=window.story.render("FI_ChooseActivity")%>
+<a0 onclick='foo();'>trigger</a>
 <%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach')%>
+</article><article id="LogPanel"></article></section>
+<script>function foo(){
+    var f=window.gm.player.Effects.get("effMutator").findMutation();
+    if(f) f();
+}</script>
+
+
+:: FI_BeachWalkNorth
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+Further up north your camp on the beach.
+</br><%=window.story.render("FI_ChooseActivity")%>
+<%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach camp')%>
+<%=window.gm.printGoto('FI_BeachNorthExplore',0,0,'explore surrounding')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachWalkEast
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+Walking the beach in eastern direction.
+</br><%=window.story.render("FI_ChooseActivity")%>
+<%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach camp')%>
+<%=window.gm.printGoto('FI_BeachEastExplore',0,0,'explore surrounding')%>
 </article><article id="LogPanel"></article></section>
 
 
@@ -110,6 +156,7 @@ The forest close to the hill is sparse. The trees arent as big as the coconut pa
 
 Climbing on top of the hill. 
 You notice that the top of the hill is solid stone, possibly volcanic origins.
+</br><%=window.story.render("FI_ChooseActivity")%>
 
 <%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach')%>
 </article><article id="LogPanel"></article></section>
@@ -117,17 +164,18 @@ You notice that the top of the hill is solid stone, possibly volcanic origins.
 
 :: FI_ScavengeWood
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-
-You got wood.
-
+<div id='select1' >Its to difficult to break those sturdy branches from the trees. Maybe there are some lying around that you just need to <a0 onclick='window.gm.printTalkLink("div#select1","div#choice1a");window.gm.player.Inv.addItem(window.gm.ItemsLib.Branch(),1)'>pick up.</a>
+</div><div id='choice1a' hidden> Picked up a branch from the ground.
+</div>
 <%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
 </article><article id="LogPanel"></article></section>
 
 :: FI_ScavengeFruit
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-
 <div id='select1' >A smaller tree picks your interest. Some bananas are growing on it, at least you guess those are bananas. Did they grow as single fruits? Either way <a0 onclick='window.gm.printTalkLink("div#select1","div#choice1a");window.gm.player.Inv.addItem(window.gm.ItemsLib.StraightBanana(),2)'>collect it.</a>
 </div><div id='choice1a' hidden> Got some bananas.
 </div>
 <%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
 </article><article id="LogPanel"></article></section>
+
+ 

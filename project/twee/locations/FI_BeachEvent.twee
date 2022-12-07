@@ -1,0 +1,49 @@
+:: FI_BeachFoundSuitcase
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+Neben dem Schwappen der anrollenden Wellen kannst du ein seltsames Schaben hören. Du schaust dich um und siehst eine Kiste oder Koffer die auf dem vorgelagerten Riff festhängt. 
+Was für ein Glücksfund. Du müsstest allerdings bis zum Riff schwimmen um da ran zukommen. Und dann wieder zurück.
+[[Ignore]] "Zu riskant, das lohnt nicht."
+[[Get it]] Du läufst ins Flachwasser und springst in die Wellen. Es kostet dich einige Kraft um gegen die Brandung anzukämpfen.
+Der Koffer ist abgeschlossen. ER ist zu schwer und unhandlich um mit ihm zurückzuschwimmen.
+[[Crack Lock]] Du verwendest den Faustkeil um das Schloss einzuschlagen. Es kostet dich einige Mühe aber nachdem das erledigt ist öffnest du voller Vorfreude den Deckel und findest... 
+...a bottle rum
+...mosquito net
+... snack bars
+
+<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachFoundBikini
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+Dir fällt etwas buntes auf dort wo der Sandstrand in Vegetation übergeht. Als du näher kommst erkennst du es ist...
+
+ein Bikini. D.h. ein Oberteil und der Slip. Wie kommen die hier her? Läuft hier jemand nackt herum? 
+Du versuchst dich daran zu erinnern ob einer deiner Freunde sowas getragen hat. Das wäre ein gutes Zeichen. Oder ein schlechtes?
+[[Grab it]] , whoever left it here should have taken more care.
+[[Leave it]]
+
+ein Kescher. Könnte nützlich zum Fangen von Fisch sein.
+
+<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachCatchFish
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+Du beschliesst im Meer mit dem Kescher Fische zu fangen, oder es zumindest zu versuchen.
+
+Eine Taucherbrille wäre hilfreich damit du Unterwasser besser siehst.
+
+
+With your prey entwinded in the net, you swim back to the shore quickly. 
+Thats a nice catch. However you arent sure if its edible.
+
+
+Als du zurück aufs Meer schaust erkennst du gerade noch wie eine graue Rückenflosse im Wasser verschwindet.
+"Whoa. I just hope that wasnt a shark."
+Its a dolphin. Maybe you can make friends if you drop him some fish? 
+
+
+<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+</article><article id="LogPanel"></article></section>

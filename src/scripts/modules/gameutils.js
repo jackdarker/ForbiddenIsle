@@ -116,6 +116,7 @@ window.gm.initGame= function(forceReset,NGP=null){
         ch.Skills.addItem(new SkillTease());
         ch.Skills.addItem(new SkillSubmit());
       }
+      ch.Effects.addItem(effMutator.factory("")); //Mutationlogic
       s.PlayerVR=ch;
     }
     if (!s.PlayerRL||forceReset){  

@@ -1,3 +1,10 @@
 :: TalkEric
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 Give advice what to eat or not. As certain food is limited you could try to save it for yourself.
 He might get suspicious however, and possibly wants exactly that food right now. 
+
+Tease him
+
+Talk about past: unlock skill , change attitude?
+<%=window.gm.printGoto(window.gm.player.location,0,0,'Move on')%>
+</article><article id="LogPanel"></article></section>

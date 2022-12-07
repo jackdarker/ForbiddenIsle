@@ -4,16 +4,27 @@ You are not thirsty/hungry
 
 
 :: FI_ChooseActivity
-[[Scavenge]]</br>
 <%if(window.passage.name=="FI_BeachForest"){%>
-[[get fruits|FI_ScavengeFruit]]</br>
-[[get firewood|FI_ScavengeWood]]</br>
+    [[Pick some fruits|FI_ScavengeFruit]] that are in your hands reach. </br>
+    [[Look around for some firewood|FI_ScavengeWood]]</br>
+    [[Shake a tree|FI_ShakeTree]]
+<%}%>
+<%if(window.passage.name=="FI_BeachForest"){%>
+    [[look western direction (toward beach)]]</br>
+    [[look northern direction (dense forest and mountains)]]</br>
+    [[find something useful]]</br>
 <%}%>
 </br>[[Sleep]]</br>
 
 
 :: FI_Help [_back_]
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%></br>[[Back|_back_]]</br>
+<h2>How not to win</h2>
+</br>- try to trigger badends by ignoring hints pushed into your face
+</br>- if your sanity decreases below zero you will get either a special or generic bad end. 
+</br>- dont worry. If you end the game - good or bad - you will get the chance to start New-Game-Plus
+
+<h2>Common tips</h2>
 </br>- You need to eat and drink. If you dont, you get weak and might do stupid things if getting desparate.
 </br>- Look around if you can find some food or other useful things. Some of the snackbars you start with you better save for later.
 <a0 onclick='(function($event){document.querySelector("#"+id+"~p").toggleAttribute("hidden");})(this);'>Spoiler !</a>
@@ -23,5 +34,89 @@ You are not thirsty/hungry
 <a0 onclick='(function($event){document.querySelector("#"+id+"~p").toggleAttribute("hidden");})(this);'>Spoiler !</a>
 <p hidden>...but also attract interest of - visitors.</p>
 </br>- spend some time to fix your clothing before it falls apart. You dont want to run around nude, do you?
+
+<h2>More indeep spoilers</h2>
+<a0 onclick='(function($event){document.querySelector("#"+id+"~p").toggleAttribute("hidden");})(this);'>Triggering transformation</a>
+<p hidden> - Its not just eating double melons and you grow "double melons".
+</br> - if you eat or drink something or are otherwise exposed to mutators, those mutators will accumulate in your body
+</br> - only if a trigger is applied a evaluation of the mutators is done to select a transformation. F.e. going to sleep. 
+</br> - The selection depends on the size of each mutator relative to the others, their absolute size and the transformations already present.
+</br> - F.e. if your Tits are already large and those mutators indicate a average breast expansion, it will do nothing 
+</br> - multiple mutators have to be present. Lets say there are mutators A,C,T,G. 
+</br> For a average breast expansion a relation A:C:T:G of around 2:1:0:0 with C beeing at least 0.5. 
+</br> C you get from Peaches while A can be obtained from Melons. But Peaches also increase T, so you need to find something that decreases it.
+</br> ??? - there should be a hint to player what kind of mutator got accumulated (" there is some odd tension in your chest")  
+</br> - The executed transformation will consume the mutators
+</br> - mutators dimish over time. Stay away from tainted things to reduce there accumulation. 
+</br> - immuno boosters increase the dimishing rate while other things increase it 
+</br> - a weakend condition or preference might reduce the threshold of a transformation or maintains a minimum level of a certain mutator
+</br> - 
+
+</br> - your body fights against the transformation and their is a chance to recover some
+
+</p> 
+
+
 </br>[[Back|_back_]]</br>
 </article><article id="LogPanel"></article></section>
+
+
+:: FI_NightDream
+The hard work at the day takes it toll on you and the night passes with a deep, dreamless sleep.
+
+Its surprisingly cold and the fire burnt already down. Shivering from the cold, you wish to have something wrap yourself into or to cuddle with someone.
+The only one around to cuddle with is Eric and thats [[Not an option]] | [[Ask him]]  
+
+Your mind switches to dream mode:...
+
+
+:: FI_NGPShop
+This is the New-Game-Plus Screen where you can configure your next play through.
+<p class="author">
+- Some game-events (BadEnds, maxing out Stats, some missions) may grant you either a NGP-token or reduce the cost of a NGP option.
+- spend those tokens here to make your life easier (or harder)
+- if you get a ingame notification that a option can be enabled for free, you can also activate them ingame. All other options need to be configured before game start.
+- Options with negative cost will give you credit that can be spent for other options. 
+- Earned tokens you dont spent get carried over in the new game but not (!) tokens you get credited for taking options with negative cost. 
+</p>
+
+TransformResistance
+- Boost10Days: resistance to transformation is increased for a limited time
+- TransformOnlyWeakend: Transforms occur only if you are in weak state
+- SanityLossEasing (human): reduces sanity damage for transformation that only shift human appearance
+- Selective: you may decide to reject a transformation 
+
+Specialised TransformParameters
+- FLatChested: Your tits tend to shrink
+- Bulky: easier to keep a muscular build
+- VagPrefered: More likely to gain a Vag then a cock
+
+StartItems
+- Compass: makes pathfinding easier in hard to navigate areas; Reliability dimish in some enviroments-
+- Crowbar: important tool to open locked boxes and doors
+- Lighter (full): 
+- big pack of ProteinBars
+- immun boosters: gives you transformation resistance for some time
+
+StartCharacter
+- decent swimmer: you didnt drown in swin training
+- Twink: 
+- Girl: you start as a girl
+- less hetero: little closer to bi
+- bi: swinging both ways
+- deep breath: can hold your breath longer; might be useful for diving
+- subby: having to submit to someone doesnt damage your dignity so much
+- dominant: You are in control. But if you arent, dignity is damaged.
+
+
+ItemMods
+- replace american pisswater with strong bavarian bear:
+- decreased clothing durability (also increases item escape chance)
+- increased clothing durability
+
+
+EventMods
+- reduce care package chance
+- disable TribeCapture Badend (unless provoked): 
+- higher chance to find fetish item removal options:
+

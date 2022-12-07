@@ -597,6 +597,7 @@ window.gm.ItemTags = { //
     Cursed  : "cursed",
     Money   : 'money', //...for trading
     Ingredient : 'ingred',
+    Material : 'material',
     Drink   : 'drink',
     Food    : 'food',
     //Outfit
