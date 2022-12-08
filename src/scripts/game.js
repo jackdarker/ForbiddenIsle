@@ -971,3 +971,100 @@ window.gm.toggleDialog= function(id){
       //??lastFocus.focus();
   }
 };
+
+{ //classes for UI
+    class SelectionController extends EventTarget {
+        constructor(selectElement, parentNode = null) {
+            super(); 
+            if (!(selectElement instanceof HTMLSelectElement)) {
+                throw new Error(
+                    "Controller-Objekt benötigt ein select Element als ersten Parameter");
+            }
+            if (parentNode && !(parentNode instanceof SelectionController)) {
+                throw new Error(
+                    "Controller-Objekt benötigt einen SelectionController als zweiten Parameter"
+                );
+            }
+            this.selectElement = selectElement;
+            this.parentNode = parentNode;
+            this.selectElement.addEventListener("change", event => this._handleChangeEvent(
+                event))
+            if (parentNode) {
+                parentNode.addEventListener("change", event => this.mapData(event.selectedObject));
+            }
+        }
+        // Ordnet dem select Element eine Datenquelle zu. 
+        // dataSource ist ein Objekt, aus dem die getValueList die Daten für die
+        // select-Optionen ermitteln kann, oder null, um das select-Element zu disablen
+        mapData(dataSource) {
+            // Quelldaten-Objekt im Controller speichern.
+            this.dataSource = dataSource;
+            // Optionen nur anfassen, wenn eine getValueList Methode vorhanden ist.
+            //  Andernfalls davon ausgehen, dass die options durch das HTML
+            // bereitgestellt werden.
+            if (typeof this.getValueList == "function") {
+                // Existierende Optionen entfernen
+                removeOptions(this.selectElement);
+                // Wenn dataSource nicht null war, die neuen Optionen daraus beschaffen
+                // Andernfalls das select-Element deaktivieren
+                const options = dataSource && this.getValueList(dataSource);
+                if (!options || !options.length) {
+                    setToDisabled(this.selectElement)
+                } else {
+                    setToEnabled(this.selectElement, options);
+                }
+            }
+            // Zum Abschluss ein change-Event auf dem select-Element feuern, damit
+            // jeder weiß, dass hier etwas passiert ist
+            this.selectElement.dispatchEvent(new Event("change"));
+            // Helper: Entferne alle options aus einem select Element	
+            function removeOptions(selectElement) {
+                    while (selectElement.length > 0) selectElement.remove(0);
+                }
+                // Helper: select-Element auf disabled setzen und eine Dummy-Option 
+                // eintragen. Eine Variante wäre: das selectElement auf hidden setzten
+            function setToDisabled(selectElement) {
+                    addOption(selectElement, "", "------");
+                    selectElement.disabled = true;
+                }
+                // Helper: disabled-Zustand vom select-Element entfernen und die
+                // übergebenen Optionen eintragen. Vorweg eine Dummy-Option "Bitte wählen".
+            function setToEnabled(selectElement, options) {
+                    addOption(selectElement, "", "???");
+                    for (var optionData of options) {
+                        addOption(selectElement, optionData.value, optionData.text);
+                    }
+                    selectElement.disabled = false;
+                }
+                // Helper: Option-Element erzeugen, ausfüllen und im select-Element eintragen
+            function addOption(selectElement, value, text) {
+                let option = document.createElement("option");
+                option.value = value;
+                option.text = text
+                selectElement.add(option);
+            }
+        }
+        // Abstrakte Methode! Wird sie nicht überschrieben, wird der TypeError geworfen
+        getValue(key) {
+            throw new TypeError(
+                "Die abstrakte Methode 'getValue' wurde nicht implementiert!");
+        }
+        // Stellt den im select Element ausgewählten Optionswert zur Verfügung
+        get selectedKey() {
+            return this.selectElement.value;
+        }
+        // Liefert das Datenobjekt zum ausgewählten Optionswert
+        get selectedObject() {
+                return this.dataSource ? this.getValue(this.dataSource, this.selectElement.value) : null;
+        }
+        // privat
+        // Die Methode reagiert auf das change-Event des select-Elements
+        // und stellt es als eigenes change-Event des Controllers zur Verfügung
+        _handleChangeEvent(event) {
+            let nodeChangeEvent = new Event("change");
+            nodeChangeEvent.selectedObject = this.selectedObject;
+            this.dispatchEvent(nodeChangeEvent);
+        }
+    }
+    window.gm.util.SelectionController = SelectionController;
+};

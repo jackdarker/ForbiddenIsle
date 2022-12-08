@@ -73,6 +73,7 @@ You might see a lot of links that are formated red-strikethrough. Those are curr
 function startFI() {
     window.story.state.vars.spawnAt="FI_Entry"; //
     window.gm.enterVR();
+    window.gm.forwardTime(1200);
     window.gm.player.levelUp(5);window.gm.player.autoLeveling();
 }
 </script>

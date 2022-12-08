@@ -71,15 +71,35 @@ Your mind switches to dream mode:...
 
 
 :: FI_NGPShop
-This is the New-Game-Plus Screen where you can configure your next play through.
-<p class="author">
-- Some game-events (BadEnds, maxing out Stats, some missions) may grant you either a NGP-token or reduce the cost of a NGP option.
-- spend those tokens here to make your life easier (or harder)
-- if you get a ingame notification that a option can be enabled for free, you can also activate them ingame. All other options need to be configured before game start.
-- Options with negative cost will give you credit that can be spent for other options. 
-- Earned tokens you dont spent get carried over in the new game but not (!) tokens you get credited for taking options with negative cost. 
+<article><%window.gm.player.location=window.passage.name;%>
+<h2>New game plus</h2>
+This is the New-Game-Plus Screen where you can configure your next play through.</br>
+<a0 onclick='(function($event){document.querySelector("#"+id+"~p").toggleAttribute("hidden");})(this);'>Hint</a>
+<p hidden>- Some game-events (BadEnds, maxing out Stats, some missions) may grant you either a NGP-token or reduce the cost of a NGP option.
+</br>- spend those tokens here to make your life easier (or harder)
+</br>- if you get a ingame notification that a option can be enabled for free, you can also activate them ingame. All other options need to be configured before game start.
+</br>- Options with negative cost will give you credit that can be spent for other options. 
+</br>- Earned tokens you dont spent get carried over in the new game but not (!) tokens you get credited for taking options with negative cost. 
 </p>
 
+<form>
+
+<label>Category:
+	<select id="category">
+	<option value="0">select something</option>
+	</select>
+</label></br>
+<label>Item:
+	<select id="item">
+	<option value="0">select category then item</option>
+	</select>
+</label>
+<div id="output"></div></br>
+<button type="button" onclick="buy()">activate</button> <div id="tokens"></div></br>
+<button type="button" onclick="resetAll()">reset all</button>
+</form>
+</br>After selecting the options press here to <a0 onclick="start()"> start the game</a> !</br>
+<div id="output2"></div></br>
 TransformResistance
 - Boost10Days: resistance to transformation is increased for a limited time
 - TransformOnlyWeakend: Transforms occur only if you are in weak state
@@ -120,3 +140,93 @@ EventMods
 - disable TribeCapture Badend (unless provoked): 
 - higher chance to find fetish item removal options:
 
+</article>
+<script>
+function NOP(){return({OK:true,msg:""});}
+function exclude(itmIdList){ let res={OK:true,msg:""};
+    for(var i=itmIdList.length-1;i>=0;i--){
+        if(NGP.hasOwnProperty(itmIdList[i])){
+            res.OK=false,res.msg+="Cannot be used with "+itmIdList[i]+".";
+        }
+    }
+    return(res);
+}
+function include(itmIdList){ let res={OK:true,msg:""};
+    for(var i=itmIdList.length-1;i>=0;i--){
+        if(!NGP.hasOwnProperty(itmIdList[i])){
+            res.OK=false,res.msg+="requires also "+itmIdList[i]+".";
+        }
+    }
+    return(res);
+}
+let NGP,ctrlCat,ctrlItem;
+let catalog = [
+    {catId:"startgear",desc:"Starting Gear",
+    items:[
+        {itmId:"Compass",name:"Compass",cost:{token:1},req:NOP,desc:"a compass that makes it easier to navigate in some areas"},
+        {itmId:"ProteinBars",name:"a dozen proteinbars",cost:{token:1},req:NOP,desc:"a package of powerbars so you dont need something you dont want"}
+    ]},
+    {catId:"resistance",desc:"transformation resistance",
+    items:[
+        {itmId:"transformWeakOnly",name:"transformWeakOnly",cost:{token:2},req:NOP,desc:"Transformations only take place in a weakend state."}
+    ]},
+    {catId:"itemMods",desc:"Item Mods",
+    items:[
+        {itmId:"decreasedClothDurability",name:"decreased clothing durability",cost:{token:1},req:exclude.bind(null,["increasedClothDurability"]),desc:"Clothes tend to break faster. Might help to get rid of some undesired things faster."},
+        {itmId:"increasedClothDurability",name:"increased clothing durability",cost:{token:1},req:exclude.bind(null,["decreasedClothDurability"]),desc:"Clothes are much more durable, especially specific one."}
+    ]}
+];
+function updateText(event) {
+    let msg=(!!ctrlItem.selectedObject?ctrlItem.selectedObject.desc:"");
+    window.gm.printOutput(msg,"#output");
+    window.gm.printOutput("Tokens left:"+(NGP.token-NGP.tokenUsed),"#tokens");
+}
+function buy(){
+    let res,itm=ctrlItem.selectedObject, freeToken=NGP.token-NGP.tokenUsed;
+    if(itm && !NGP[itm.itmId]) {
+        res=itm.req();
+        if(!res.OK){
+            window.gm.printOutput(res.msg,"#output");
+        }else if(itm.cost.token>freeToken){
+            window.gm.printOutput("not enough token","#output");
+        }else{
+            NGP[itm.itmId]=1;
+        }
+    }
+    window.gm.printOutput(JSON.stringify(NGP),"#output2");
+}
+function resetAll(){
+    NGP = {token:window.story.state.NGP.token};//window.gm.util.deepCloneObj(window.story.state.NGP);
+    NGP.tokenUsed=0; //
+    ctrlCat.value="";
+    window.gm.printOutput("","#output2");
+}
+function start() {
+    window.gm.initGame(true,NGP);
+    window.story.state.vars.spawnAt="FI_Entry"; //
+    window.gm.enterVR();
+    window.gm.forwardTime(1200);
+    window.gm.player.levelUp(5);window.gm.player.autoLeveling();
+}
+function init(){
+    var selCat = document.getElementById("category"),selItem = document.getElementById("item");
+    ctrlCat = new window.gm.util.SelectionController(selCat), ctrlItem = new window.gm.util.SelectionController(selItem,ctrlCat);
+    ctrlCat.getValueList=function(cat,sel) {
+        return cat.map(item => ({value: item.catId,text: item.desc}));
+    }
+    ctrlCat.getValue=function(cat, sel) {
+        return cat.find(item => item.catId == sel);
+    }
+    ctrlItem.getValueList=function(cat,sel) {
+        return cat.items.map(item => ({value: item.itmId,text: item.name
+            + " ("+((item.cost.token>0)?item.cost.token+" token":"free")+")"}));
+    }
+    ctrlItem.getValue=function(cat, sel) {
+        return cat.items.find(item => item.itmId == sel);
+    }
+    ctrlCat.mapData(catalog);
+    ctrlItem.addEventListener("change", updateText);
+    resetAll();
+}
+init();
+</script>

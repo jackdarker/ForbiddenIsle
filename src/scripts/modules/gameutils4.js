@@ -1,10 +1,10 @@
 "use strict";
 //stuff for ForbiddenIsle
 window.gm.initGameFlags = function(forceReset,NGP=null) {
-    let s= window.story.state,map,data;
+    let s= window.story.state;
     function dataPrototype(){return({visitedTiles:[],mapReveal:[],tmp:{},version:0});}
     if (forceReset) {  
-      s.Settings=s.DngSY=null; 
+      s.NGP=s.Settings=s.DngSY=null; 
       s.Lab=s.Known=null;
     }
     let Settings = {
@@ -16,6 +16,7 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
         remainingNights: -1,
         resourceForest: 5,   //number resource left
         exploreForest:0,
+        campUpgrade:{}, //see Data.ods
         visitedTiles: [],mapReveal: [],
         dng:'', //current dungeon name
         prevLocation:'', nextLocation:'', //used for nav-logic
@@ -26,17 +27,24 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
       recipes:{}  //'LustPotion:20%'
       ,places:{},study:{}
     }
+    if(!NGP) {
+        NGP={token:0,tokenUsed:0}
+    }
     //see comment in rebuildFromSave why this is done
     s.Settings=window.gm.util.mergePlainObject(Settings,s.Settings);
+    s.NGP=window.gm.util.mergePlainObject(NGP,s.NGP);
     s.DngSY=window.gm.util.mergePlainObject(DngSY,s.DngSY);
     s.Lab=window.gm.util.mergePlainObject(Lab,s.Lab);
     s.Known=window.gm.util.mergePlainObject(Known,s.Known);
     //todo cleanout obsolete data ( filtering those not defined in template) 
   }
 
-window.gm.printGoto=function(location,time,energy,alias){
-    let msg='';
-    msg=window.gm.printLink((alias===''?location:alias)+((time>0)?' ('+time+'min)':''),
+//prints link 
+window.gm.printGoto=function(location,time,energy,alias,difficult){
+    let msg='',res={OK:true,msg:''};
+    msg=window.gm.printLink((alias===''?location:alias)+((time>0)?' ('+time+'min)':'')
+        /*+((energy!==0)?' ('+energy+'E)':'')*/
+        +(difficult?(' '+difficult):''),
     "window.gm.addTime("+time.toString()+");window.story.show(\""+location+"\");")
     return(msg);
 };
@@ -266,6 +274,7 @@ class Food extends Item {
         else if(style===40) this.id=this.name='SquishyMelon';
         else if(style===50) this.id=this.name='JuicyPeach';
         else if(style===60) this.id=this.name='SmellyPear';
+        //Cocoabean PewPepper
         else throw new Error(this.id +' doesnt know '+style); 
     }
     get style(){return this._style;}
@@ -283,6 +292,7 @@ class CraftMaterial extends Item {
         this._style = style; 
         if(style===0) this.id='Branch',this.name='Branch';
         else if(style===10) this.id=this.name='ObsidianShard';
+        else if(style===20) this.id=this.name='CookingPot';
         else throw new Error(this.id +' doesnt know '+style);
     }
     get style(){return this._style;}
@@ -294,6 +304,9 @@ class CraftMaterial extends Item {
                 break;
             case 10: 
                 msg ='shard from obsidian';
+                break;
+            case 20: 
+                msg ='cooking pot';
                 break;
             default: throw new Error(this.id +' doesnt know '+style);
         }
@@ -312,6 +325,7 @@ class Tools extends Item{
         if(style===0) this.id='Lighter',this.name='Lighter';
         else if(style===10) this.id=this.name='HandAxe';
         else if(style===20) this.id=this.name='ButterflyNet';
+        else if(style===30) this.id=this.name='CookingPot';
         else throw new Error(this.id +' doesnt know '+style);
     }
     get style(){return this._style;}
@@ -326,6 +340,9 @@ class Tools extends Item{
                 break;
             case 20: 
                 msg ='a net attached to a stick to catch butterfly or small fish';
+                break; 
+            case 30: 
+                msg ='a old, dented but still usable cooking pot';
                 break;
             default: throw new Error(this.id +' doesnt know '+style);
         }
@@ -349,5 +366,6 @@ ItemsLib['ObsidianShard'] = function(){ let x= new CraftMaterial();x.style=10;re
 ItemsLib['Lighter'] = function(){ let x= new Tool();x.style=0;return(x);}
 ItemsLib['HandAxe'] = function(){ let x= new Tool();x.style=10;return(x);}
 ItemsLib['ButterflyNet'] = function(){ let x= new Tool();x.style=20;return(x);}
+ItemsLib['CookingPot'] = function(){ let x= new Tool();x.style=30;return(x);}
 return ItemsLib; 
 }(window.gm.ItemsLib || {}));

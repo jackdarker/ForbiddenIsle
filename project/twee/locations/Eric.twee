@@ -1,10 +1,35 @@
 :: TalkEric
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-Give advice what to eat or not. As certain food is limited you could try to save it for yourself.
-He might get suspicious however, and possibly wants exactly that food right now. 
+Give advice what to eat or not. As certain food is limited, you could try to save it for yourself.
+He might get suspicious however, and possibly wants exactly that food right then. 
 
 Tease him
 
 Talk about past: unlock skill , change attitude?
+<%=window.gm.printGoto(window.gm.player.location,0,0,'Move on')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: TalkEricNight1
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<p class="tPC">"Hey Eric. Shouldnt we go and look around for our friends?"</p>
+<p class="tNPC1">"Well. We might miss each other if we start moving away."</p>
+<p class="tNPC1">"Besides Id ont even know in which direction we should walk. Did you see where they are dropping off?
+I couldn't take a glimpse at them as I clutched on that cargo drop sailing out of the plane."</p>
+<p class="tPC">"Me too. That was a hell of a ride."</p> That memory gives you a shiver.
+
+<p class="tNPC1">"I also doubt that we are properly outfitted as jungle explorers are we?</p>
+Guess he is right. You wear some [[bermuda shorts, colorful button up shirt and cheap flip-flops]] | [[ripped denim shorts, orange t-shirt and sports sneakers]].
+
+Ok. So exploring the deeper parts of this place might not be an option. What else should we do then?
+[[So, what do you think we should do?]] - asking others for their opinion isn't bad. Just dont forget to make your own decissions ( this made you a little less dominant).
+
+<p class="tNPC1">"I think we should look around the beach and see if we find something useful. Collecting some firewood would be a good idea, just in case we have to stay the night outside."</p>
+<p class="tNPC1">"Its possible that someone shows up here if they spotted the airplane going down. And if they do its more likely they come by boat then through that jungle. A fire could be helpful to be spotted when its dark. And to shoo off animals."</p>
+<p class="tPC">"Animals? What kind of animals do you think off?"</p> 
+<p class="tNPC1">"Dunno. Arent you the animalplanet guy?"</p> [[Yep]] [[No]]
+
+So lets look around the beach.
+
 <%=window.gm.printGoto(window.gm.player.location,0,0,'Move on')%>
 </article><article id="LogPanel"></article></section>

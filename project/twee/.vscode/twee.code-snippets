@@ -33,7 +33,7 @@
 			"body": ["</br>$0"]
 		},
 		"Insert hint": {
-			"prefix": "hint",
+			"prefix": "<ah",
 			"body": ["<a0 id='$1' onclick='(function(me){document.querySelector(\"#\"+id+\"~p\").toggleAttribute(\"hidden\");})(this);'>${2:Hint}</a><p hidden>${3:${TM_SELECTED_TEXT}}<p>$0"]
 		},
 		"Insert <select": {

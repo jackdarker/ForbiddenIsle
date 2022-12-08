@@ -63,7 +63,7 @@ tw-story {
   /*width:95vW;*/
   max-width: 60em;
   margin: 0 0/*auto*/; 
-  line-height: 100%;
+  line-height: 120%;
   display: block;
 }
 

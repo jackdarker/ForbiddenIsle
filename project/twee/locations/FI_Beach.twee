@@ -13,14 +13,15 @@ Now you just returned to the beach to find the rubber dhingy missing as well as 
 Scheinbar war das aber der Nachwuchs von einer wichtigen Persönlichkeit den du und deine Begleiter werde in Gewahrsam genommen und in ein Flugzeug verfrachtet.
 Die Cops erscheinen dir Zwielichtig den das Flugzeug ist eine Transportmaschine mit noch anderer Fracht und das Ziel deiner Reise ist unklar.
 Der Ausfall eines Motors führt zu einem Streit zwischen deinen Aufsehern. Einer schnappt sich den einzig funktionsfähig erscheinenden Fallschirm un döffnet die Heckklappe. Als ihn der andere droht anzuschwärzen setzt er ihn mit einem Taser außer Gefecht.
-Da geht ein Ruck durch das Flugzeug als auch der 2. Motor ausfällt und der Cop stolpert mitsamt Falschirm aus der Frachtluke. Mit einem Brecheisen das in Reichweite gerutscht ist stemmst du den Griff auf an den du gefesselt bist und befreist die anderen.
-Was nun? Flaschirme keine mehr da aber da stehen noch 2 Fracht-Paletten die aus irgendeinem Grund mit Schwimmern und Lastfalschirm ausgestattet sind.
-Eine Gruppe Freunde retten sich (hoffentlich) mit der ersten Palette. Die 2. hängt und dadurch springst du später und tiefer ab und verlierst die Freunde aus den Augen.
-Mit Eric, dem Freund eines Freundes, landest du im Wasser nahe des Inselstrands. Die Schwimmer der Palette gehen nicht auf und du rettest dich an den Strand.
+Da geht ein Ruck durch das Flugzeug als auch der 2. Motor ausfällt und der Cop stolpert mitsamt Falschirm aus der Frachtluke. </p>
+<p>Mit einem Brecheisen das in Reichweite gerutscht ist stemmst du den Griff auf an den du gefesselt bist und befreist die anderen.
+Was nun? Fallschirme sind keine zu finden aber da stehen noch 2 Fracht-Paletten die aus irgendeinem Grund mit Schwimmern und Lastfalschirm ausgestattet sind.
+</p><p>Eine Gruppe Freunde retten sich (hoffentlich) mit der ersten Palette. Die 2. hängt und dadurch springst du später und tiefer ab und verlierst die Freunde aus den Augen.
+</p><p>Mit Eric, dem Freund eines Freundes, landest du im Wasser nahe des Inselstrands. Die Schwimmer der Palette gehen nicht auf und du rettest dich an den Strand.
 Wahrscheinlich wird bald eine Suchmannschaft eintreffen aber wäre es gut von der gefunden zu werden. Die Cops und die Ladung schienen sehr Zwielichtig zu sein: Eric hatte von der Palette eines der Paket mitgenommen und es besteht aus gepressten weißen Pulver. 
 Vielleicht solltest du lieber nach deinen Freunden suchen und herausfinden ob jemand auf der Insel lebt der dich wegbringen kann.
 </p>
-
+[[FI_NGPShop]]
 
 <p><%=window.gm.printGoto('FI_BeachStart',0,0,'What now?')%></p>
 </article><article id="LogPanel"></article></section>
@@ -60,19 +61,19 @@ You made your way up the hill.
 :: FI_BeachCamp
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
-You are at the beach where you landed. Its <%=window.gm.getTimeStruct().daytime%>.
-
-There is a [[fireplace|FI_BeachFire]] and a windscreen made from palm branches.
-
+You are at the beach where you first set foot on this isle. Its <%=window.gm.getTimeStruct().daytime%>.
+<%if(window.story.state.DngSY.campUpgrade.fire!=0){%> 
+    There is a [[fireplace|FI_BeachFire]] and a windscreen made from palm branches.
+<%}else{%>
+    Go get some dry wood to get a fire started. 3 thick branches should be enough.
+<%}%>
 [[Eric|TalkEric]] is here.
 <%=window.story.render("FI_NeedsPlayer")%>
 
-Coconut palms are scattered around. Maybe you could [[get some coconut|FI_BeachCoconut]]?
+<p>Maybe you should look around the <%=window.gm.printGoto('FI_BeachForest',0,0,'sparse forest')%> around the hill, or make your <%=window.gm.printGoto('FI_BeachHill',0,0,'way up')%> again. 
+You could also walk the sandy beach in <%=window.gm.printGoto('FI_BeachWalkNorth',0,0,'northern')%> or <%=window.gm.printGoto('FI_BeachWalkEast',0,0,'eastern')%> direction.</p>
 
-Maybe you should look around the <%=window.gm.printGoto('FI_BeachForest',0,0,'sparse forest')%> around the hill, or make your <%=window.gm.printGoto('FI_BeachHill',0,0,'way up')%> again. 
-You could also walk the sandy beach in <%=window.gm.printGoto('FI_BeachWalkNorth',0,0,'northern')%> or <%=window.gm.printGoto('FI_BeachWalkEast',0,0,'eastern')%> direction.
-
-<p>You could simply [[relax]] here instead of running around and wasting energy.</p>
+<p>You could simply <%=window.gm.printGoto('FI_SunBath',0,0,'relax')%> here instead of running around and wasting energy.</p>
 
 FORWARDTIME:  [[at morning|FI_BeachCampWake]] | [[at midday]] | [[at afternoon]] | [[at night|FI_BeachCampSleep]]
 </br>[[Guide|FI_Help]]
@@ -119,7 +120,7 @@ You dont think you can climb that high.
 :: FI_BeachForest
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
-The forest close to the hill is sparse. The trees arent as big as the coconut palms close to the beach. A lot of bushes and plant are growing here.
+The forest close to the hill is sparse. The trees arent as big as the coconut palms closer to the beach. A lot of bushes and plant are growing here.
 </br><%=window.story.render("FI_ChooseActivity")%>
 <a0 onclick='foo();'>trigger</a>
 <%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach')%>
@@ -134,6 +135,7 @@ The forest close to the hill is sparse. The trees arent as big as the coconut pa
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
 Further up north your camp on the beach.
+Coconut palms are scattered around. Maybe you could [[get some coconut|FI_BeachCoconut]]?
 </br><%=window.story.render("FI_ChooseActivity")%>
 <%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach camp')%>
 <%=window.gm.printGoto('FI_BeachNorthExplore',0,0,'explore surrounding')%>
@@ -157,7 +159,6 @@ Walking the beach in eastern direction.
 Climbing on top of the hill. 
 You notice that the top of the hill is solid stone, possibly volcanic origins.
 </br><%=window.story.render("FI_ChooseActivity")%>
-
 <%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach')%>
 </article><article id="LogPanel"></article></section>
 

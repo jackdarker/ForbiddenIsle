@@ -47,3 +47,26 @@ Its a dolphin. Maybe you can make friends if you drop him some fish?
 
 <%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
 </article><article id="LogPanel"></article></section>
+
+
+:: FI_ShakeTree
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+Grabing the tree with you hands, you shake it as hard as possible. Your effort is rewarded with...
+</br> ... a branch. 
+</br> A bendy one. That moves by itself and is hissing at you.
+<p class="tPC">"Look out - Its a snake !"</p> you shout.
+
+
+<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_SunBath
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+The weather is nice, you are on a tropical island, the beautiful beach all for yourself. So why not make use of it and dooze for a while. 
+
+If someone would just be around to help with the sunscreen.
+Should you strip naked? There is no one around except Eric lurking somewhere.
+
+<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+</article><article id="LogPanel"></article></section>
