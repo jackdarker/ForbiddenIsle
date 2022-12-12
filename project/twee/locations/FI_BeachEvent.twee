@@ -29,6 +29,61 @@ ein Kescher. Könnte nützlich zum Fangen von Fisch sein.
 </article><article id="LogPanel"></article></section>
 
 
+:: FI_BeachSandSculpt
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+Während du über den feuchten Sand läufst springt dir eine Stelle ins Auge die nicht so glatt und eben wie der Rest ist.
+Zunächst glaubst du darin eine Skulptur zu erkennen wie sie manchmal von Künstlern an Sandstränden modeliert wird.
+Beim Näherkommen stellst du aber fest das es nur einige Bodenunebenheiten sind.
+Aus dem Augenwinkel gesehen scheinen die kleinen Erhebungen und Senken die Form eines auf den Rücken liegenden Menschen anzunehmen.
+<div id='select10' >
+<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10a")'>Who cares</a></br>
+<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10b")'>This supple sand invites to model with it. Might be a good distraction.</a></br>
+</div><div id='choice10a' hidden></br> There is no time to waste and you hurry on. <%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+</div>
+<div id='choice10b' hidden></br>
+    Once you feel the smooth sand glide through your fingers you get into it, reshaping bulges and clefts.
+    You arent an artist but somehow you do some decent work. 
+    At some point you have to remind yourself that you also have other means to do and you stand up.
+
+    Seems that you have put a lot of effort in shaping some nice feminine|masculine legs|ass|neckline|hips|breast|... 
+    <div id='select100' >
+    <a0 onclick='window.gm.printTalkLink("div#select100","div#choice100a")'>Touch that form again</a></br>
+    <a0 onclick='window.gm.printTalkLink("div#select100","div#choice100b")'>Move on</a></br>
+    </div><div id='choice100a' hidden></br>
+        adopt those bodyfeature you modeled
+        get molested by that sculpture and lose will.
+        bad end:get pulled in a sandy embrace and beeing buried alive 
+    </div>
+    <div id='choice100b' hidden></br>
+        <%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+    </div>
+   
+</div>
+
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachWorkout
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+Pushups, situps für muskelaufbau. Steigert M-Mutator.
+
+Eric beobachtet dich, gibt dir handson tips.
+
+<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachSwim
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+Du bist bei Ende Flut schwimmen gegangen und das Wasser beginnt allmählich zurückzuweichen. Zu spät bemerkst du das dich die Strömung aufs offene Meer herauszieht.
+</br> Irgendwann verlassen dich die Kräfte und du versinkst in deimem feuchten Grab.
+
+</br></br> THE END 
+
+</br></br><a0 onclick='window.gm.setAchievement("swamToFar",1);window.story.show("FI_NGPShop");'>New Game Plus</a>
+</article><article id="LogPanel"></article></section>
+
+
 :: FI_BeachCatchFish
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 Du beschliesst im Meer mit dem Kescher Fische zu fangen, oder es zumindest zu versuchen.
@@ -51,14 +106,34 @@ Its a dolphin. Maybe you can make friends if you drop him some fish?
 
 :: FI_ShakeTree
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-Grabing the tree with you hands, you shake it as hard as possible. Your effort is rewarded with...
-</br> ... a branch. 
-</br> A bendy one. That moves by itself and is hissing at you.
-<p class="tPC">"Look out - Its a snake !"</p> you shout.
-
-
+Grabing the tree with you hands, you shake it as hard as possible. 
+<div id='select1' >
+<a0 onclick='foo()'>Your effort is rewarded with...</a></br>
+</div><div id='choice1a' hidden></br>
+    </br> ... a meek branch. 
+</div>
+<div id='choice1b' hidden></br>
+    </br> ... a branch. 
+    </br> A bendy one. That moves by itself and is hissing at you.
+    <p class="tPC">"Look out - Its a snake !"</p> you shout.
+</div>
+<div id='choice1a' hidden></br>
+    </br> ... some hit on your head. You received a sturdy branch. Could be useful to poke around or to craft some weapon. 
+</div>
 <%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
 </article><article id="LogPanel"></article></section>
+<script>function foo(){
+    let x="1a",rnd=_.random(0,100);
+    if(rnd>90) { //snake
+        x="1b"; 
+    } else if(rnd>60) { //sturdy
+        x="1c";window.gm.player.Inv.addItem(window.gm.ItemsLib.SturdyBranch());
+    } else { //plain
+        window.gm.player.Inv.addItem(window.gm.ItemsLib.Branch());
+    }
+    window.gm.printTalkLink("div#select1","div#choice"+x;);
+}
+</script>
 
 
 :: FI_SunBath
@@ -69,4 +144,14 @@ If someone would just be around to help with the sunscreen.
 Should you strip naked? There is no one around except Eric lurking somewhere.
 
 <%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_NightDream
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%></br>
+The hard work at the day takes it toll on you and the night passes with a deep, dreamless sleep.
+
+Your mind switches to dream mode:...
+
+<%=window.gm.printGoto("FI_Wakeup",0,0,'Wake up')%>
 </article><article id="LogPanel"></article></section>

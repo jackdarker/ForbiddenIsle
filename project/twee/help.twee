@@ -12,10 +12,43 @@ Here you can find some information about the gameplay.</br>
 </article><article id="LogPanel"></article></section>
 
 :: Help_background [_back_]
-<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-Of course you want to escape from this strange netherworld and get back to your old life.</br>
-The most prospective way to solve this is to satisfy the keepers requests.</br>
-Or maybe find some portal elsewhere...</br>
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%></br>[[Back|_back_]]</br>
+<h2>How not to win</h2>
+</br>- try to trigger badends by ignoring hints pushed into your face
+</br>- if your sanity decreases below zero you will get either a special or generic bad end. 
+</br>- dont worry. If you end the game - good or bad - you will get the chance to start New-Game-Plus
+
+<h2>Common tips</h2>
+</br>- You need to eat and drink. If you dont, you get weak and might do stupid things because getting desparate.
+</br>- Look around if you can find some food or other useful things. Some of the snackbars you start with you better save for later.
+<a0 onclick='(function($event){document.querySelector("#"+id+"~p").toggleAttribute("hidden");})(this);'>Spoiler !</a>
+<p hidden>Somehow that isle is tainted and when eating or drinking something it might change you. Not immediatly, but on a longtime range. So you better not eat everything you find.</p>
+</br>- Your chances to scavenge something increase if you get more familiar with your surrounding. However, resources migth need some time to regrow, so you better move on at a point. 
+</br>- a bonfire keeps you warm and animals away. Gather some wood.
+<a0 onclick='(function($event){document.querySelector("#"+id+"~p").toggleAttribute("hidden");})(this);'>Spoiler !</a>
+<p hidden>...but also attract interest of - visitors.</p>
+</br>- spend some time to fix your clothing before it falls apart. You dont want to run around nude, do you?
+
+<h2>More indeep spoilers</h2>
+<a0 onclick='(function($event){document.querySelector("#"+id+"~p").toggleAttribute("hidden");})(this);'>Triggering transformation</a>
+<p hidden> - Its not just eating double melons and you grow "double melons".
+    </br> - if you eat or drink something or are otherwise exposed to mutators, those mutators will accumulate in your body
+    </br> - only if a trigger is applied a evaluation of the mutators is done to select a transformation. F.e. going to sleep. 
+    </br> - The selection depends on the size of each mutator relative to the others, their absolute size and the transformations already present.
+    </br> - F.e. if your Tits are already large and those mutators indicate a average breast expansion, it will do nothing 
+    </br> - multiple mutators have to be present. Lets say there are mutators A,C,T,G. 
+    </br> For a average breast expansion a relation A:C:T:G of around 2:1:0:0 with C beeing at least 0.5. 
+    </br> C you get from Peaches while A can be obtained from Melons. But Peaches also increase T, so you need to find something that decreases it.
+    </br> ??? - there should be a hint to player what kind of mutator got accumulated (" there is some odd tension in your chest")  
+    </br> - The executed transformation will consume the mutators
+    </br> - mutators dimish over time. Stay away from tainted things to reduce there accumulation. 
+    </br> - immuno boosters increase the dimishing rate while other things increase it 
+    </br> - a weakend condition or preference might reduce the threshold of a transformation or maintains a minimum level of a certain mutator
+    </br> - 
+
+    </br> - your body fights against the transformation and their is a chance to recover some
+
+</p> 
 </br>[[Back|_back_]]</br>
 </article><article id="LogPanel"></article></section>
 
@@ -51,40 +84,9 @@ Here is a task-list for you: </br>
 </article><article id="LogPanel"></article></section>
 
 
-:: Help_Basicsold [_back_]
-<section> 
-<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-Real Life</br><hr></br>
-For many activities you have to spend energy and time. F.e. walking into the city takes some time and effort.</br>
-Energy can be recovered by sleeping. Also some activities, food or drugs can restore energy.</br>
-Use the sleep-option in your own bedroom to rest.</br>
-</br>Virtual Reallity</br><hr></br>
-Leaving the VR is only possible at the spawn-points, and only if in freeplay. If there is some storyrelevant stage running, you cant leave.</br>
-Entering VR is also only possible if the story-stage is at a certain points and requires it or freeplay is on.</br>
-</br>
-</br>Combat</br><hr></br>
-You defeat enemys by damaging their health. If you have the skill, you can tease them until they are to aroused to bother fighting.
-Postbattle scenes might differ if the victor is excited !
-For some actions you need energy, f.e. a heavy strike or blocking with shield. Energy is recovered slowly on each turn.
-Will can be used to cast magic.
-Be aware that running out of energy/will might get you in a weakened condition.
-</br>
-[[Back|_back_]]</br>
-</article><article id="LogPanel"></article></section>
-
-
-:: Help_Questold [_back_]
-<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-For the beginning:
-- you should receive game equipment after 2 days
-- try to explore the college in the meantime and look around for a job.</br>
-[[Back|_back_]]</br>
-</article><article id="LogPanel"></article></section>
-
-
 :: Help_Fixes [_back_]
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-If you are stuck on a page and you cannot escape. Press this [[Button|NOP]] to get back to your Home.</br></br>
+If you are stuck on a page and you cannot escape. Press this [[Button|FI_BeachCamp]] to get back to your Home.</br></br>
 If you are even unable to get to this page because you see a weird plain textmessage in your browser:</br>
 Im sorry but no one can help you. I will try to add some debug-log that shows some more information that you can send me.</br>
 Then I might be abel to backtrack the error.</br>
@@ -96,13 +98,15 @@ Then I might be abel to backtrack the error.</br>
 <section> <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 Credits:</br>
 
-Icons & Images:</br>
-https://game-icons.net/
+Icons & Images (pixels or vectors):</br>
+https://game-icons.net/</br>
+https://favpng.com/</br>
 https://www.svgrepo.com/ </br>
 https://www.hiclipart.com/</br>
 https://pixabay.com/de/</br>
 https://www.klipartz.com/</br>
 https://www.vecteezy.com/</br>
+https://www.freevector.com/vector</br>
 
 [[Back|_back_]]</br>
 </article><article id="LogPanel"></article></section>

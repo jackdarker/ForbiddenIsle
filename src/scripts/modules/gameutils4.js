@@ -3,9 +3,9 @@
 window.gm.initGameFlags = function(forceReset,NGP=null) {
     let s= window.story.state;
     function dataPrototype(){return({visitedTiles:[],mapReveal:[],tmp:{},version:0});}
-    if (forceReset) {  
-      s.NGP=s.Settings=s.DngSY=null; 
-      s.Lab=s.Known=null;
+    if (forceReset) { 
+        s.NGP=s.Settings=s.DngSY=null; 
+        s.Lab=s.Known=null;
     }
     let Settings = {
       showCombatPictures:true,
@@ -17,6 +17,7 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
         resourceForest: 5,   //number resource left
         exploreForest:0,
         campUpgrade:{}, //see Data.ods
+        talkEric:{},
         visitedTiles: [],mapReveal: [],
         dng:'', //current dungeon name
         prevLocation:'', nextLocation:'', //used for nav-logic
@@ -27,9 +28,26 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
       recipes:{}  //'LustPotion:20%'
       ,places:{},study:{}
     }
-    if(!NGP) {
+    if(!NGP) { //init if missing
         NGP={token:0,tokenUsed:0}
     }
+    if(!window.gm.achievements){//||forceReset) { 
+        window.gm.achievements={
+          looseEnd: 0 //
+          ,swamToFar: 0
+          ,day10: 0
+          ,insaneTFHuman: 0
+        }
+        window.gm.achievementsInfo={ //this is kept separate to not bloat savegame
+            //hidden bitmask: 0= all visisble, 1= Name ???, 2= Todo ???
+            looseEnd: {set:1, hidden:3, name:"loose end", descToDo:"Find a loose end.",descDone:"Found a link without target. Gained a NGPtoken."} //
+            ,swamToFar: {set:1, hidden:2, name:"swam to far", descToDo:"swim to far into the sea",descDone:"You swam to far and drowned."} //
+            ,swamToFar: {set:1, hidden:1, name:"survive 10days", descToDo:"Survive 10days.",descDone:"You survived for 10days. But this is only the beginning."} //
+            ,insaneTFHuman: {set:1, hidden:1, name:"insane human TF", descToDo:"Got insane by transforming to much.",descDone:"You stayed human but all the TF are stressing you to much."} //
+        }
+    }
+    window.storage.loadAchivementsFromBrowser();
+
     //see comment in rebuildFromSave why this is done
     s.Settings=window.gm.util.mergePlainObject(Settings,s.Settings);
     s.NGP=window.gm.util.mergePlainObject(NGP,s.NGP);
@@ -39,15 +57,7 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
     //todo cleanout obsolete data ( filtering those not defined in template) 
   }
 
-//prints link 
-window.gm.printGoto=function(location,time,energy,alias,difficult){
-    let msg='',res={OK:true,msg:''};
-    msg=window.gm.printLink((alias===''?location:alias)+((time>0)?' ('+time+'min)':'')
-        /*+((energy!==0)?' ('+energy+'E)':'')*/
-        +(difficult?(' '+difficult):''),
-    "window.gm.addTime("+time.toString()+");window.story.show(\""+location+"\");")
-    return(msg);
-};
+
 class effMutator extends Effect {
     static factory(type){
         window.storage.registerConstructor(effMutator);
@@ -290,9 +300,10 @@ class CraftMaterial extends Item {
     }
     set style(style){ 
         this._style = style; 
-        if(style===0) this.id='Branch',this.name='Branch';
-        else if(style===10) this.id=this.name='ObsidianShard';
-        else if(style===20) this.id=this.name='CookingPot';
+        if(style===0) this.id='Branch',this.name='crooked Branch';
+        else if(style===5) this.id='SturdyBranch',this.name='sturdy Branch';
+        else if(style===10) this.id="ObsidianShard",this.name='Obsidian Shard';
+        else if(style===20) this.id="CookingPot",this.name='Cooking Pot';
         else throw new Error(this.id +' doesnt know '+style);
     }
     get style(){return this._style;}
@@ -300,7 +311,10 @@ class CraftMaterial extends Item {
         let msg ='';
         switch(this._style){
             case 0: 
-                msg ='wodden branch';
+                msg ='crooked branch';
+                break;
+            case 5: 
+                msg ='sturdy branch';
                 break;
             case 10: 
                 msg ='shard from obsidian';
@@ -361,6 +375,7 @@ ItemsLib['SquishyMelon'] = function(){ let x= new Food();x.style=40;return(x);};
 ItemsLib['JuicyPeach'] = function(){ let x= new Food();x.style=50;return(x);};
 ItemsLib['SmellyPear'] = function(){ let x= new Food();x.style=60;return(x);};
 ItemsLib['Branch'] = function(){ let x= new CraftMaterial();x.style=0;return(x);}
+ItemsLib['SturdyBranch'] = function(){ let x= new CraftMaterial();x.style=5;return(x);}
 ItemsLib['ObsidianShard'] = function(){ let x= new CraftMaterial();x.style=10;return(x);}
 
 ItemsLib['Lighter'] = function(){ let x= new Tool();x.style=0;return(x);}

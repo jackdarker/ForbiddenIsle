@@ -411,7 +411,7 @@ window.gm.getDateString= function(){
   var v=window.story.state._gm;
   return v.day.toString()+". day "+ window.gm.DoWs[(v.day%8)-1];
 };
-//forward time to until (1025 = 10:25), regenerate player
+//forward time to until (1025 = 10:25)
 //warning dont write 0700 because this would be take as octal number
 window.gm.forwardTime=function(until){
   let v=window.story.state._gm;
@@ -424,7 +424,7 @@ window.gm.forwardTime=function(until){
   //if now is 8:00 and until 10:00 we assume you want to sleep 2h and not 2+24h
   //if now is 10:00 and until is 9:00 we assume sleep for 23h
   if(until<v.time){
-    min = 24*60-(h-h2)*60+(m-m2);
+    min = 24*60-(h-h2)*60-(m-m2);
   }
   if(min===0){ //if sleep from 700 to 700, its a day
     min=24*60;
@@ -733,8 +733,10 @@ window.gm.printPassageLink= function(label,target){
   return("<a href=\"javascript:void(0)\" data-passage=\""+target+"\">"+label+"</a>");
 };
 //prints a link where target is a expression called onClick. Use \" instead of " or ' !
-window.gm.printLink= function(label,target){
-  return('<a href=\'javascript:void(0)\' onclick=\''+target+'\'>'+label+'</a>');
+window.gm.printLink= function(label,target,params){
+  let _params=params||{}
+  _params.class=(params&&params.class)?params.class:"";
+  return('<a href=\'javascript:void(0)\' class=\''+_params.class+'\' onclick=\''+target+'\'>'+label+'</a>');
 };
 
 //prints a link that when clicked picksup an item and places it in the inventory, if itemleft is <0, no link appears
@@ -887,20 +889,25 @@ window.gm.printRelationSummary= function(){
           var data = window.gm.player.Rel.get(ids[k]);
           result+='<tr><td>'+data.id+':</td><td>'+data.value+' of '+window.gm.player.Rel.get(ids[k]+"_Max").value+'</td></tr>';
       }
-  }   //todo print mom : 10 of 20
+  } 
   result+='</table>';
   return(result);
 };
 //prints achievements
 window.gm.printAchievements= function(){
-  var elmt='';
-  var result ='';
-  var ids = [];
+  let result ='', ids = [];
   result+='<table>';
-  var ids = Object.keys(window.gm.achievements);
+  let name,msg,x,achv;
+  ids = Object.keys(window.gm.achievements);
   ids.sort();
   for(var k=0;k<ids.length;k++){
-          result+='<tr><td>'+ids[k]+':</td><td>'+window.gm.achievements[ids[k]]+'</td></tr>';
+    x=window.gm.achievements[ids[k]];
+    achv=window.gm.getAchievementInfo(ids[k]);
+    name=achv.name;
+    msg=((!!x)?achv.descDone:achv.descToDo); 
+    if(!x && (achv.hidden&0x1)>0) {name = "???";}
+    if(!x && (achv.hidden&0x2)>0) {msg = "???";}
+    result+='<tr><td><input type=\"checkbox\" name=\"y\" value=\"x\" readonly disabled '+((!!x)?'checked=\"checked\"':'')+'></td><td>'+name+':</td><td>'+msg+'</td></tr>';
   }   //todo print mom : 10 of 20
   result+='</table>';
   return(result);
@@ -971,7 +978,14 @@ window.gm.toggleDialog= function(id){
       //??lastFocus.focus();
   }
 };
-
+// expects window.gm.achievementsInfo[id]={set:1, hidden:4, name:"loose end", descToDo:"",descDone:""} //
+window.gm.getAchievementInfo=function(id){
+  return(window.gm.achievementsInfo[id]);
+}
+window.gm.setAchievement=function(id,data){
+  window.gm.achievements[id]=data;
+  window.gm.toasty.info("Achievement : "+id);
+}
 { //classes for UI
     class SelectionController extends EventTarget {
         constructor(selectElement, parentNode = null) {

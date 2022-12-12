@@ -49,12 +49,12 @@ window.gm.initGame= function(forceReset,NGP=null){
         }; 
     }
     
-    if (!window.gm.achievements||forceReset){  //outside of window.story !
+    /*if (!window.gm.achievements||forceReset){  //outside of window.story !
       window.gm.achievements= {
         looseEnd: false //add your flags here
       }
       window.storage.loadAchivementsFromBrowser();
-    }
+    }*/
     if (!s.mom||forceReset){
       s.mom = {
         location : "Kitchen",
@@ -124,7 +124,7 @@ window.gm.initGame= function(forceReset,NGP=null){
         ch.id="PlayerRL";
         ch.name="Andrew";
         ch.faction="Player";
-        ch.Effects.addItem(new skCooking());
+        //ch.Effects.addItem(new skCooking());
         //add some basic inventory
         ch.Inv.addItem(new Money(),20);
         ch.Inv.addItem(new LighterDad());

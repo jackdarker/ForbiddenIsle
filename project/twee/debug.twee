@@ -4,7 +4,6 @@
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 Some things for debugging:</br>
 </br>[[MemoryGame]] [[HangmanGame]] [[MinesweeperAscii]] [[Evade]] [[Pong]]</br> <!--todo-->
-</br>[[NewGamePlus]]</br> <!--todo-->
 [[Cheats|debug]]</br>
 [[Back|_back_]]</br>
 </article><article id="LogPanel"></article></section>
@@ -148,7 +147,7 @@ Theme:
 <div class="popup">[hover here]
   <span class="popuptext" id="myPopup2">A Simple window.gm.printPickupAndClear('Crowbar','A crowbar is lying other there.'</span>
 </div>
-<label> <input type="checkbox" >
+<label> <input type="checkbox" onclick='window.gm.toasty.info("clicked");' >
   <span role='tooltip'>hkljj  fdggfdsf gf   dfsd afsdafgdae sgfegf</span>
 </label>
 </article><article id="LogPanel"></article></section>
@@ -168,7 +167,7 @@ function change(){
 [[Back|_back_]]</br></div>
 </article><article id="LogPanel"></article></section>
 <script>
-window.gm.achievements.looseEnd='You found a dead end somewhere in '+window.gm.location;
+window.gm.achievements.looseEnd=1;
 </script>
 
 

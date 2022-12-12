@@ -39,10 +39,16 @@ window.gm.AlchemyDef = (function (Lib) {
     Lib.DominancePotion={name:'dominance potion', tier:0, ingr:['PurpleBerry','PurpleBerry','ApocaFlower'], result:'DominancePotion'};
 return Lib; }(window.gm.AlchemyDef || {}));
 
-window.gm.printGoto=function(location,time,energy,alias){
-    let msg='';
-    msg=window.gm.printLink((alias===''?location:alias)+((time>0)?' ('+time+'min)':''),
-    "window.gm.addTime("+time.toString()+");window.story.show(\""+location+"\");")
+//prints link 
+window.gm.printGoto=function(location,time,energy,alias,difficult){
+    let msg='',res={OK:true,msg:''};
+    msg=window.gm.printLink((alias===''?location:alias)+((time>0)?' ('+time+'min)':'')
+        +((energy!==0)?' ('+energy+'E)':'')
+        +(difficult?(' '+difficult):''),
+    "(function(){if(!("+energy+">0 && window.gm.player.energy().value<"+energy+")){"+
+    "window.gm.player.Stats.increment(\"energy\",-1*"+energy+");window.gm.addTime("+time.toString()+");window.story.show(\""+location+"\");"+
+    "}else{alert(\"Cant do it!\")}}())",
+    {class:(!(energy>0 && window.gm.player.energy().value<energy))?"":"done"}); //TODO replace alert with ??
     return(msg);
 };
 

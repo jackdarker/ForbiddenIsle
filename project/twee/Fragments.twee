@@ -5,73 +5,19 @@ You are not thirsty/hungry
 
 :: FI_ChooseActivity
 <%if(window.passage.name=="FI_BeachForest"){%>
-    [[Pick some fruits|FI_ScavengeFruit]] that are in your hands reach. </br>
-    [[Look around for some firewood|FI_ScavengeWood]]</br>
-    [[Shake a tree|FI_ShakeTree]]
+    <%=window.gm.printGoto('FI_ScavengeFruit',10,5,'Pick some fruits that are in your hands reach.')%></br>
+    <%=window.gm.printGoto('FI_ScavengeWood',10,10,'Look around for some firewood')%></br>
+    <%=window.gm.printGoto('FI_ShakeTree',10,10,'Look around for some firewood')%></br>[[Shake a tree|FI_ShakeTree]]
 <%}%>
 <%if(window.passage.name=="FI_BeachForest"){%>
-    [[look western direction (toward beach)]]</br>
-    [[look northern direction (dense forest and mountains)]]</br>
+    [[explore western direction (toward beach)]]</br>
+    [[explore northern direction (dense forest and mountains)]]</br>
     [[find something useful]]</br>
 <%}%>
-</br>[[Sleep]]</br>
-
-
-:: FI_Help [_back_]
-<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%></br>[[Back|_back_]]</br>
-<h2>How not to win</h2>
-</br>- try to trigger badends by ignoring hints pushed into your face
-</br>- if your sanity decreases below zero you will get either a special or generic bad end. 
-</br>- dont worry. If you end the game - good or bad - you will get the chance to start New-Game-Plus
-
-<h2>Common tips</h2>
-</br>- You need to eat and drink. If you dont, you get weak and might do stupid things if getting desparate.
-</br>- Look around if you can find some food or other useful things. Some of the snackbars you start with you better save for later.
-<a0 onclick='(function($event){document.querySelector("#"+id+"~p").toggleAttribute("hidden");})(this);'>Spoiler !</a>
-<p hidden>Somehow that isle is tainted and when eating or drinking something it might change you. Not immediatly, but on a longtime range. So you better not eat everything you find.</p>
-</br>- Your chances to scavenge something increase if you get more familiar with your surrounding. However, resources migth need some time to regrow, so you better move on at a point. 
-</br>- a bonfire keeps you warm and animals away. Gather some wood.
-<a0 onclick='(function($event){document.querySelector("#"+id+"~p").toggleAttribute("hidden");})(this);'>Spoiler !</a>
-<p hidden>...but also attract interest of - visitors.</p>
-</br>- spend some time to fix your clothing before it falls apart. You dont want to run around nude, do you?
-
-<h2>More indeep spoilers</h2>
-<a0 onclick='(function($event){document.querySelector("#"+id+"~p").toggleAttribute("hidden");})(this);'>Triggering transformation</a>
-<p hidden> - Its not just eating double melons and you grow "double melons".
-</br> - if you eat or drink something or are otherwise exposed to mutators, those mutators will accumulate in your body
-</br> - only if a trigger is applied a evaluation of the mutators is done to select a transformation. F.e. going to sleep. 
-</br> - The selection depends on the size of each mutator relative to the others, their absolute size and the transformations already present.
-</br> - F.e. if your Tits are already large and those mutators indicate a average breast expansion, it will do nothing 
-</br> - multiple mutators have to be present. Lets say there are mutators A,C,T,G. 
-</br> For a average breast expansion a relation A:C:T:G of around 2:1:0:0 with C beeing at least 0.5. 
-</br> C you get from Peaches while A can be obtained from Melons. But Peaches also increase T, so you need to find something that decreases it.
-</br> ??? - there should be a hint to player what kind of mutator got accumulated (" there is some odd tension in your chest")  
-</br> - The executed transformation will consume the mutators
-</br> - mutators dimish over time. Stay away from tainted things to reduce there accumulation. 
-</br> - immuno boosters increase the dimishing rate while other things increase it 
-</br> - a weakend condition or preference might reduce the threshold of a transformation or maintains a minimum level of a certain mutator
-</br> - 
-
-</br> - your body fights against the transformation and their is a chance to recover some
-
-</p> 
-
-
-</br>[[Back|_back_]]</br>
-</article><article id="LogPanel"></article></section>
-
-
-:: FI_NightDream
-The hard work at the day takes it toll on you and the night passes with a deep, dreamless sleep.
-
-Its surprisingly cold and the fire burnt already down. Shivering from the cold, you wish to have something wrap yourself into or to cuddle with someone.
-The only one around to cuddle with is Eric and thats [[Not an option]] | [[Ask him]]  
-
-Your mind switches to dream mode:...
 
 
 :: FI_NGPShop
-<article><%window.gm.player.location=window.passage.name;%>
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%></br><%window.gm.player.location=window.passage.name;%>
 <h2>New game plus</h2>
 This is the New-Game-Plus Screen where you can configure your next play through.</br>
 <a0 onclick='(function($event){document.querySelector("#"+id+"~p").toggleAttribute("hidden");})(this);'>Hint</a>
@@ -83,7 +29,6 @@ This is the New-Game-Plus Screen where you can configure your next play through.
 </p>
 
 <form>
-
 <label>Category:
 	<select id="category">
 	<option value="0">select something</option>
@@ -140,10 +85,11 @@ EventMods
 - disable TribeCapture Badend (unless provoked): 
 - higher chance to find fetish item removal options:
 
-</article>
+</article><article id="LogPanel"></article></section>
 <script>
 function NOP(){return({OK:true,msg:""});}
-function exclude(itmIdList){ let res={OK:true,msg:""};
+function exclude(itmIdList){ 
+    let res={OK:true,msg:""};
     for(var i=itmIdList.length-1;i>=0;i--){
         if(NGP.hasOwnProperty(itmIdList[i])){
             res.OK=false,res.msg+="Cannot be used with "+itmIdList[i]+".";
@@ -151,7 +97,8 @@ function exclude(itmIdList){ let res={OK:true,msg:""};
     }
     return(res);
 }
-function include(itmIdList){ let res={OK:true,msg:""};
+function include(itmIdList){ 
+    let res={OK:true,msg:""};
     for(var i=itmIdList.length-1;i>=0;i--){
         if(!NGP.hasOwnProperty(itmIdList[i])){
             res.OK=false,res.msg+="requires also "+itmIdList[i]+".";
@@ -159,8 +106,8 @@ function include(itmIdList){ let res={OK:true,msg:""};
     }
     return(res);
 }
-let NGP,ctrlCat,ctrlItem;
-let catalog = [
+var NGP,ctrlCat,ctrlItem;
+var catalog = [
     {catId:"startgear",desc:"Starting Gear",
     items:[
         {itmId:"Compass",name:"Compass",cost:{token:1},req:NOP,desc:"a compass that makes it easier to navigate in some areas"},
@@ -191,13 +138,16 @@ function buy(){
             window.gm.printOutput("not enough token","#output");
         }else{
             NGP[itm.itmId]=1;
+            NGP.tokenUsed+=itm.cost.token;
         }
     }
+    window.gm.printOutput("Tokens left:"+(NGP.token-NGP.tokenUsed),"#tokens");
     window.gm.printOutput(JSON.stringify(NGP),"#output2");
 }
 function resetAll(){
-    NGP = {token:window.story.state.NGP.token};//window.gm.util.deepCloneObj(window.story.state.NGP);
-    NGP.tokenUsed=0; //
+    let token=0,x=window.gm.achievements;
+    if(x.swamToFar>=1){token++};
+    NGP = {token:token,tokenUsed:0};
     ctrlCat.value="";
     window.gm.printOutput("","#output2");
 }
