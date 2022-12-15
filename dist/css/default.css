@@ -1,6 +1,6 @@
 
 body {
-  background-image:url('assets/bg_hex.jpg');
+  background-image:url('../assets/bg_hex.jpg');
   color:black;
   padding:0;
   margin:0;
@@ -36,6 +36,7 @@ a:hover {
     text-decoration-color: #008929;
 }
 #sidebar {
+  background-color: #ffede099;
   margin: 0.25em 0.25em;
   padding: 0.25em;
   min-width: 10em;

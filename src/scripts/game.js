@@ -71,7 +71,7 @@ window.gm.util.updateLinks=function(Container){
     if (Links.length >= 1 ){//&& Links.length <= 10){
 			var n = 1;
 			for (i = 0; i < Links.length; i++){
-				if (Links[i].id==="" && !Links[i].disabled){//!Links[i].id.includes("Link")){
+				if (Links[i].id==="" && !Links[i].disabled && !Links[i].hidden){//!Links[i].id.includes("Link")){
 					while (document.querySelector("#Link" + n)){//$(Container).find("#Link" + n).length){ //check for existing links
 						++n;
 						if (n > 10){	break;	}

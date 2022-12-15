@@ -14,8 +14,10 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
     };
     let DngSY = {
         remainingNights: -1,
-        resourceForest: 5,   //number resource left
+        resourceForest: {wood:5,fruit:5},   //number resource left
         exploreForest:0,
+        exploreHill:0,
+        exploreBeach:0,
         campUpgrade:{}, //see Data.ods
         talkEric:{},
         visitedTiles: [],mapReveal: [],
@@ -30,19 +32,21 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
     }
     if(!NGP) { //init if missing
         NGP={token:0,tokenUsed:0}
+    }else{ //grant NGP-options; window.gm.player is not valid yet!
+        if(!!NGP.ProteinBars) window.story.state.PlayerVR.Inv.addItem(window.gm.ItemsLib["SnackBar"](),12);
     }
     if(!window.gm.achievements){//||forceReset) { 
         window.gm.achievements={
           looseEnd: 0 //
           ,swamToFar: 0
-          ,day10: 0
+          ,survive10days: 0
           ,insaneTFHuman: 0
         }
         window.gm.achievementsInfo={ //this is kept separate to not bloat savegame
             //hidden bitmask: 0= all visisble, 1= Name ???, 2= Todo ???
             looseEnd: {set:1, hidden:3, name:"loose end", descToDo:"Find a loose end.",descDone:"Found a link without target. Gained a NGPtoken."} //
             ,swamToFar: {set:1, hidden:2, name:"swam to far", descToDo:"swim to far into the sea",descDone:"You swam to far and drowned."} //
-            ,swamToFar: {set:1, hidden:1, name:"survive 10days", descToDo:"Survive 10days.",descDone:"You survived for 10days. But this is only the beginning."} //
+            ,survive10days: {set:1, hidden:1, name:"survive 10days", descToDo:"Survive 10days.",descDone:"You survived for 10days. But this is only the beginning."} //
             ,insaneTFHuman: {set:1, hidden:1, name:"insane human TF", descToDo:"Got insane by transforming to much.",descDone:"You stayed human but all the TF are stressing you to much."} //
         }
     }
@@ -60,7 +64,6 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
 
 class effMutator extends Effect {
     static factory(type){
-        window.storage.registerConstructor(effMutator);
         let eff = new effMutator();
         //eff.type = type;eff.data.id=eff.data.name='eff'+type;
         return(eff);
@@ -174,7 +177,6 @@ class effMutator extends Effect {
     }
     onTimeChange(time){
         var delta = window.gm.getDeltaTime(time,this.data.time);
-        
         return(null);
     }
     onApply(){
@@ -193,7 +195,6 @@ class effMutator extends Effect {
 }
 class effFoodEffect extends Effect {
     static factory(type){
-        window.storage.registerConstructor(effFoodEffect);
         let eff = new effFoodEffect();
         eff.type = type;
         eff.data.id=eff.data.name='eff'+type;
@@ -270,6 +271,7 @@ class Food extends Item {
             context.removeItem(this.id);
             if(on instanceof Character){ 
                 //on.addEffect(effPillEffect.factory(this.id));
+                on.Stats.increment("satiation",this.satiation),on.Stats.increment("energy",this.energy);;
                 on.Effects.get(effMutator.name).addMutator(this.id);
                 _txt=on.name+' ate something. ';
                 return({OK:true, msg:_txt});
@@ -277,8 +279,8 @@ class Food extends Item {
         } else throw new Error('context is invalid');
     }
     set style(style){
-        this._style = style;
-        if(style===0) this.id=this.name='SnackBar';
+        this._style = style; this.satiation=10,this.energy=20;
+        if(style===0) this.id=this.name='SnackBar',this.satiation=30,this.energy=50;
         else if(style===20) this.id=this.name='BellPepper';
         else if(style===30) this.id=this.name='StraightBanana';
         else if(style===40) this.id=this.name='SquishyMelon';
@@ -329,7 +331,7 @@ class CraftMaterial extends Item {
     toJSON(){return window.storage.Generic_toJSON("CraftMaterial", this); };
     static fromJSON(value){ return window.storage.Generic_fromJSON(CraftMaterial, value.data);};
 }
-class Tools extends Item{
+class Tool extends Item{
     constructor(){ super('Tools');
         this.addTags([window.gm.ItemTags.Tool]); this.price=this.basePrice=10;   
         this.style=0;this.lossOnRespawn = true;
@@ -362,12 +364,16 @@ class Tools extends Item{
         }
         return(msg);
     }
-    toJSON(){return window.storage.Generic_toJSON("Tools", this); };
-    static fromJSON(value){ return window.storage.Generic_fromJSON(Tools, value.data);};
+    toJSON(){return window.storage.Generic_toJSON("Tool", this); };
+    static fromJSON(value){ return window.storage.Generic_fromJSON(Tool, value.data);};
 }
 
 window.gm.ItemsLib = (function (ItemsLib){
-window.storage.registerConstructor(Food);
+    window.storage.registerConstructor(effFoodEffect);
+    window.storage.registerConstructor(effMutator);
+    window.storage.registerConstructor(Food);
+    window.storage.registerConstructor(CraftMaterial);
+    window.storage.registerConstructor(Tool);
 ItemsLib['SnackBar'] = function(){ let x= new Food();x.style=0;return(x);};
 ItemsLib['BellPepper'] = function(){ let x= new Food();x.style=30;return(x);};
 ItemsLib['StraightBanana'] = function(){ let x= new Food();x.style=30;return(x);};

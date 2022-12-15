@@ -1,20 +1,42 @@
+:: FI_InspectSelf [_back_]
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+[[Back|_back_]]</br> Checking out <%=window.gm.player.name%>:</br>
+<div id='output'><%=window.gm.printBodyDescription(window.gm.player,true)%><div>
+<div id='output2'><%=JSON.stringify(window.gm.player.Effects.get("effMutator").sumupMutators())%><div>
+</article><article id="LogPanel"></article></section>
+
 :: FI_NeedsPlayer
-You are not thirsty/hungry
-
-
+<div id="needs"></div>
+<script>function needs(){
+    let msg="",x=window.gm.player.Stats.get("satiation").value;
+    if(x>70){
+        msg="You are not thirsty/hungry";
+    } else if(x<20) {
+        msg="You are really thirsty/hungry";
+    } else if(x<5) {
+        msg="You are starving";
+    } else {
+        msg="You are somewhat thirsty/hungry";
+    }
+    return(msg);
+}
+window.gm.printOutput(needs(),'#needs');
+</script>
 
 :: FI_ChooseActivity
 <%if(window.passage.name=="FI_BeachForest"){%>
-    <%=window.gm.printGoto('FI_ScavengeFruit',10,5,'Pick some fruits that are in your hands reach.')%></br>
-    <%=window.gm.printGoto('FI_ScavengeWood',10,10,'Look around for some firewood')%></br>
-    <%=window.gm.printGoto('FI_ShakeTree',10,10,'Look around for some firewood')%></br>[[Shake a tree|FI_ShakeTree]]
+    <%=window.gm.printGoto('FI_ScavengeFruit',30,5,'Pick some fruits that are in your hands reach.')%></br>
+    <%=window.gm.printGoto('FI_ScavengeWood',30,10,'Look around for some firewood')%></br>
+    <%=window.gm.printGoto('FI_ShakeTree',30,10,'Shake a tree')%></br>
 <%}%>
 <%if(window.passage.name=="FI_BeachForest"){%>
     [[explore western direction (toward beach)]]</br>
     [[explore northern direction (dense forest and mountains)]]</br>
     [[find something useful]]</br>
 <%}%>
-
+<%if(window.passage.name=="FI_BeachWalkEast"){%>
+    <%=window.gm.printGoto('FI_BeachEastExplore',20,20,'explore surrounding')%>
+<%}%>
 
 :: FI_NGPShop
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%></br><%window.gm.player.location=window.passage.name;%>

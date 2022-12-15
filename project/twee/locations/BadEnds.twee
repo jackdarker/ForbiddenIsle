@@ -1,3 +1,23 @@
+:: FI_BeachSwimDrown
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+You have gone swimming at the end of the tide and the water begins to recede. Too late you notice that the current pulls you out to the open sea.
+</br> Eventually, your strength leaves you and you sink into your damp grave.
+</br></br> THE END 
+
+</br></br><a0 onclick='window.gm.setAchievement("swamToFar",1);window.story.show("FI_NGPShop");'>New Game Plus</a>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_RunOutOfWill
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+With all those strange and scary things happening to you, your sanity is shattered.</br>
+<p class="author">Todo: Need to be replaced with something better!</p>
+</br></br> THE END 
+
+</br></br><a0 onclick='window.gm.setAchievement("looseEnd",1);window.story.show("FI_NGPShop");'>New Game Plus</a>
+</article><article id="LogPanel"></article></section>
+
+
 :: AntFarm
 Du wurdest gefesselt in einem Ameisenhaufen platziert. Sobald es wärmer wird werden auch die Ameisen aktiver....
 

@@ -1673,7 +1673,7 @@ class Ability extends Stat { //double check if ability is present !
     static setup(context, base,kind){   
         let _stat = new Ability();
         let _n = _stat.data;
-        _n.id="sk_"+kind,_n.base=base, _n.value=base,_n.limits=[{max:100,min:-100}];
+        _n.id="sk_"+kind,_n.base=base, _n.value=base,_n.limits=[{max:1000,min:-1000}];
         context.addItem(_stat);
         _stat.Calc();
     }
@@ -1794,5 +1794,6 @@ window.gm.StatsLib = (function (StatsLib){
     window.storage.registerConstructor(effVaginalPregnant);
     //non-combat skills
     window.storage.registerConstructor(Ability);
+    StatsLib.Ability=Ability;
     return(StatsLib); 
 }(window.gm.StatsLib || {}));

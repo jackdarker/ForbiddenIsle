@@ -29,6 +29,30 @@ ein Kescher. Könnte nützlich zum Fangen von Fisch sein.
 </article><article id="LogPanel"></article></section>
 
 
+:: FI_BeachDig
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+Walking up the shore along the waterline you look around for anything that could be of use.</br>
+
+<p>A dull black surface catches your attention. It does not look like the other stones or shells scattered around. It is burried in the fine, dense mud. Digging it out with your hands is too troublesome.</p>
+<%if(window.gm.player.Inv.countItem("SturdyBranch")>0){%>
+    <div id='select1' >You still carry one of those sturdy branches that you now could make use off. 
+    <%=window.gm.printDo('window.gm.printTalkLink(\"div#select1\",\"div#choice1a\"),window.gm.player.Inv.addItem(\"CookingPot\")',30,30,'Use the stick to dig')%></br>
+    <a0 onclick='window.gm.printTalkLink("div#select1","div#choice1b")'>Walk away</a></br>
+    </div><div id='choice1a' hidden></br> As you start to remove the sand around the object you quickly notice that it is made of metal.
+        <p class="tPC">'Maybe its a pot of gold... Or a explosive mine.'</p>
+        <p>Its a small kettle. Its made from aluminium as the inside, once cleared from the mud, shows blank surface.</p>
+        <p class="tPC">'No gold. Hmm..but could be of use to carry water and or to cook something.'</p> 
+        </div>
+    <div id='choice1b' hidden></br> <p class="tPC">'Nah, its not worth the effort.'</p><%=window.gm.printGoto(window.gm.player.location,0,0,'Move on')%>
+    </div>
+<%}else{%>
+    A simple tool would be of help here.</br>
+    <%=window.gm.printGoto(window.gm.player.location,0,0,'Move on')%>
+<%}%>
+
+</article><article id="LogPanel"></article></section>
+
+
 :: FI_BeachSandSculpt
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 Während du über den feuchten Sand läufst springt dir eine Stelle ins Auge die nicht so glatt und eben wie der Rest ist.
@@ -75,13 +99,32 @@ Eric beobachtet dich, gibt dir handson tips.
 
 :: FI_BeachSwim
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-Du bist bei Ende Flut schwimmen gegangen und das Wasser beginnt allmählich zurückzuweichen. Zu spät bemerkst du das dich die Strömung aufs offene Meer herauszieht.
-</br> Irgendwann verlassen dich die Kräfte und du versinkst in deimem feuchten Grab.
+<%if(window.gm.player.Stats.findItemSlot("sk_Swimming")<=-1){%> 
+    Swimming really isn't your kind of thing, let alone doing it in this open sea with big waves rolling in.</br>
+    <div id='select10' > Find a spot where the water is a little calmer and 
+    <a0 onclick='window.gm.StatsLib.Ability.setup(window.gm.player.Stats,1,"Swimming");window.gm.printTalkLink("div#select10","div#choice10a")'>try a few swims</a>.</br>
+    </div><div id='choice10a' hidden></br>After you have stripped of your cloths you step into the small pool. You swim back and forth and even do a dive. Swimming seems fun.</br>
+    <%=window.gm.printGoto(window.gm.player.location,0,0,'Return to camp')%>
+    </div>
+<%}else if(window.gm.player.Stats.get("sk_Swimming").value>0){%>
+    <span class="tPC">'lets do some more swim-training.'</span> With that you strip your outerwear and walk into the sea.
+    <div id='select20' > 
+    <a0 onclick='window.gm.player.Stats.increment("sk_Swimming",1);window.gm.printTalkLink("div#select20","div#choice20a")'>Swim parallel to beach.</a></br>
+    </div><div id='choice20a' hidden></br> You think your skill has gotten better.
+        <div id='select30' >
+        <%=window.gm.printDo('window.gm.printTalkLink(\"div#select30\",\"div#choice30a\")',60,30,'Swim some more lanes')%> or <a0 onclick='window.gm.printTalkLink("div#select30","div#choice30b")'>leave the water.</a></br>
+        </div><div id='choice30a' hidden></br> Lets see if you can [[swim a little|FI_BeachSwimDrown]] bit further out in the sea.
+        </div>
+        <div id='choice30b' hidden></br> You step out of the water and <%=window.gm.printGoto(window.gm.player.location,0,0,'redress')%>.
+        </div>
+    </div>
+<%}else{%>
+    Its not time to splash around.</br>
+    <%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+<%}%>
 
-</br></br> THE END 
-
-</br></br><a0 onclick='window.gm.setAchievement("swamToFar",1);window.story.show("FI_NGPShop");'>New Game Plus</a>
 </article><article id="LogPanel"></article></section>
+
 
 
 :: FI_BeachCatchFish
@@ -117,7 +160,7 @@ Grabing the tree with you hands, you shake it as hard as possible.
     </br> A bendy one. That moves by itself and is hissing at you.
     <p class="tPC">"Look out - Its a snake !"</p> you shout.
 </div>
-<div id='choice1a' hidden></br>
+<div id='choice1c' hidden></br>
     </br> ... some hit on your head. You received a sturdy branch. Could be useful to poke around or to craft some weapon. 
 </div>
 <%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
@@ -131,15 +174,18 @@ Grabing the tree with you hands, you shake it as hard as possible.
     } else { //plain
         window.gm.player.Inv.addItem(window.gm.ItemsLib.Branch());
     }
-    window.gm.printTalkLink("div#select1","div#choice"+x;);
+    window.gm.printTalkLink("div#select1","div#choice"+x);
 }
 </script>
 
 
 :: FI_SunBath
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-The weather is nice, you are on a tropical island, the beautiful beach all for yourself. So why not make use of it and dooze for a while. 
-
+The weather is nice, you are on a tropical island, the beautiful beach all for yourself. 
+<div id='select1' >So why not make use of it and  
+<a0 onclick='window.gm.addTime(60),window.gm.player.Stats.increment("energy",20),window.gm.player.Stats.increment("will",20),window.gm.printTalkLink("div#select1","div#choice1a")'>dooze for a while.</a></br>
+</div><div id='choice1a' hidden></br>
+</div>
 If someone would just be around to help with the sunscreen.
 Should you strip naked? There is no one around except Eric lurking somewhere.
 
@@ -152,6 +198,12 @@ Should you strip naked? There is no one around except Eric lurking somewhere.
 The hard work at the day takes it toll on you and the night passes with a deep, dreamless sleep.
 
 Your mind switches to dream mode:...
+
+Those drugs in your veins do a good job in letting you go inconscious...
+
+if you cant sleep because no warmth- reduce will/energy recoverage
+if you are horny, you get wild dreams- 
+if you cant sleep because disturbance-  
 
 <%=window.gm.printGoto("FI_Wakeup",0,0,'Wake up')%>
 </article><article id="LogPanel"></article></section>
