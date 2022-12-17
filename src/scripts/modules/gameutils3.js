@@ -40,21 +40,25 @@ window.gm.AlchemyDef = (function (Lib) {
 return Lib; }(window.gm.AlchemyDef || {}));
 
 //prints link to other passage
-window.gm.printGoto=function(location,time,energy,alias,difficult){
+window.gm.printGoto=function(location,cost,alias){
     let msg='',res={OK:true,msg:''};
-    msg=window.gm.printDo("window.story.show(\""+location+"\");",time,energy,alias,difficult);
+    msg=window.gm.printDo("window.story.show(\""+location+"\");",cost,alias);
     return(msg);
 };
 //prints link that executes doThat f.e. "window.story.show(\"NewGame\")";
-window.gm.printDo=function(doThat,time,energy,alias,difficult){
-    let msg='',res={OK:true,msg:''};
-    msg=window.gm.printLink((alias===''?location:alias)+((time>0)?' ('+time+'min)':'')
-        +((energy!==0)?' ('+energy+'E)':'')
-        +(difficult?(' (<b>'+difficult+'</b>)'):''),
-    "(function(){if(!("+energy+">0 && window.gm.player.energy().value<"+energy+")){"+
-    "window.gm.player.Stats.increment(\"energy\",-1*"+energy+");window.gm.addTime("+time.toString()+");"+doThat+";"+
+window.gm.printDo=function(doThat,cost,alias){
+    let k='',msg='',res={OK:true,msg:''};
+    let _cost = cost||{}; //cost={time:30,energy:-10,will:-10,difficult:hard}  easy, average, hard
+    _cost.time=(cost&&cost.time)?cost.time:0, _cost.energy=(cost&&cost.energy)?cost.energy:0, _cost.will=(cost&&cost.will)?cost.will:0; 
+    _cost.difficult=(cost&&cost.difficult)?cost.difficult:'';
+    k=((_cost.time>0)?' '+_cost.time+'min':'') + ((_cost.energy!==0)?' '+_cost.energy+'E':'') + 
+      ((_cost.will!==0)?' '+_cost.will+'W':'') + (_cost.difficult?(' <b>'+_cost.difficult+'</b>'):'');
+    if(k!=='')k=" ("+k+")";
+    msg=window.gm.printLink((alias===''?location:alias)+k,
+    "(function(){if(!(("+_cost.energy+"<0 && window.gm.player.energy().value<"+(-1*_cost.energy)+")||("+_cost.will+"<0 && window.gm.player.Stats.get(\"will\").value<"+(-1*_cost.will)+"))){"+
+    "window.gm.player.Stats.increment(\"energy\","+_cost.energy+");window.gm.player.Stats.increment(\"will\","+_cost.will+");window.gm.addTime("+_cost.time.toString()+");"+doThat+";"+
     "}else{alert(\"Cant do it!\")}}())",
-    {class:(!(energy>0 && window.gm.player.energy().value<energy))?"":"done"}); //TODO replace alert with ??
+    {class:(!((_cost.energy<0 && window.gm.player.energy().value<(-1*_cost.energy))||(_cost.will<0 && window.gm.player.Stats.get("will").value<(-1*_cost.will))))?"":"done"}); //TODO replace alert with ??
     return(msg);
 };
 

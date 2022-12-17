@@ -11,12 +11,14 @@
     let msg="",x=window.gm.player.Stats.get("satiation").value;
     if(x>70){
         msg="You are not thirsty/hungry";
-    } else if(x<20) {
+    } else if(x>50) {
+        msg="You are getting thirsty/hungry";
+    } else if(x>30) {
         msg="You are really thirsty/hungry";
-    } else if(x<5) {
-        msg="You are starving";
+    } else if(x>10) {
+        msg="<b>You are starving. Did you look around if there is something edidable?</b>";
     } else {
-        msg="You are somewhat thirsty/hungry";
+        msg="<b>You are starving and would eat anything. Check your inventory for something to eat.</b>";
     }
     return(msg);
 }
@@ -25,18 +27,15 @@ window.gm.printOutput(needs(),'#needs');
 
 :: FI_ChooseActivity
 <%if(window.passage.name=="FI_BeachForest"){%>
-    <%=window.gm.printGoto('FI_ScavengeFruit',30,5,'Pick some fruits that are in your hands reach.')%></br>
-    <%=window.gm.printGoto('FI_ScavengeWood',30,10,'Look around for some firewood')%></br>
-    <%=window.gm.printGoto('FI_ShakeTree',30,10,'Shake a tree')%></br>
+    <%=window.gm.printGoto('FI_ScavengeFruit',{time:30*(1+2*s.NGP.xForestFood),energy:-5*(1+2*s.NGP.xForestFood)},'Pick some fruits that are in your hands reach.')%></br>
+    <%=window.gm.printGoto('FI_ScavengeWood',{time:30,energy:-10},'Look around for some firewood')%></br>
+    <%=window.gm.printGoto('FI_ShakeTree',{time:30,energy:-20},'Shake a tree')%></br>
 <%}%>
 <%if(window.passage.name=="FI_BeachForest"){%>
     [[explore western direction (toward beach)]]</br>
     [[explore northern direction (dense forest and mountains)]]</br>
-    [[find something useful]]</br>
 <%}%>
-<%if(window.passage.name=="FI_BeachWalkEast"){%>
-    <%=window.gm.printGoto('FI_BeachEastExplore',20,20,'explore surrounding')%>
-<%}%>
+
 
 :: FI_NGPShop
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%></br><%window.gm.player.location=window.passage.name;%>
@@ -103,6 +102,7 @@ ItemMods
 
 
 EventMods
+- increased forest food-drop x3 (just less clicking)
 - reduce care package chance
 - disable TribeCapture Badend (unless provoked): 
 - higher chance to find fetish item removal options:
@@ -137,12 +137,19 @@ var catalog = [
     ]},
     {catId:"resistance",desc:"transformation resistance",
     items:[
+        {itmId:"increasedSatiation",name:"Satiation increased",cost:{token:1},req:NOP,desc:"Improved satiation when consuming food."},
+        {itmId:"willOnSatiated",name:"Happy when well-fed",cost:{token:1},req:NOP,desc:"Eating while beeing mostly satiated gives you a little bit willpower. But you loose will if you are hungry."},
+        //{itmId:"",name:"will gain when satiated",cost:{token:1},req:NOP,desc:"Eating while beeing mostly satiated gives you a little bit willpower."},
         {itmId:"transformWeakOnly",name:"transformWeakOnly",cost:{token:2},req:NOP,desc:"Transformations only take place in a weakend state."}
     ]},
     {catId:"itemMods",desc:"Item Mods",
     items:[
         {itmId:"decreasedClothDurability",name:"decreased clothing durability",cost:{token:1},req:exclude.bind(null,["increasedClothDurability"]),desc:"Clothes tend to break faster. Might help to get rid of some undesired things faster."},
         {itmId:"increasedClothDurability",name:"increased clothing durability",cost:{token:1},req:exclude.bind(null,["decreasedClothDurability"]),desc:"Clothes are much more durable, especially specific one."}
+    ]},
+    {catId:"eventMods",desc:"Event Mods",
+    items:[
+        {itmId:"xForestFood",name:"increased food-drop in forest",cost:{token:0},req:NOP,desc:"Gather more food at once from forest (just to reduce clicking)."}
     ]}
 ];
 function updateText(event) {
@@ -159,7 +166,7 @@ function buy(){
         }else if(itm.cost.token>freeToken){
             window.gm.printOutput("not enough token","#output");
         }else{
-            NGP[itm.itmId]=1;
+            NGP[itm.itmId]=1;   //s.NGP.ProteinBars
             NGP.tokenUsed+=itm.cost.token;
         }
     }

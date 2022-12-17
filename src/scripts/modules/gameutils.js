@@ -104,6 +104,7 @@ window.gm.initGame= function(forceReset,NGP=null){
       ch.Outfit.addItem(new BaseHumanoid());
       ch.Outfit.addItem(new SkinHuman());
       ch.Outfit.addItem(new FaceHuman());
+      ch.Outfit.addItem(HeadHairHuman.factory('smooth'));
       ch.Outfit.addItem(HandsHuman.factory('human'));
       ch.Outfit.addItem(AnusHuman.factory('human'));
       ch.Outfit.addItem(PenisHuman.factory('human'));

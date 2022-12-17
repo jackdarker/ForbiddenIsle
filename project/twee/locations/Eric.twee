@@ -1,12 +1,12 @@
 :: TalkEric
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-Eric is resting on some tree trunk other there lets talk about...</br>
-<%=((!!s.DngSY.talkEric.day1)?"":window.gm.printGoto("TalkEricDay1",0,0,"Ask about searching friends")+"</br>")%>
-<%=((!s.DngSY.talkEric.friends)?"":window.gm.printGoto("TalkEricFriends",0,0,"Ask about his friends")+"</br>")%>
-<%=((!s.DngSY.talkEric.friendship)?"":window.gm.printGoto("TalkEricChat",0,0,"Chat about this and that")+"</br>")%>
-<%=((s.DngSY.talkEric.friendship&&s.DngSY.talkEric.friendship>=100)?window.gm.printGoto("TalkEricSex",0,0,"Tease him")+"</br>":"")%>
+Eric is resting on some tree trunk over there. Lets talk about...</br>
+<%=((!!s.DngSY.talkEric.day1)?"":window.gm.printGoto("TalkEricDay1",{},"Ask about searching friends")+"</br>")%>
+<%=((!s.DngSY.talkEric.friends)?"":window.gm.printGoto("TalkEricFriends",{},"Ask about his friends")+"</br>")%>
+<%=((!s.DngSY.talkEric.friendship)?"":window.gm.printGoto("TalkEricChat",{},"Chat about this and that")+"</br>")%>
+<%=((s.DngSY.talkEric.friendship&&s.DngSY.talkEric.friendship>=100)?window.gm.printGoto("TalkEricSex",{},"Tease him")+"</br>":"")%>
 </br></br>
-<%=window.gm.printGoto(window.gm.player.location,0,0,'Move on')%>
+<%=window.gm.printGoto(window.gm.player.location,{},'Move on')%>
 </article><article id="LogPanel"></article></section>
 
 
@@ -49,22 +49,63 @@ I couldn't take a glimpse at them as I clutched on that cargo drop sailing out o
         </div><div id='choice40a' hidden></br><p class="tPC">"No, I'm more the mangaplanet type."</p></div>
         <div id='choice40b' hidden></br><p class="tPC">"I guess I know a little something."</p></div>
         <p>Lets look around the beach.</p>
-        <%=window.gm.printLink("Back",'window.story.state.DngSY.talkEric.day1=1,window.story.state.DngSY.talkEric.friendship=1;window.story.show(window.gm.player.location);')%>
+        <%=window.gm.printLink("Back",'window.story.state.DngSY.talkEric.day1=1,window.story.state.DngSY.talkEric.friends=1;window.story.show(window.gm.player.location);')%>
     </div>    
 </div>
 </article><article id="LogPanel"></article></section>
 
 :: TalkEricFriends
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-Talk about his relation to your common friends...
+<div id='select10' >Talk about your mutual friends...
+<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10a")' <%=(!!window.story.state.DngSY.talkEric.Naria)?"":"hidden"%>>about Maria</a></br>
+<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10b")' <%=(!!window.story.state.DngSY.talkEric.Sten)?"":"hidden"%>>about Sten</a></br>
+<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10c")'>the others</a></br>
+</div><div id='choice10a' hidden></br>
+    <div id='select10a10' >
+    <a0 onclick='window.gm.printTalkLink("div#select10a10","div#choice10a10a")' <%=(window.story.state.DngSY.talkEric.Naria<3)?"":"hidden"%>>Chat</a></br>
+    <a0 onclick='window.gm.printTalkLink("div#select10a10","div#choice10a10b")'>Can Maria handle this situation?</a></br>
+    </div><div id='choice10a10a' hidden></br>
+        <p>Chatting about Maria seems to lighten his mood.</p>
+        <a0 onclick='window.story.show(window.gm.player.location);'>Move on</a>
+    </div>
+    <div id='choice10a10b' hidden></br>
+        <p class="tNPC1">"Maria is a tough girl. She doesnt look like much but she can be very determined."</p>
+        <a0 onclick='window.story.state.DngSY.talkEric.Naria+=1;window.story.show(window.gm.player.location);'>Move on</a>
+    </div>
+</div>
+<div id='choice10b' hidden></br>
+</div>
+<div id='choice10c' hidden></br>
+    <p class="tPC">"I'm worried that we didnt get any notice from the others until now."</p>
+    <p class="tNPC1">"I just hope Maria and Carl made it safely down to that isle."</p>
+    <div id='select10c10' >
+    <a0 onclick='window.gm.printTalkLink("div#select10c10","div#choice10c10a")'>I'm worried too</a></br>
+    <a0 onclick='window.gm.printTalkLink("div#select10c10","div#choice10c10b")'>I'm pretty sure they are fine</a></br>
+    </div><div id='choice10c10a' hidden></br>
+        <p>Eric seems grim about the separation from his friends. Especially Maria & Carl. What about Sten?</p>    
+        <a0 onclick='window.story.state.DngSY.talkEric.Naria=1;window.story.show(window.gm.player.location);'>Move on</a>
+    </div>
+    <div id='choice10c10b' hidden></br>
+        <p>Eric seems grim about the separation from his friends. Especially Maria & Carl. What about Sten?</p>    
+        <a0 onclick='window.story.state.DngSY.talkEric.Naria=1;window.story.show(window.gm.player.location);'>Move on</a>
+    </div>
+</div>
+</div>
+his relation to them, friends with benefit
+is he jelous 
+interests
+oddities
 
-<%=window.gm.printLink("Back",'window.story.show(window.gm.player.location);')%>
+<a0 onclick='window.story.show(window.gm.player.location);'>Move on</a>
 </article><article id="LogPanel"></article></section>
 
 :: TalkEricChat
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 Give advice what to eat or not. As certain food is limited, you could try to save it for yourself.
-He might get suspicious however, and possibly wants exactly that food right then. 
+He might get suspicious however, and possibly wants exactly that food right then. </br>
+
+If you have to ask for support -> he is getting more dominant
+
 
 Talk about past: unlock skill , change attitude?
 

@@ -1,149 +1,21 @@
-:: FI_BeachFoundSuitcase
+:: FI_ScavengeWood
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-Neben dem Schwappen der anrollenden Wellen kannst du ein seltsames Schaben hören. Du schaust dich um und siehst eine Kiste oder Koffer die auf dem vorgelagerten Riff festhängt. 
-Was für ein Glücksfund. Du müsstest allerdings bis zum Riff schwimmen um da ran zukommen. Und dann wieder zurück.
-[[Ignore]] "Zu riskant, das lohnt nicht."
-[[Get it]] Du läufst ins Flachwasser und springst in die Wellen. Es kostet dich einige Kraft um gegen die Brandung anzukämpfen.
-Der Koffer ist abgeschlossen. ER ist zu schwer und unhandlich um mit ihm zurückzuschwimmen.
-[[Crack Lock]] Du verwendest den Faustkeil um das Schloss einzuschlagen. Es kostet dich einige Mühe aber nachdem das erledigt ist öffnest du voller Vorfreude den Deckel und findest... 
-...a bottle rum
-...mosquito net
-... snack bars
-
-<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
-</article><article id="LogPanel"></article></section>
-
-
-:: FI_BeachFoundBikini
-<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-Dir fällt etwas buntes auf dort wo der Sandstrand in Vegetation übergeht. Als du näher kommst erkennst du es ist...
-
-ein Bikini. D.h. ein Oberteil und der Slip. Wie kommen die hier her? Läuft hier jemand nackt herum? 
-Du versuchst dich daran zu erinnern ob einer deiner Freunde sowas getragen hat. Das wäre ein gutes Zeichen. Oder ein schlechtes?
-[[Grab it]] , whoever left it here should have taken more care.
-[[Leave it]]
-
-ein Kescher. Könnte nützlich zum Fangen von Fisch sein.
-
-<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
-</article><article id="LogPanel"></article></section>
-
-
-:: FI_BeachDig
-<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-Walking up the shore along the waterline you look around for anything that could be of use.</br>
-
-<p>A dull black surface catches your attention. It does not look like the other stones or shells scattered around. It is burried in the fine, dense mud. Digging it out with your hands is too troublesome.</p>
-<%if(window.gm.player.Inv.countItem("SturdyBranch")>0){%>
-    <div id='select1' >You still carry one of those sturdy branches that you now could make use off. 
-    <%=window.gm.printDo('window.gm.printTalkLink(\"div#select1\",\"div#choice1a\"),window.gm.player.Inv.addItem(\"CookingPot\")',30,30,'Use the stick to dig')%></br>
-    <a0 onclick='window.gm.printTalkLink("div#select1","div#choice1b")'>Walk away</a></br>
-    </div><div id='choice1a' hidden></br> As you start to remove the sand around the object you quickly notice that it is made of metal.
-        <p class="tPC">'Maybe its a pot of gold... Or a explosive mine.'</p>
-        <p>Its a small kettle. Its made from aluminium as the inside, once cleared from the mud, shows blank surface.</p>
-        <p class="tPC">'No gold. Hmm..but could be of use to carry water and or to cook something.'</p> 
-        </div>
-    <div id='choice1b' hidden></br> <p class="tPC">'Nah, its not worth the effort.'</p><%=window.gm.printGoto(window.gm.player.location,0,0,'Move on')%>
-    </div>
-<%}else{%>
-    A simple tool would be of help here.</br>
-    <%=window.gm.printGoto(window.gm.player.location,0,0,'Move on')%>
-<%}%>
-
-</article><article id="LogPanel"></article></section>
-
-
-:: FI_BeachSandSculpt
-<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-Während du über den feuchten Sand läufst springt dir eine Stelle ins Auge die nicht so glatt und eben wie der Rest ist.
-Zunächst glaubst du darin eine Skulptur zu erkennen wie sie manchmal von Künstlern an Sandstränden modeliert wird.
-Beim Näherkommen stellst du aber fest das es nur einige Bodenunebenheiten sind.
-Aus dem Augenwinkel gesehen scheinen die kleinen Erhebungen und Senken die Form eines auf den Rücken liegenden Menschen anzunehmen.
-<div id='select10' >
-<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10a")'>Who cares</a></br>
-<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10b")'>This supple sand invites to model with it. Might be a good distraction.</a></br>
-</div><div id='choice10a' hidden></br> There is no time to waste and you hurry on. <%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+<div id='select1' >Its to difficult to break those sturdy branches from the trees. Maybe there are some lying around that you just need to <a0 onclick='window.gm.printTalkLink("div#select1","div#choice1a");window.gm.player.Inv.addItem(window.gm.ItemsLib.Branch(),1)'>pick up.</a>
+</div><div id='choice1a' hidden> Picked up a branch from the ground.
 </div>
-<div id='choice10b' hidden></br>
-    Once you feel the smooth sand glide through your fingers you get into it, reshaping bulges and clefts.
-    You arent an artist but somehow you do some decent work. 
-    At some point you have to remind yourself that you also have other means to do and you stand up.
-
-    Seems that you have put a lot of effort in shaping some nice feminine|masculine legs|ass|neckline|hips|breast|... 
-    <div id='select100' >
-    <a0 onclick='window.gm.printTalkLink("div#select100","div#choice100a")'>Touch that form again</a></br>
-    <a0 onclick='window.gm.printTalkLink("div#select100","div#choice100b")'>Move on</a></br>
-    </div><div id='choice100a' hidden></br>
-        adopt those bodyfeature you modeled
-        get molested by that sculpture and lose will.
-        bad end:get pulled in a sandy embrace and beeing buried alive 
-    </div>
-    <div id='choice100b' hidden></br>
-        <%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
-    </div>
-   
-</div>
-
+<%=window.gm.printGoto(window.gm.player.location,{},'next')%>
 </article><article id="LogPanel"></article></section>
 
-
-:: FI_BeachWorkout
+:: FI_ScavengeFruit
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-Pushups, situps für muskelaufbau. Steigert M-Mutator.
-
-Eric beobachtet dich, gibt dir handson tips.
-
-<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
-</article><article id="LogPanel"></article></section>
-
-
-:: FI_BeachSwim
-<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-<%if(window.gm.player.Stats.findItemSlot("sk_Swimming")<=-1){%> 
-    Swimming really isn't your kind of thing, let alone doing it in this open sea with big waves rolling in.</br>
-    <div id='select10' > Find a spot where the water is a little calmer and 
-    <a0 onclick='window.gm.StatsLib.Ability.setup(window.gm.player.Stats,1,"Swimming");window.gm.printTalkLink("div#select10","div#choice10a")'>try a few swims</a>.</br>
-    </div><div id='choice10a' hidden></br>After you have stripped of your cloths you step into the small pool. You swim back and forth and even do a dive. Swimming seems fun.</br>
-    <%=window.gm.printGoto(window.gm.player.location,0,0,'Return to camp')%>
-    </div>
-<%}else if(window.gm.player.Stats.get("sk_Swimming").value>0){%>
-    <span class="tPC">'lets do some more swim-training.'</span> With that you strip your outerwear and walk into the sea.
-    <div id='select20' > 
-    <a0 onclick='window.gm.player.Stats.increment("sk_Swimming",1);window.gm.printTalkLink("div#select20","div#choice20a")'>Swim parallel to beach.</a></br>
-    </div><div id='choice20a' hidden></br> You think your skill has gotten better.
-        <div id='select30' >
-        <%=window.gm.printDo('window.gm.printTalkLink(\"div#select30\",\"div#choice30a\")',60,30,'Swim some more lanes')%> or <a0 onclick='window.gm.printTalkLink("div#select30","div#choice30b")'>leave the water.</a></br>
-        </div><div id='choice30a' hidden></br> Lets see if you can [[swim a little|FI_BeachSwimDrown]] bit further out in the sea.
-        </div>
-        <div id='choice30b' hidden></br> You step out of the water and <%=window.gm.printGoto(window.gm.player.location,0,0,'redress')%>.
-        </div>
-    </div>
-<%}else{%>
-    Its not time to splash around.</br>
-    <%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
-<%}%>
-
-</article><article id="LogPanel"></article></section>
-
-
-
-:: FI_BeachCatchFish
-<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-Du beschliesst im Meer mit dem Kescher Fische zu fangen, oder es zumindest zu versuchen.
-
-Eine Taucherbrille wäre hilfreich damit du Unterwasser besser siehst.
-
-
-With your prey entwinded in the net, you swim back to the shore quickly. 
-Thats a nice catch. However you arent sure if its edible.
-
-
-Als du zurück aufs Meer schaust erkennst du gerade noch wie eine graue Rückenflosse im Wasser verschwindet.
-"Whoa. I just hope that wasnt a shark."
-Its a dolphin. Maybe you can make friends if you drop him some fish? 
-
-
-<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+<% s.tmp.args=[0,0,0];for(var i=(1+2*s.NGP.xForestFood);i>0;i--){s.tmp.args[_.random(0,s.tmp.args.length-1)]+=1;}%>
+<%if(s.tmp.args[0]>0){%><div id='select1'>A smaller tree picks your interest. Some bananas are growing on it, at least you guess those are bananas. Did they grow as single fruits? Either way <a0 onclick='window.gm.printTalkLink("div#select1","div#choice1a");window.gm.player.Inv.addItem(window.gm.ItemsLib.StraightBanana(),<%=s.tmp.args[0]%>)'>collect it.</a>
+</div><div id='choice1a' hidden> Got some bananas.</div><%}%>
+<%if(s.tmp.args[1]>0){%><div id='select2'>In between some large leaves on the ground you <a0 onclick='window.gm.printTalkLink("div#select2","div#choice2a");window.gm.player.Inv.addItem(window.gm.ItemsLib.SquishyMelon(),<%=s.tmp.args[1]%>)'>harvest a melon.</a>
+</div><div id='choice2a' hidden> Got some melon.</div><%}%>
+<%if(s.tmp.args[2]>0){%><div id='select3'>A bush carries some midsized, oval fruits covered in brown hairs. <a0 onclick='window.gm.printTalkLink("div#select3","div#choice3a");window.gm.player.Inv.addItem(window.gm.ItemsLib.HairyKiwi(),<%=s.tmp.args[2]%>)'>Get some.</a>
+</div><div id='choice3a' hidden> Got some Kiwi.</div><%}%>
+<%=window.gm.printGoto(window.gm.player.location,{},'next')%>
 </article><article id="LogPanel"></article></section>
 
 
@@ -163,7 +35,7 @@ Grabing the tree with you hands, you shake it as hard as possible.
 <div id='choice1c' hidden></br>
     </br> ... some hit on your head. You received a sturdy branch. Could be useful to poke around or to craft some weapon. 
 </div>
-<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+<%=window.gm.printGoto(window.gm.player.location,{},'next')%>
 </article><article id="LogPanel"></article></section>
 <script>function foo(){
     let x="1a",rnd=_.random(0,100);
@@ -189,7 +61,187 @@ The weather is nice, you are on a tropical island, the beautiful beach all for y
 If someone would just be around to help with the sunscreen.
 Should you strip naked? There is no one around except Eric lurking somewhere.
 
-<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+<%=window.gm.printGoto(window.gm.player.location,{},'next')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachFoundSuitcase
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+Neben dem Schwappen der anrollenden Wellen kannst du ein seltsames Schaben hören. Du schaust dich um und siehst eine Kiste oder Koffer die auf dem vorgelagerten Riff festhängt. 
+Was für ein Glücksfund. Du müsstest allerdings bis zum Riff schwimmen um da ran zukommen. Und dann wieder zurück.
+[[Ignore]] "Zu riskant, das lohnt nicht."
+[[Get it]] Du läufst ins Flachwasser und springst in die Wellen. Es kostet dich einige Kraft um gegen die Brandung anzukämpfen.
+Der Koffer ist abgeschlossen. ER ist zu schwer und unhandlich um mit ihm zurückzuschwimmen.
+[[Crack Lock]] Du verwendest den Faustkeil um das Schloss einzuschlagen. Es kostet dich einige Mühe aber nachdem das erledigt ist öffnest du voller Vorfreude den Deckel und findest... 
+...a bottle rum
+...mosquito net
+... snack bars
+... suncream
+
+<%=window.gm.printGoto(window.gm.player.location,{},'next')%>
+</article><article id="LogPanel"></article></section>
+
+:: FI_BeachEastExplore
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+You got to know this area a little better.</br>
+<%=window.gm.printGoto(window.gm.player.location,{},'next')%>
+</article><article id="LogPanel"></article></section
+
+
+:: FI_BeachNorthExplore
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+You got to know this area a little better.</br>
+<%=window.gm.printGoto(window.gm.player.location,{},'next')%>
+</article><article id="LogPanel"></article></section
+
+
+:: FI_BeachFoundBikini
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+Dir fällt etwas buntes auf dort wo der Sandstrand in Vegetation übergeht. Als du näher kommst erkennst du es ist...
+
+ein Bikini. D.h. ein Oberteil und der Slip. Wie kommen die hier her? Läuft hier jemand nackt herum? 
+Du versuchst dich daran zu erinnern ob einer deiner Freunde sowas getragen hat. Das wäre ein gutes Zeichen. Oder ein schlechtes?
+[[Grab it]] , whoever left it here should have taken more care.
+[[Leave it]]
+
+ein Kescher. Könnte nützlich zum Fangen von Fisch sein.
+
+<%=window.gm.printGoto(window.gm.player.location,{},'next')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachPawPrints
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+As you wwalk along the beach you spot some pawprints in the fne sand.
+It looks like this:
+
+<p class="tPC">'I wonder what kind of animal this is.'</p>
+Placing one of your hand next to it you do some raw measurements. Could be housecat, jaguar, tiger
+
+"You did it. Just to frighten me!" "What?" You look puzzled. Does he really think you have somehow forged that pawprint.
+"Yes I did it"
+"No, this has to be some real animal" 
+
+<%=window.gm.printGoto(window.gm.player.location,{},'next')%>
+</article><article id="LogPanel"></article></section>
+
+
+
+:: FI_BeachDig
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+Walking up the shore along the waterline you look around for anything that could be of use.</br>
+
+<p>A dull black surface burried in the fine, dense mud catches your attention. It does not look like the other stones or shells scattered around. Digging it out with your hands is too troublesome.</p>
+<%if(window.gm.player.Inv.countItem("SturdyBranch")>0){%>
+    <div id='select1' >You still carry one of those sturdy branches that you now could make use off. 
+    <%=window.gm.printDo('window.gm.printTalkLink(\"div#select1\",\"div#choice1a\"),window.gm.player.Inv.addItem(\"CookingPot\")',{time:60,energy:-30},'Use the stick to dig')%></br>
+    <a0 onclick='window.gm.printTalkLink("div#select1","div#choice1b")'>Walk away</a></br>
+    </div><div id='choice1a' hidden></br> As you start to remove the sand around the object you quickly notice that it is made of metal.
+        <p class="tPC">'Maybe its a pot of gold... Or a explosive mine.'</p>
+        <p>Its a small kettle. Its made from aluminium as the inside, once cleared from the mud, shows blank surface.</p>
+        <p class="tPC">'No gold. Hmm..but could be of use to carry water and or to cook something.'</p> 
+        </div>
+    <div id='choice1b' hidden></br> <p class="tPC">'Nah, its not worth the effort.'</p><%=window.gm.printGoto(window.gm.player.location,{},'Move on')%>
+    </div>
+<%}else{%>
+    A simple tool would be of help here.</br>
+    <%=window.gm.printGoto(window.gm.player.location,{},'Move on')%>
+<%}%>
+
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachSandSculpt
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+Während du über den feuchten Sand läufst springt dir eine Stelle ins Auge die nicht so glatt und eben wie der Rest ist.
+Zunächst glaubst du darin eine Skulptur zu erkennen wie sie manchmal von Künstlern an Sandstränden modeliert wird.
+Beim Näherkommen stellst du aber fest das es nur einige Bodenunebenheiten sind.
+Aus dem Augenwinkel gesehen scheinen die kleinen Erhebungen und Senken die Form eines auf den Rücken liegenden Menschen anzunehmen.
+<div id='select10' >
+<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10a")'>Who cares</a></br>
+<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10b")'>This supple sand invites to model with it. Might be a good distraction.</a></br>
+</div><div id='choice10a' hidden></br> There is no time to waste and you hurry on. <%=window.gm.printGoto(window.gm.player.location,{},'next')%>
+</div>
+<div id='choice10b' hidden></br>
+    Once you feel the smooth sand glide through your fingers you get into it, reshaping bulges and clefts.
+    You arent an artist but somehow you do some decent work. 
+    At some point you have to remind yourself that you also have other means to do and you stand up.
+
+    Seems that you have put a lot of effort in shaping some nice feminine|masculine legs|ass|neckline|hips|breast|... 
+    <div id='select100' >
+    <a0 onclick='window.gm.printTalkLink("div#select100","div#choice100a")'>Touch that form again</a></br>
+    <a0 onclick='window.gm.printTalkLink("div#select100","div#choice100b")'>Move on</a></br>
+    </div><div id='choice100a' hidden></br>
+        adopt those bodyfeature you modeled
+        get molested by that sculpture and lose will.
+        bad end:get pulled in a sandy embrace and beeing buried alive 
+    </div>
+    <div id='choice100b' hidden></br>
+        <%=window.gm.printGoto(window.gm.player.location,{},'next')%>
+    </div>
+   
+</div>
+
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachWorkout
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+Pushups, situps für muskelaufbau. Steigert M-Mutator.
+
+Eric beobachtet dich, gibt dir handson tips.
+
+<%=window.gm.printGoto(window.gm.player.location,{},'next')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachSwim
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%if(window.gm.player.Stats.findItemSlot("sk_Swimming")<=-1){%> 
+    Swimming really isn't your kind of thing, let alone doing it in this open sea with big waves rolling in.</br>
+    <div id='select10' > Find a spot where the water is a little calmer and 
+    <a0 onclick='window.gm.StatsLib.Ability.setup(window.gm.player.Stats,1,"Swimming");window.gm.printTalkLink("div#select10","div#choice10a")'>try a few swims</a>.</br>
+    </div><div id='choice10a' hidden></br>After you have stripped of your cloths you step into the small pool. You swim back and forth and even do a dive. Swimming seems fun.</br>
+    <%=window.gm.printGoto(window.gm.player.location,{},'Return to camp')%>
+    </div>
+<%}else if(window.gm.player.Stats.get("sk_Swimming").value>0){%>
+    <span class="tPC">'lets do some more swim-training.'</span> With that you strip your outerwear and walk into the sea.
+    <div id='select20' > 
+    <a0 onclick='window.gm.player.Stats.increment("sk_Swimming",1);window.gm.printTalkLink("div#select20","div#choice20a")'>Swim parallel to beach.</a></br>
+    </div><div id='choice20a' hidden></br> You think your skill has gotten better.
+        <div id='select30' >
+        <%=window.gm.printDo('window.gm.printTalkLink(\"div#select30\",\"div#choice30a\")',{time:60,energy:-30},'Swim some more lanes')%> or <a0 onclick='window.gm.printTalkLink("div#select30","div#choice30b")'>leave the water.</a></br>
+        </div><div id='choice30a' hidden></br> Lets see if you can [[swim a little|FI_BeachSwimDrown]] bit further out in the sea.
+        </div>
+        <div id='choice30b' hidden></br> You step out of the water and <%=window.gm.printGoto(window.gm.player.location,{},'redress')%>.
+        </div>
+    </div>
+<%}else{%>
+    Its not time to splash around.</br>
+    <%=window.gm.printGoto(window.gm.player.location,{},'next')%>
+<%}%>
+
+</article><article id="LogPanel"></article></section>
+
+
+
+:: FI_BeachCatchFish
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+Du beschliesst im Meer mit dem Kescher Fische zu fangen, oder es zumindest zu versuchen.
+
+Eine Taucherbrille wäre hilfreich damit du Unterwasser besser siehst.
+
+
+With your prey entwinded in the net, you swim back to the shore quickly. 
+Thats a nice catch. However you arent sure if its edible.
+
+
+Als du zurück aufs Meer schaust erkennst du gerade noch wie eine graue Rückenflosse im Wasser verschwindet.
+"Whoa. I just hope that wasnt a shark."
+Its a dolphin. Maybe you can make friends if you drop him some fish? 
+
+
+<%=window.gm.printGoto(window.gm.player.location,{},'next')%>
 </article><article id="LogPanel"></article></section>
 
 
@@ -205,5 +257,6 @@ if you cant sleep because no warmth- reduce will/energy recoverage
 if you are horny, you get wild dreams- 
 if you cant sleep because disturbance-  
 
-<%=window.gm.printGoto("FI_Wakeup",0,0,'Wake up')%>
+<a0 onclick='window.gm.checkMutation("wake"),window.story.show("FI_Wakeup");'>Wake up</a>
 </article><article id="LogPanel"></article></section>
+

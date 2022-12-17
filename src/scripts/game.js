@@ -53,19 +53,18 @@ window.gm.util.arrayEquals=function(a, b) {
 window.gm.util.updateLinks=function(Container){
   let tags=window.story.passage(window.passage.name).tags;
 	if (!tags.includes("_noshortkey_")){
-		var Links, i;
+		var Links=[],Nodes, i;
 		if (typeof Container === "undefined"){
 			Container = document;
-			Links = document.querySelector('tw-passage').querySelectorAll('a,button'); //all links within page    todo how about buttons
+			Nodes = document.querySelector('tw-passage').querySelectorAll('a,button'); //all links within page    todo how about buttons
 		} else {
-			Links = Container.querySelectorAll('a,button');
+			Nodes = Container.querySelectorAll('a,button');
 		}
-		if (Links.length > 0){
-			for (i = 0; i < Links.length; i++){
-				if ((Links[i].getAttribute("data-nokey") == "true") || (Links[i].parentElement.getAttribute("data-nokey") == "true")){
-					Links.deleteAt(i);
-					i--;
-				}
+		if (Nodes.length > 0){
+			for (i = 0; i < Nodes.length; i++){
+				if ((Nodes[i].getAttribute("data-nokey") == "true") || (Nodes[i].parentElement.getAttribute("data-nokey") == "true")||
+            Nodes[i].parentElement.hidden || Nodes[i].parentElement.disabled ){
+				}else{ Links.push(Nodes[i]); }
 			}
 		}
     if (Links.length >= 1 ){//&& Links.length <= 10){

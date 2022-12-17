@@ -85,6 +85,44 @@ class BaseInsect extends BodyPart {
     static fromJSON(value){return(window.storage.Generic_fromJSON(BaseInsect, value.data));}
     descLong(fconv){return(fconv('$[My]$ body is like that of an insect.'));}
 }
+class HeadHairHuman extends BodyPart {
+    static dataPrototype(){    
+        return({growth:0.05, maxGrowth: 0.3,style:'smooth'});
+        //length relative to bBase
+    }
+    static factory(id){
+        let obj =  new HeadHairHuman();
+        obj.setStyle(id,"dark brown");
+        return(obj);
+    }
+    constructor(){
+        super('HeadHairHuman');
+        this.addTags(['body']);
+        this.slotUse = ['bHeadHair'];
+        this.data = HeadHairHuman.dataPrototype();   
+    }
+    setStyle(id,color='dark grey'){
+        this.data.style = id; 
+        this.data.color = color;
+        switch(id){
+            case 'smooth':
+            case 'wavy':
+            case 'shaggy':
+            case 'curled':
+                break;
+            default:
+                throw new Error("unknown Hair-style "+id);
+        }
+    }
+    getStyle(){ return this.data.style; }
+    get descShort(){ return 'human hair';}
+    get desc(){ return(this.data.style +' hair');}
+    toJSON(){return window.storage.Generic_toJSON("HeadHairHuman", this); };
+    static fromJSON(value){return(window.storage.Generic_fromJSON(HeadHairHuman, value.data));}
+    descLong(fconv){
+        return(fconv('$[I]$ have '+this.data.color+', '+this.data.style+' hair that is around '+this.sizeString(this.data.growth*this.data.maxGrowth) +' long.'));
+    }
+}
 class FaceHuman extends BodyPart {
     static dataPrototype(){    
         return({femininity:0.2,style:'human'});
@@ -1228,6 +1266,7 @@ window.gm.ItemsLib = (function (ItemsLib){
     window.storage.registerConstructor(HandsHoof);
     window.storage.registerConstructor(HandsHuman);
     window.storage.registerConstructor(HandsPaw);
+    window.storage.registerConstructor(HeadHairHuman);
     window.storage.registerConstructor(FaceBird);
     window.storage.registerConstructor(FaceHorse);
     window.storage.registerConstructor(FaceHuman);

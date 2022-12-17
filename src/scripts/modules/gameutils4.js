@@ -31,7 +31,7 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
       ,places:{},study:{}
     }
     if(!NGP) { //init if missing
-        NGP={token:0,tokenUsed:0}
+        NGP={token:0,tokenUsed:0,xForestFood:0,increasedSatiation:0,willOnSatiated:0}
     }else{ //grant NGP-options; window.gm.player is not valid yet!
         if(!!NGP.ProteinBars) window.story.state.PlayerVR.Inv.addItem(window.gm.ItemsLib["SnackBar"](),12);
     }
@@ -39,14 +39,14 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
         window.gm.achievements={
           looseEnd: 0 //
           ,swamToFar: 0
-          ,survive10days: 0
+          ,survive7days: 0
           ,insaneTFHuman: 0
         }
         window.gm.achievementsInfo={ //this is kept separate to not bloat savegame
             //hidden bitmask: 0= all visisble, 1= Name ???, 2= Todo ???
             looseEnd: {set:1, hidden:3, name:"loose end", descToDo:"Find a loose end.",descDone:"Found a link without target. Gained a NGPtoken."} //
             ,swamToFar: {set:1, hidden:2, name:"swam to far", descToDo:"swim to far into the sea",descDone:"You swam to far and drowned."} //
-            ,survive10days: {set:1, hidden:1, name:"survive 10days", descToDo:"Survive 10days.",descDone:"You survived for 10days. But this is only the beginning."} //
+            ,survive7days: {set:1, hidden:1, name:"survive 7 days", descToDo:"Make it to day 8.",descDone:"You survived a week. But this is only the beginning."} //
             ,insaneTFHuman: {set:1, hidden:1, name:"insane human TF", descToDo:"Got insane by transforming to much.",descDone:"You stayed human but all the TF are stressing you to much."} //
         }
     }
@@ -59,8 +59,14 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
     s.Lab=window.gm.util.mergePlainObject(Lab,s.Lab);
     s.Known=window.gm.util.mergePlainObject(Known,s.Known);
     //todo cleanout obsolete data ( filtering those not defined in template) 
-  }
-
+}
+window.gm.checkMutation= function(trigger){ //
+    var f=window.gm.player.Effects.get("effMutator").findMutation(trigger);
+    if(f) {
+        f();
+        //window.story.state.tmp.args=[(function(){window.gm.sex.growBreast({state:0});})];window.story.show('GenericPassage');
+    }  
+}
 
 class effMutator extends Effect {
     static factory(type){
@@ -76,11 +82,13 @@ class effMutator extends Effect {
             Genital:0.0,    //Genital
             Hair:0.0,
             Hip:0.0,    //Hips
-            Skin:0.0,
+            Legs:0.0,
             Torso:0.0,    //torso
+            Skin:0.0,
 
             F:0.0,    //feminin
             M:0.0,    //masculin
+            //narrow-wide, short-long, slim- thick, soft-hard, elastic-plastic
 
             Cat:0.0,
             Horse:0.0
@@ -104,6 +112,9 @@ class effMutator extends Effect {
                 break;
             case "StraightBanana":
                 v.M=0.5,v.Torso=0.1,v.Genital=0.4;
+                break;
+            case "HairyKiwi":
+                v.F=0.2,v.Hair=0.2,v.Face=0.2;
                 break;
             default:
                 break;
@@ -135,16 +146,17 @@ class effMutator extends Effect {
         if(i>-1){ //then update entry..
             _item=this.Stack[i];
             _item.timestamp=window.gm.getTime();
-            _item.factor=1.0//+_item.factor; //TODO sum up or 1+ factor*50% ?
+            _item.factor+=1.0; //TODO sum up or 1+ factor*50% ?
         } else { //else push to stack
             this.Stack.push({timestamp: window.gm.getTime(),source:mutator,factor:1.0,values:effMutator.vectorForId(mutator)});
         }
     }
     sumupMutators() {
-        let v=effMutator.mutatorDataProto();
+        let factor,v=effMutator.mutatorDataProto();
         for(i=this.Stack.length-1;i>=0;i--){
+            factor=this.Stack[i].factor;
             for (const key in v) {
-                v[key]+=this.Stack[i].values[key];
+                v[key]+=factor*this.Stack[i].values[key];
             }
         }
         return(v);
@@ -271,7 +283,8 @@ class Food extends Item {
             context.removeItem(this.id);
             if(on instanceof Character){ 
                 //on.addEffect(effPillEffect.factory(this.id));
-                on.Stats.increment("satiation",this.satiation),on.Stats.increment("energy",this.energy);;
+                on.Stats.increment("satiation",this.satiation*(1+window.story.state.NGP.increasedSatiation)),
+                on.Stats.increment("energy",this.energy);;
                 on.Effects.get(effMutator.name).addMutator(this.id);
                 _txt=on.name+' ate something. ';
                 return({OK:true, msg:_txt});
@@ -286,7 +299,14 @@ class Food extends Item {
         else if(style===40) this.id=this.name='SquishyMelon';
         else if(style===50) this.id=this.name='JuicyPeach';
         else if(style===60) this.id=this.name='SmellyPear';
-        //Cocoabean PewPepper
+        else if(style===70) this.id=this.name='HairyKiwi';
+        else if(style===100) this.id=this.name='Oyster';    //https://en.wikipedia.org/wiki/List_of_types_of_seafood
+        else if(style===110) this.id=this.name='Loco';
+        else if(style===120) this.id=this.name='Sepia';
+        else if(style===200) this.id=this.name='SeaGrapes'; //https://en.wikipedia.org/wiki/Edible_seaweed
+        else if(style===210) this.id=this.name='SeaLettuce';
+        //Cocoabean PewPepper Zwiebel
+        //scrub
         else throw new Error(this.id +' doesnt know '+style); 
     }
     get style(){return this._style;}
@@ -380,6 +400,13 @@ ItemsLib['StraightBanana'] = function(){ let x= new Food();x.style=30;return(x);
 ItemsLib['SquishyMelon'] = function(){ let x= new Food();x.style=40;return(x);};
 ItemsLib['JuicyPeach'] = function(){ let x= new Food();x.style=50;return(x);};
 ItemsLib['SmellyPear'] = function(){ let x= new Food();x.style=60;return(x);};
+ItemsLib['HairyKiwi'] = function(){ let x= new Food();x.style=70;return(x);};
+ItemsLib['Oyster'] = function(){ let x= new Food();x.style=100;return(x);};
+ItemsLib['Loco'] = function(){ let x= new Food();x.style=110;return(x);};
+ItemsLib['Sepia'] = function(){ let x= new Food();x.style=120;return(x);};
+ItemsLib['SeaGrapes'] = function(){ let x= new Food();x.style=200;return(x);};
+ItemsLib['SeaLettuce'] = function(){ let x= new Food();x.style=210;return(x);};
+
 ItemsLib['Branch'] = function(){ let x= new CraftMaterial();x.style=0;return(x);}
 ItemsLib['SturdyBranch'] = function(){ let x= new CraftMaterial();x.style=5;return(x);}
 ItemsLib['ObsidianShard'] = function(){ let x= new CraftMaterial();x.style=10;return(x);}

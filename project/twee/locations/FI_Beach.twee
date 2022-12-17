@@ -35,7 +35,7 @@ Maybe you should return to the <%=window.gm.printGoto('FI_HillStart',0,0,'hill')
 <p>It took you some effort to swim that short distance from within the sea to the sandy beach, but finally you did it. You and your buddy drag yourself onto the saving beach.</p>
 <p>After catching your breath for a while you look around. There are no traces of inhabitation here, no people or buildings.</p>
 <p>There is a hill close to the beach with just few trees growing on it. 
-It would be a good idea to <%=window.gm.printGoto('FI_HillStart',20,20,'walk up')%> there to get a better overview.</p> 
+It would be a good idea to <%=window.gm.printGoto('FI_HillStart',{time:20,energy:-20},'walk up')%> there to get a better overview.</p> 
 <p class="author">This action requires some time and energy (see your statusbar on the left). If you run out of energy you should eat (if you have something in your inventory) or relax somewhere.</p>
 </article><article id="LogPanel"></article></section>
 
@@ -49,7 +49,7 @@ You made your way up the hill.
 </br>The direct way to the mountains would lead through dense jungle and the area seems quite hilly. Try as you might but you dont see anything that would tell you if this island is inhabitated. 
 
 </br>So what should we do?
-<p><%=window.gm.printGoto('FI_BeachCamp',0,0,'Wait at the beach for return of your comrades.')%></p>
+<p><%=window.gm.printGoto('FI_BeachCamp',{},'Wait at the beach for return of your comrades.')%></p>
 
 </br>[[Follow the shoreline.]] Try to move along the isle's coast and possibly find a settlement. Maybe you spot a ship that could pick you up.
 
@@ -116,15 +116,16 @@ You are at the beach where you first set foot on this isle.
 </br>[[Eric|TalkEric]] is here.
 </br>[[Check on yourself|FI_InspectSelf]]
 <%if(window.gm.getTimeStruct().daytime==='night'){%> <p>Its getting late. Better go get some [[sleep|FI_GoSleep]].</p><%}else{%>
-<p>You could simply <%=window.gm.printGoto('FI_SunBath',0,0,'relax')%> here instead of running around and wasting energy. Or doing some [[workout|FI_BeachWorkout]] could help with gaining some muscle and confidence.</p>
-<p>Maybe you should look around the <%=window.gm.printGoto('FI_BeachForest',30,5,'sparse forest')%> around the hill, or make your <%=window.gm.printGoto('FI_BeachHill',30,10,'way up')%> again. </br>
-You could also walk the sandy beach in <%=window.gm.printGoto('FI_BeachWalkNorth',20,5,'northern')%> or <%=window.gm.printGoto('FI_BeachWalkEast',20,5,'eastern')%> direction.</p>
+<p>You could simply <%=window.gm.printGoto('FI_SunBath',{},'relax')%> here instead of running around and wasting energy. Or doing some [[workout|FI_BeachWorkout]] could help with gaining some muscle and confidence.</p>
+<p>Maybe you should look around the <%=window.gm.printGoto('FI_BeachForest',{time:30,energy:-5},'sparse forest')%> around the hill, or make your <%=window.gm.printGoto('FI_BeachHill',{time:30,energy:-10},'way up')%> again. </br>
+You could also walk the sandy beach in <%=window.gm.printGoto('FI_BeachWalkNorth',{time:30,energy:-5},'northern')%> or <%=window.gm.printGoto('FI_BeachWalkEast',{time:30,energy:-5},'eastern')%> direction.</p>
 <%}%>
 Pass some time until... (just forwards time):
 <a0 onclick='window.gm.forwardTime(1200);window.story.show("FI_BeachCamp");' <%=(window.gm.getTimeStruct().daytime==='morning')?'':'hidden'%>> midday</a>
 <a0 onclick='window.gm.forwardTime(1600);window.story.show("FI_BeachCamp");' <%=(window.gm.getTimeStruct().daytime==='noon')?'':'hidden'%>> afternoon</a>
 <a0 onclick='window.gm.forwardTime(2000);window.story.show("FI_BeachCamp");' <%=(window.gm.getTimeStruct().daytime==='afternoon')?'':'hidden'%>> evening</a>
 <a0 onclick='window.gm.forwardTime(2200);window.story.show("FI_BeachCamp");' <%=(window.gm.getTimeStruct().daytime==='evening')?'':'hidden'%>> night</a>
+<p class="author">Todo: Consumption of Energy & time needs some more balancing. Use the pass-time link until you get the sleep option if you run out of energy.</p>
 </article><article id="LogPanel"></article></section>
 
 
@@ -158,14 +159,9 @@ You are greeted by some morning wood. [[Just ignore and stuff it into your pants
     <a0 onclick='window.story.show("FI_RunOutOfWill");'>Your will is broken.</a>
 <%}else{%>
     <a0 onclick='foo();'>trigger</a>
-    <%=window.gm.printGoto("FI_Breakfast",0,0,'Breakfast')%>
+    <%=window.gm.printGoto("FI_Breakfast",{},'Breakfast')%>
 <%}%>
 </article><article id="LogPanel"></article></section>
-<script>function foo(){
-    //var f=window.gm.player.Effects.get("effMutator").findMutation();
-    //if(f) f();
-    window.story.state.tmp.args=[(function(){window.gm.sex.growBreast({state:0});})];window.story.show('GenericPassage');
-}</script>
 
 :: FI_Breakfast
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
@@ -175,14 +171,31 @@ You are greeted by some morning wood. [[Just ignore and stuff it into your pants
 <%if(window.gm.player.Stats.get("satiation").value<20){%>
     There is only XYZ left but you are to hungry to reject it.
 <%}%>
+<dic id="choice"></div></br><div id="output"></div>
 As you arrived late today, you have to eat whats left.
 Eric already ate some XYZ. | Suggest that Eric eats XYZ
-
 Annoyingly, some of your faster perishable food seems to have spoiled. Perhaps you should have fried it or boiled it or preserved it in some other way.
-
-<%=window.gm.printGoto("FI_BeachCamp",0,0,'Next')%>
 </article><article id="LogPanel"></article></section>
-
+<script>function foo(){
+    //present list off food and have player eat until sated or no food left
+    let msg="",cnt,item,allID=window.gm.player.Inv.getAllIds();
+    for(var id of allID){
+        item=window.gm.player.Inv.getItem(id);
+        if(item.hasTag([window.gm.ItemTags.Food])){
+            cnt=window.gm.player.Inv.countItem(id);
+            msg+=window.gm.printLink(item.name+' x'+cnt,"window.gm.printOutput(window.gm.player.Inv.use(\""+id+"\",window.gm.player).msg);foo();window.gm.refreshSidePanel();")+", ";
+        }
+    }
+    if(window.gm.player.Stats.get("satiation").value<20) {
+        if( cnt>0) window.gm.printOutput("Your stomach growls with hunger and you have to silence it with whatever food is available.");
+        else window.gm.printOutput("No stone unturned, but there is no meal to find."),msg+=window.gm.printLink("Time to move on.",'window.story.show("FI_BeachCamp")');
+    } else {
+        msg+="</br> You feel you are more or less done with breakfast. "+window.gm.printLink("Time to move on.",'window.story.show("FI_BeachCamp")');
+    }
+    window.gm.printOutput(msg,'#choice');
+}
+foo();
+</script>
 
 :: FI_BeachCoconut
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
@@ -194,16 +207,16 @@ You dont think you can climb that high.
 
 Now you have a coconut but how do you open it? Without a machete or an axe its quite impossible.
 
-<%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach')%>
+<%=window.gm.printGoto('FI_BeachCamp',{},'return to beach')%>
 </article><article id="LogPanel"></article></section>
 
 
 :: FI_BeachForest
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
-The forest close to the hill is sparse. The trees arent as big as the coconut palms closer to the beach. A lot of bushes and plant are growing here.
+The forest close to the hill is sparse. The trees arent as big as the coconut palms closer to the beach. A lot of bushes and plants are growing here making it difficult to pass through.
 </br><%=window.story.render("FI_ChooseActivity")%>
-<%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach')%>
+<%=window.gm.printGoto('FI_BeachCamp',{},'return to beach')%>
 </article><article id="LogPanel"></article></section>
 
 
@@ -214,10 +227,10 @@ The forest close to the hill is sparse. The trees arent as big as the coconut pa
 <%=window.gm.images._sizeTo(window.gm.images["Beach"](),200,200)%>
 Further up north your camp on the beach.
 </br>Coconut palms are scattered around. Maybe you could [[get some coconut|FI_BeachCoconut]]?
-<%=window.gm.printGoto('FI_BeachNorthExplore',20,20,'explore surrounding')%>
-</br><%=window.gm.printGoto('FI_BeachSwim',0,0,'Go swimming',"hard")%>
+<%=window.gm.printGoto('FI_BeachNorthExplore',{time:30,energy:-5},'explore surrounding')%>
+</br><%=window.gm.printGoto('FI_BeachSwim',{},'Go swimming',"hard")%>
 </br><%=window.story.render("FI_ChooseActivity")%>
-<%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach camp')%>
+<%=window.gm.printGoto('FI_BeachCamp',{},'return to beach camp')%>
 </article><article id="LogPanel"></article></section>
 
 
@@ -225,10 +238,10 @@ Further up north your camp on the beach.
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
 Walking the beach in eastern direction.
-<%=window.gm.printGoto('FI_BeachNorthExplore',20,20,'explore surrounding')%>
-</br><%=window.gm.printGoto('FI_BeachDig',30,10,'search for jetsam',"easy")%>
+</br><%=window.gm.printGoto('FI_BeachEastExplore',{time:30,energy:-20},'explore surrounding')%>
+</br><%=window.gm.printGoto('FI_BeachDig',{time:30,energy:-15},'search for jetsam',"easy")%>
 </br><%=window.story.render("FI_ChooseActivity")%>
-<%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach camp')%>
+<%=window.gm.printGoto('FI_BeachCamp',{},'return to beach camp')%>
 </article><article id="LogPanel"></article></section>
 
 
@@ -246,30 +259,11 @@ Climbing on top of the hill.
 
 You notice that the top of the hill is mostly solid stone, likely volcanic origin. Some of the edges of the rock are very sharp.  
 <div id='select20' > Could you possibly 
-<%=window.gm.printDo('window.gm.printTalkLink(\"div#select20\",\"div#choice20a\"),window.gm.player.Inv.addItem(window.gm.ItemsLib.HandAxe())',60,30,'beat off')%> some sharp splinters that you could use as cuttng tool?</br>
+<%=window.gm.printDo('window.gm.printTalkLink(\"div#select20\",\"div#choice20a\"),window.gm.player.Inv.addItem(window.gm.ItemsLib.HandAxe())',{time:60,energy:-30},'beat off')%> some sharp splinters that you could use as cuttng tool?</br>
 </div><div id='choice20a' hidden></br> With a large stone you start beating on those splintering rock. Its quite a demanding work and you earned yourself several bruises but finally you got something that someone could call a handaxe. 
 </div>
 </br><%=window.story.render("FI_ChooseActivity")%>
-<%=window.gm.printGoto('FI_BeachCamp',0,0,'return to beach')%>
-</article><article id="LogPanel"></article></section>
-
-
-:: FI_ScavengeWood
-<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-<div id='select1' >Its to difficult to break those sturdy branches from the trees. Maybe there are some lying around that you just need to <a0 onclick='window.gm.printTalkLink("div#select1","div#choice1a");window.gm.player.Inv.addItem(window.gm.ItemsLib.Branch(),1)'>pick up.</a>
-</div><div id='choice1a' hidden> Picked up a branch from the ground.
-</div>
-<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
-</article><article id="LogPanel"></article></section>
-
-:: FI_ScavengeFruit
-<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-<% var choose=['StraightBanana','SquishyMelon'];s.tmp.args=[choose[_.random(0,choose.length-1)]];%>
-<%if(s.tmp.args[0]==='StraightBanana'){%><div id='select1'>A smaller tree picks your interest. Some bananas are growing on it, at least you guess those are bananas. Did they grow as single fruits? Either way <a0 onclick='window.gm.printTalkLink("div#select1","div#choice1a");window.gm.player.Inv.addItem(window.gm.ItemsLib.StraightBanana(),1)'>collect it.</a>
-</div><div id='choice1a' hidden> Got some bananas.</div><%}%>
-<%if(s.tmp.args[0]==='SquishyMelon'){%><div id='select2'>In between some large leaves on the ground you <a0 onclick='window.gm.printTalkLink("div#select2","div#choice2a");window.gm.player.Inv.addItem(window.gm.ItemsLib.SquishyMelon(),1)'>harvest a melon.</a>
-</div><div id='choice2a' hidden> Got some melon.</div><%}%>
-<%=window.gm.printGoto(window.gm.player.location,0,0,'next')%>
+<%=window.gm.printGoto('FI_BeachCamp',{},'return to beach')%>
 </article><article id="LogPanel"></article></section>
 
  
