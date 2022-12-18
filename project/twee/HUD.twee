@@ -168,7 +168,7 @@ for(var i=0;i<maxSlots;i++){
 
 :: Achievements [_back_] 
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-[[Back|_back_]]</br>
+[[Back|_back_]]</br> <a0 onclick="window.gm.resetAchievements();window.gm.refreshAllPanel();">Reset all achievements. Not undoable !</a></br>
 <%=window.gm.printAchievements()%>
 </article><article id="LogPanel"></article></section>
 

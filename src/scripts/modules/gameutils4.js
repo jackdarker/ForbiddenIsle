@@ -36,19 +36,7 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
         if(!!NGP.ProteinBars) window.story.state.PlayerVR.Inv.addItem(window.gm.ItemsLib["SnackBar"](),12);
     }
     if(!window.gm.achievements){//||forceReset) { 
-        window.gm.achievements={
-          looseEnd: 0 //
-          ,swamToFar: 0
-          ,survive7days: 0
-          ,insaneTFHuman: 0
-        }
-        window.gm.achievementsInfo={ //this is kept separate to not bloat savegame
-            //hidden bitmask: 0= all visisble, 1= Name ???, 2= Todo ???
-            looseEnd: {set:1, hidden:3, name:"loose end", descToDo:"Find a loose end.",descDone:"Found a link without target. Gained a NGPtoken."} //
-            ,swamToFar: {set:1, hidden:2, name:"swam to far", descToDo:"swim to far into the sea",descDone:"You swam to far and drowned."} //
-            ,survive7days: {set:1, hidden:1, name:"survive 7 days", descToDo:"Make it to day 8.",descDone:"You survived a week. But this is only the beginning."} //
-            ,insaneTFHuman: {set:1, hidden:1, name:"insane human TF", descToDo:"Got insane by transforming to much.",descDone:"You stayed human but all the TF are stressing you to much."} //
-        }
+        window.gm.resetAchievements();
     }
     window.storage.loadAchivementsFromBrowser();
 
@@ -59,6 +47,23 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
     s.Lab=window.gm.util.mergePlainObject(Lab,s.Lab);
     s.Known=window.gm.util.mergePlainObject(Known,s.Known);
     //todo cleanout obsolete data ( filtering those not defined in template) 
+}
+window.gm.resetAchievements = function() { //declare achievements here
+    window.gm.achievements={
+        looseEnd: 0 //
+        ,swamToFar: 0
+        ,starveBreakfast:0
+        ,survive7days: 0
+        ,insaneTFHuman: 0
+      }
+      window.gm.achievementsInfo={ //this is kept separate to not bloat savegame
+          //hidden bitmask: 0= all visisble, 1= Name ???, 2= Todo ???
+          looseEnd: {set:1, hidden:3, name:"loose end", descToDo:"Find a loose end.",descDone:"Found a link without target. Gained a NGPtoken."} //
+          ,starveBreakfast: {set:1, hidden:3, name:"starved at breakfast", descToDo:"Have nothing to eat at breakfast and no will.",descDone:"You starved at breakfast because you had no food left and no will to go and find something."} //
+          ,swamToFar: {set:1, hidden:2, name:"swam to far", descToDo:"swim to far into the sea",descDone:"You swam to far and drowned."} //
+          ,survive7days: {set:1, hidden:1, name:"survive 7 days", descToDo:"Make it to day 8.",descDone:"You survived a week. But this is only the beginning."} //
+          ,insaneTFHuman: {set:1, hidden:1, name:"insane human TF", descToDo:"Got insane by transforming to much.",descDone:"You stayed human but all the TF are stressing you to much."} //
+      }
 }
 window.gm.checkMutation= function(trigger){ //
     var f=window.gm.player.Effects.get("effMutator").findMutation(trigger);

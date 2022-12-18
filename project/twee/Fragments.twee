@@ -66,7 +66,7 @@ This is the New-Game-Plus Screen where you can configure your next play through.
 </form>
 </br>After selecting the options press here to <a0 onclick="start()"> start the game</a> !</br>
 <div id="output2"></div></br>
-TransformResistance
+<p hidden>TransformResistance
 - Boost10Days: resistance to transformation is increased for a limited time
 - TransformOnlyWeakend: Transforms occur only if you are in weak state
 - SanityLossEasing (human): reduces sanity damage for transformation that only shift human appearance
@@ -105,7 +105,7 @@ EventMods
 - increased forest food-drop x3 (just less clicking)
 - reduce care package chance
 - disable TribeCapture Badend (unless provoked): 
-- higher chance to find fetish item removal options:
+- higher chance to find fetish item removal options</p>
 
 </article><article id="LogPanel"></article></section>
 <script>
@@ -132,26 +132,36 @@ var NGP,ctrlCat,ctrlItem;
 var catalog = [
     {catId:"startgear",desc:"Starting Gear",
     items:[
-        {itmId:"Compass",name:"Compass",cost:{token:1},req:NOP,desc:"a compass that makes it easier to navigate in some areas"},
-        {itmId:"ProteinBars",name:"a dozen proteinbars",cost:{token:1},req:NOP,desc:"a package of powerbars so you dont need something you dont want"}
+        {itmId:"Compass",name:"Compass",cost:{token:1},disabled:false,req:NOP,desc:"a compass that makes it easier to navigate in some areas"},
+        {itmId:"ProteinBars",name:"a dozen proteinbars",cost:{token:1},disabled:false,req:NOP,desc:"a package of powerbars so you dont need something you dont want"}
     ]},
     {catId:"resistance",desc:"transformation resistance",
     items:[
-        {itmId:"increasedSatiation",name:"Satiation increased",cost:{token:1},req:NOP,desc:"Improved satiation when consuming food."},
-        {itmId:"willOnSatiated",name:"Happy when well-fed",cost:{token:1},req:NOP,desc:"Eating while beeing mostly satiated gives you a little bit willpower. But you loose will if you are hungry."},
+        {itmId:"noSatiationWillKill",name:"survive if will&satiation is low",cost:{token:1},disabled:false,req:NOP,desc:"Bypass bad end if you are starving and have no will left."},
+        {itmId:"increasedSatiation",name:"Satiation increased",cost:{token:1},disabled:false,req:NOP,desc:"Improved satiation when consuming food."},
+        {itmId:"willOnSatiated",name:"Happy when well-fed",cost:{token:1},disabled:false,req:NOP,desc:"Eating while beeing mostly satiated gives you a little bit willpower. But you loose will if you are hungry."},
         //{itmId:"",name:"will gain when satiated",cost:{token:1},req:NOP,desc:"Eating while beeing mostly satiated gives you a little bit willpower."},
-        {itmId:"transformWeakOnly",name:"transformWeakOnly",cost:{token:2},req:NOP,desc:"Transformations only take place in a weakend state."}
+        {itmId:"transformWeakOnly",name:"transformWeakOnly",cost:{token:2},disabled:false,req:NOP,desc:"Transformations only take place in a weakend state."}
     ]},
     {catId:"itemMods",desc:"Item Mods",
     items:[
-        {itmId:"decreasedClothDurability",name:"decreased clothing durability",cost:{token:1},req:exclude.bind(null,["increasedClothDurability"]),desc:"Clothes tend to break faster. Might help to get rid of some undesired things faster."},
-        {itmId:"increasedClothDurability",name:"increased clothing durability",cost:{token:1},req:exclude.bind(null,["decreasedClothDurability"]),desc:"Clothes are much more durable, especially specific one."}
+        {itmId:"decreasedClothDurability",name:"decreased clothing durability",cost:{token:1},disabled:false,req:exclude.bind(null,["increasedClothDurability"]),desc:"Clothes tend to break faster. Might help to get rid of some undesired things faster."},
+        {itmId:"increasedClothDurability",name:"increased clothing durability",cost:{token:1},disabled:false,req:exclude.bind(null,["decreasedClothDurability"]),desc:"Clothes are much more durable, especially specific one."}
     ]},
     {catId:"eventMods",desc:"Event Mods",
     items:[
         {itmId:"xForestFood",name:"increased food-drop in forest",cost:{token:0},req:NOP,desc:"Gather more food at once from forest (just to reduce clicking)."}
     ]}
 ];
+function resetAll(){
+    let tk=0,x=window.gm.achievements;
+    if(x.swamToFar>=1)tk++; //convert achievements to token here or unhide options
+    if(x.starveBreakfast>=1)tk++;
+    else findItem("noSatiationWillKill").disabled=true;
+    NGP = {token:tk,tokenUsed:0};
+    ctrlCat.value="";
+    window.gm.printOutput("","#output2");
+}
 function updateText(event) {
     let msg=(!!ctrlItem.selectedObject?ctrlItem.selectedObject.desc:"");
     window.gm.printOutput(msg,"#output");
@@ -173,12 +183,15 @@ function buy(){
     window.gm.printOutput("Tokens left:"+(NGP.token-NGP.tokenUsed),"#tokens");
     window.gm.printOutput(JSON.stringify(NGP),"#output2");
 }
-function resetAll(){
-    let token=0,x=window.gm.achievements;
-    if(x.swamToFar>=1){token++};
-    NGP = {token:token,tokenUsed:0};
-    ctrlCat.value="";
-    window.gm.printOutput("","#output2");
+function findItem(itmId){
+    let itm=null;
+    for(var cat of catalog){
+        for(var it of cat.items){
+            if(it.itmId===itmId) return(it);
+        }
+    }
+    if(itm===null) throw new Error("unknown item " + itmId);
+    return(itm);
 }
 function start() {
     window.gm.initGame(true,NGP);
@@ -191,14 +204,15 @@ function init(){
     var selCat = document.getElementById("category"),selItem = document.getElementById("item");
     ctrlCat = new window.gm.util.SelectionController(selCat), ctrlItem = new window.gm.util.SelectionController(selItem,ctrlCat);
     ctrlCat.getValueList=function(cat,sel) {
-        return cat.map(item => ({value: item.catId,text: item.desc}));
+        return cat.map(item => ({value: item.catId,text: item.desc,disabled:false}));
     }
     ctrlCat.getValue=function(cat, sel) {
         return cat.find(item => item.catId == sel);
     }
     ctrlItem.getValueList=function(cat,sel) {
-        return cat.items.map(item => ({value: item.itmId,text: item.name
-            + " ("+((item.cost.token>0)?item.cost.token+" token":"free")+")"}));
+        return cat.items.map(item => ({value: item.itmId,
+            text: item.name+ " ("+((item.cost.token>0)?item.cost.token+" token":"free")+")",
+            disabled:item.disabled})); //todo: remove item instead 
     }
     ctrlItem.getValue=function(cat, sel) {
         return cat.items.find(item => item.itmId == sel);

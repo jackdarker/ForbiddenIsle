@@ -13,8 +13,16 @@ You have gone swimming at the end of the tide and the water begins to recede. To
 With all those strange and scary things happening to you, your sanity is shattered.</br>
 <p class="author">Todo: Need to be replaced with something better!</p>
 </br></br> THE END 
-
 </br></br><a0 onclick='window.gm.setAchievement("looseEnd",1);window.story.show("FI_NGPShop");'>New Game Plus</a>
+</article><article id="LogPanel"></article></section>
+
+
+:: FI_StarveBreakfast
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+With nothing left to eat and your tenacity at a dangerous level, you didnt have the strength to go search for some food.
+</br>And you just sat there and waited, and waited, and waited...
+</br></br> THE END 
+</br></br><a0 onclick='window.gm.setAchievement("starveBreakfast",1);window.story.show("FI_NGPShop");'>New Game Plus</a>
 </article><article id="LogPanel"></article></section>
 
 

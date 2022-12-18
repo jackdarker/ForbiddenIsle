@@ -47,22 +47,70 @@ class Jeans extends Equipment {
     static fromJSON(value){return(window.storage.Generic_fromJSON(Jeans, value.data));}
 }
 class Sneakers extends Equipment {
+    static factory(style){
+        let x = new Sneakers();
+        x.style=style;
+        return(x);
+    }
     constructor(){
         super('Sneakers');
-        this.addTags(['cloth']);
+        this.addTags(['cloth']);this.style=0;
         this.slotUse = ['Feet'];
     }
-    get desc(){ return 'Sneakers for sport and recreational activities.';    }
+    set style(style){ 
+        this._style = style; 
+        if(style===0) this.id=this.name='Sneakers';
+        else if(style===10) this.id=this.name='FlipFlops';
+        else throw new Error(this.id +' doesnt know '+style);
+    }
+    get style(){return this._style;}
+    get desc(){ 
+        let msg ='comfy sneakers';
+        switch(this._style){
+            case 10:
+                msg=('slouchy flip-flops');
+                break;
+            default:
+        }
+        return(msg);
+    }
     toJSON(){return window.storage.Generic_toJSON("Sneakers", this); }
     static fromJSON(value){return(window.storage.Generic_fromJSON(Sneakers, value.data));}
 }
 class TankShirt extends Equipment {
+    static factory(style){
+        let x = new TankShirt();
+        x.style=style;
+        return(x);
+    }
     constructor(){
         super('TankShirt');
-        this.addTags(['cloth']);
+        this.addTags(['cloth']);this.style=0;
         this.slotUse = ['Breast','Stomach'];
+        this.HP=100;
     }
-    get desc(){ return 'light blue tank-top';}
+    set HP(hp){ //todo if multiple items edited ??
+        this._HP=hp;
+        //todo this.id=this.name=this.baseId+hp.toString();
+    } 
+    set style(style){ 
+        this._style = style; 
+        if(style===0) this.baseId=this.id=this.name='TankShirt';
+        else if(style===10) this.baseId=this.id=this.name='Hawaiishirt';
+        else throw new Error(this.id +' doesnt know '+style);
+        if(this._HP) this.HP=this._HP;
+    }
+    get style(){return this._style;}
+    get desc(){ 
+        let msg ='light blue tank-top';
+        switch(this._style){
+            case 10:
+                msg=('shirt with flower pattern');
+                break;
+            default:
+        }
+        return(msg);//+" ("+this._HP+"%)");
+    }
     toJSON(){return window.storage.Generic_toJSON("TankShirt", this); }
     static fromJSON(value){return(window.storage.Generic_fromJSON(TankShirt, value.data));}
 }
@@ -579,26 +627,66 @@ class ChastityBelt extends Equipment {
     }
 }
 class BikiniBottomLeather extends Equipment {
+    static factory(style){
+        let x = new BikiniBottomLeather();
+        x.style=style;
+        return(x);
+    }
     constructor(){
         super('BikiniBottomLeather');
         this.addTags(['cloth']);
         this.slotUse = ['uHips'];
         this.slotCover = ['bPenis','bVulva','bBalls','bClit','bAnus','pPenis','pClit'];    
-        this.lossOnRespawn = true;
+        this.lossOnRespawn = true;this.style=0;
     }
-    get desc(){ return 'leather triangle-bikini bottom';}
+    set style(style){ 
+        this._style = style; 
+        if(style===0) this.id=this.name='BikiniBottomLeather';
+        else throw new Error(this.id +' doesnt know '+style);
+    }
+    get style(){return this._style;}
+    get desc(){ 
+        let msg ='leather triangle-bikini bottom';
+        switch(this._style){
+            case 100:
+                msg=('xxx');
+                break;
+            default:
+        }
+        return(msg);
+    }
     toJSON(){return window.storage.Generic_toJSON("BikiniBottomLeather", this); }
     static fromJSON(value){return(window.storage.Generic_fromJSON(BikiniBottomLeather, value.data));}
 }
 class BikiniTopLeather extends Equipment {
+    static factory(style){
+        let x = new BikiniTopLeather();
+        x.style=style;
+        return(x);
+    }
     constructor(){
         super('BikiniTopLeather');
         this.addTags(['cloth']);
         this.slotUse = ['uBreast'];
         this.slotCover = ['pNipples'];    
-        this.lossOnRespawn = true;
+        this.lossOnRespawn = true;this.style=0;
     }
-    get desc(){ return 'leather triangle-bikini top';}
+    set style(style){ 
+        this._style = style; 
+        if(style===0) this.id=this.name='BikiniTopLeather';
+        else throw new Error(this.id +' doesnt know '+style);
+    }
+    get style(){return this._style;}
+    get desc(){ 
+        let msg ='leather triangle-bikini top';
+        switch(this._style){
+            case 100:
+                msg=('xxx');
+                break;
+            default:
+        }
+        return(msg);
+    }
     toJSON(){return window.storage.Generic_toJSON("BikiniTopLeather", this); }
     static fromJSON(value){return(window.storage.Generic_fromJSON(BikiniTopLeather, value.data));}
 }
@@ -620,6 +708,8 @@ class ShortsLeather extends Equipment {
     set style(style){ 
         this._style = style; 
         if(style===0) this.id=this.name='ShortsLeather';
+        else if(style===10) this.id=this.name='DenimShorts';
+        else if(style===20) this.id=this.name='BermudaShorts';
         else if(style===100) this.id=this.name='Loincloth';
         else if(style===200){
             this.id=this.name='Chaps';
@@ -631,6 +721,12 @@ class ShortsLeather extends Equipment {
     get desc(){ 
         let msg ='short trousers made from leather';
         switch(this._style){
+            case 10:
+                msg=('shorts made from blue jeans');
+                break;
+            case 20:
+                msg=('colorful bermuda shorts');
+                break;
             case 100:
                 msg=('a crude loincloth made from rough cotton');
                 break;
@@ -1072,10 +1168,12 @@ window.gm.ItemsLib = (function (ItemsLib){
     ItemsLib['CollarSpikes'] = function(){let x=new Collar();x.style=20;return(x);};
     ItemsLib['PendantLuck'] = function(){let x=new Collar();x.style=30;return(x);};
     ItemsLib['Leggings'] = function(){ return new Leggings();};
-    ItemsLib['Tank-shirt'] = function(){ return new TankShirt(); };
+    ItemsLib['TankShirt'] = function(){ return new TankShirt();};
+    ItemsLib['HawaiiShirt'] = function(){ let x= new TankShirt();x.style=10;return(x); };
     ItemsLib['Jeans'] = function(){ return new Jeans();};
     ItemsLib['Trousers'] = function(){let x=new Jeans();x.style=100;return(x);};
     ItemsLib['Sneakers'] = function(){ return new Sneakers();};
+    ItemsLib['FlipFlops'] = function(){ let x= new Sneakers();x.style=10;return(x); };
     ItemsLib['Pullover'] = function(){ return new Pullover();};
     ItemsLib['TailRibbon'] = function(){ return new TailRibbon();};
     ItemsLib['PiercingClit'] = function(){ return new PiercingClit();};
@@ -1086,6 +1184,8 @@ window.gm.ItemsLib = (function (ItemsLib){
     ItemsLib['RobesZealot'] = function(){ return new RobesZealot();};
     ItemsLib['PrisonerCloths'] = function(){ let x= new RobesZealot();x.style=100;return(x); };
     ItemsLib['ShortsLeather'] = function(){ let x= new ShortsLeather();x.style=0;return(x); };
+    ItemsLib['ShortsDenim'] = function(){ let x= new ShortsLeather();x.style=10;return(x); };
+    ItemsLib['ShortsBermuda'] = function(){ let x= new ShortsLeather();x.style=20;return(x); };
     ItemsLib['LoinCloth'] = function(){ let x= new ShortsLeather();x.style=100;return(x);};
     ItemsLib['Chaps'] = function(){ let x= new ShortsLeather();x.style=200;return(x);};
     ItemsLib['WristCuffs'] = function(){ return new WristCuffs();};

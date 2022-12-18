@@ -1045,15 +1045,15 @@ window.gm.setAchievement=function(id,data){
             function setToEnabled(selectElement, options) {
                     addOption(selectElement, "", "???");
                     for (var optionData of options) {
-                        addOption(selectElement, optionData.value, optionData.text);
+                        addOption(selectElement, optionData.value, optionData.text, optionData.disabled);
                     }
                     selectElement.disabled = false;
                 }
                 // Helper: Option-Element erzeugen, ausfüllen und im select-Element eintragen
-            function addOption(selectElement, value, text) {
+            function addOption(selectElement, value, text,disabled=false) {
                 let option = document.createElement("option");
-                option.value = value;
-                option.text = text
+                option.value = value; option.text = text;
+                if(disabled) option.disabled=disabled;
                 selectElement.add(option);
             }
         }

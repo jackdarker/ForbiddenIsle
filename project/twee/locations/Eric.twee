@@ -56,6 +56,7 @@ I couldn't take a glimpse at them as I clutched on that cargo drop sailing out o
 
 :: TalkEricFriends
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%if(!s.DngSY.talkEric.friendship) s.DngSY.talkEric.friendship=1;%>
 <div id='select10' >Talk about your mutual friends...
 <a0 onclick='window.gm.printTalkLink("div#select10","div#choice10a")' <%=(!!window.story.state.DngSY.talkEric.Naria)?"":"hidden"%>>about Maria</a></br>
 <a0 onclick='window.gm.printTalkLink("div#select10","div#choice10b")' <%=(!!window.story.state.DngSY.talkEric.Sten)?"":"hidden"%>>about Sten</a></br>
@@ -83,10 +84,10 @@ I couldn't take a glimpse at them as I clutched on that cargo drop sailing out o
     <a0 onclick='window.gm.printTalkLink("div#select10c10","div#choice10c10b")'>I'm pretty sure they are fine</a></br>
     </div><div id='choice10c10a' hidden></br>
         <p>Eric seems grim about the separation from his friends. Especially Maria & Carl. What about Sten?</p>    
-        <a0 onclick='window.story.state.DngSY.talkEric.Naria=1;window.story.show(window.gm.player.location);'>Move on</a>
+        <a0 onclick='window.story.state.DngSY.talkEric.friendship+=1;window.story.state.DngSY.talkEric.Naria=1;window.story.show(window.gm.player.location);'>Move on</a>
     </div>
     <div id='choice10c10b' hidden></br>
-        <p>Eric seems grim about the separation from his friends. Especially Maria & Carl. What about Sten?</p>    
+        <p>Eric seems grim about the separation from his friends. And is disappointed about your lazy attitude.</p>    
         <a0 onclick='window.story.state.DngSY.talkEric.Naria=1;window.story.show(window.gm.player.location);'>Move on</a>
     </div>
 </div>

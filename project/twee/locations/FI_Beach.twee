@@ -116,9 +116,10 @@ You are at the beach where you first set foot on this isle.
 </br>[[Eric|TalkEric]] is here.
 </br>[[Check on yourself|FI_InspectSelf]]
 <%if(window.gm.getTimeStruct().daytime==='night'){%> <p>Its getting late. Better go get some [[sleep|FI_GoSleep]].</p><%}else{%>
-<p>You could simply <%=window.gm.printGoto('FI_SunBath',{},'relax')%> here instead of running around and wasting energy. Or doing some [[workout|FI_BeachWorkout]] could help with gaining some muscle and confidence.</p>
-<p>Maybe you should look around the <%=window.gm.printGoto('FI_BeachForest',{time:30,energy:-5},'sparse forest')%> around the hill, or make your <%=window.gm.printGoto('FI_BeachHill',{time:30,energy:-10},'way up')%> again. </br>
-You could also walk the sandy beach in <%=window.gm.printGoto('FI_BeachWalkNorth',{time:30,energy:-5},'northern')%> or <%=window.gm.printGoto('FI_BeachWalkEast',{time:30,energy:-5},'eastern')%> direction.</p>
+    <p>You could simply <%=window.gm.printGoto('FI_SunBath',{},'relax')%> here instead of running around and wasting energy. Or doing some [[workout|FI_BeachWorkout]] could help with gaining some muscle and confidence.</p>
+    <p>Maybe you should look around the <%=window.gm.printGoto('FI_BeachForest',{time:30,energy:-5},'sparse forest')%> around the hill, or make your <%=window.gm.printGoto('FI_BeachHill',{time:30,energy:-10},'way up')%> again. </br>
+    <%if(!!s.DngSY.exploreBeach){%>You could also walk the sandy beach in <%=window.gm.printGoto('FI_BeachWalkNorth',{time:30,energy:-5},'northern')%> or <%=window.gm.printGoto('FI_BeachWalkEast',{time:30,energy:-5},'eastern')%> direction.</p><%}%>
+    <p>Of course you could also <%=window.gm.printGoto('FI_BeachWalk',{time:60,energy:-10},'explore the beach')%> some more</p>
 <%}%>
 Pass some time until... (just forwards time):
 <a0 onclick='window.gm.forwardTime(1200);window.story.show("FI_BeachCamp");' <%=(window.gm.getTimeStruct().daytime==='morning')?'':'hidden'%>> midday</a>
@@ -166,15 +167,11 @@ You are greeted by some morning wood. [[Just ignore and stuff it into your pants
 :: FI_Breakfast
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
-
 <p class="tPC">"Anything left for breakfast? I could kill for some coffee and toast."</p>
-<%if(window.gm.player.Stats.get("satiation").value<20){%>
-    There is only XYZ left but you are to hungry to reject it.
-<%}%>
-<dic id="choice"></div></br><div id="output"></div>
-As you arrived late today, you have to eat whats left.
+<div id="output"></div></br><div id="choice"></div>
+<!--As you arrived late today, you have to eat whats left.
 Eric already ate some XYZ. | Suggest that Eric eats XYZ
-Annoyingly, some of your faster perishable food seems to have spoiled. Perhaps you should have fried it or boiled it or preserved it in some other way.
+Annoyingly, some of your faster perishable food seems to have spoiled. Perhaps you should have fried it or boiled it or preserved it in some other way.-->
 </article><article id="LogPanel"></article></section>
 <script>function foo(){
     //present list off food and have player eat until sated or no food left
@@ -188,11 +185,18 @@ Annoyingly, some of your faster perishable food seems to have spoiled. Perhaps y
     }
     if(window.gm.player.Stats.get("satiation").value<20) {
         if( cnt>0) window.gm.printOutput("Your stomach growls with hunger and you have to silence it with whatever food is available.");
-        else window.gm.printOutput("No stone unturned, but there is no meal to find."),msg+=window.gm.printLink("Time to move on.",'window.story.show("FI_BeachCamp")');
+        else window.gm.printOutput("No stone unturned, but there is no meal to find."),msg+=window.gm.printLink("Time to move on.",'foo2();');
     } else {
-        msg+="</br> You feel you are more or less done with breakfast. "+window.gm.printLink("Time to move on.",'window.story.show("FI_BeachCamp")');
+        msg+="</br> You feel you are more or less done with breakfast. "+window.gm.printLink("Time to move on.",'foo2();');
     }
     window.gm.printOutput(msg,'#choice');
+}
+function foo2(){
+    if(window.gm.player.Stats.get("satiation").value<=0) {
+        if(!!window.story.state.NGP.noSatiationWillKill) window.gm.printOutput("The hunger you feel is quite demoralizing. "+window.gm.printLink('But you grit your teeth.','window.story.show("FI_BeachCamp");'),"#choice");
+        else window.story.show("FI_StarveBreakfast");
+    }
+    else window.story.show("FI_BeachCamp");
 }
 foo();
 </script>
@@ -219,6 +223,13 @@ The forest close to the hill is sparse. The trees arent as big as the coconut pa
 <%=window.gm.printGoto('FI_BeachCamp',{},'return to beach')%>
 </article><article id="LogPanel"></article></section>
 
+
+:: FI_BeachWalk
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+The beach extends [[further north|FI_BeachWalkNorth]] and also in [[eastern direction|FI_BeachWalkEast]]. </br>
+<%if(!!s.DngSY.exploreBeach){%>There isnt much more to find here. Maybe you should look at other places.</br><%}%>
+<a0 onclick='window.story.state.DngSY.exploreBeach=1;window.story.show(window.gm.player.location)'>Walk back</a>
+</article><article id="LogPanel"></article></section>
 
 
 :: FI_BeachWalkNorth
@@ -248,7 +259,9 @@ Walking the beach in eastern direction.
 :: FI_BeachHill
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
-Climbing on top of the hill. 
+Climbing on top of the hill. </br>
+<a0 onclick='window.gm.player.Outfit.getItemForSlot(window.gm.OutfitSlotLib.Breast).HP=25;'>tear shirt</a>
+<a0 onclick='window.gm.player.Wardrobe.addItem(window.gm.ItemsLib.TankShirt());'>find shirt</a>
 <div id='select10' >
 <a0 onclick='window.gm.printTalkLink("div#select10","div#choice10a")'>Look around</a></br>
 </div><div id='choice10a' hidden></br>

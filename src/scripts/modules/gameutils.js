@@ -108,6 +108,10 @@ window.gm.initGame= function(forceReset,NGP=null){
       ch.Outfit.addItem(HandsHuman.factory('human'));
       ch.Outfit.addItem(AnusHuman.factory('human'));
       ch.Outfit.addItem(PenisHuman.factory('human'));
+      ch.Outfit.addItem(new Briefs());
+      ch.Outfit.addItem(window.gm.ItemsLib.ShortsDenim());
+      ch.Outfit.addItem(new Sneakers());
+      ch.Outfit.addItem(new TankShirt());
       if(s._gm.debug){
         ch.Skills.addItem(new SkillInspect());
         ch.Skills.addItem(new SkillUltraKill());
