@@ -87,11 +87,11 @@ class TankShirt extends Equipment {
         super('TankShirt');
         this.addTags(['cloth']);this.style=0;
         this.slotUse = ['Breast','Stomach'];
-        this.HP=100;
     }
+    get HP() {return(this._HP);}
     set HP(hp){ //todo if multiple items edited ??
         this._HP=hp;
-        //todo this.id=this.name=this.baseId+hp.toString();
+        this._updateId();this.name=this.baseId+" "+hp.toString();
     } 
     set style(style){ 
         this._style = style; 
@@ -109,7 +109,7 @@ class TankShirt extends Equipment {
                 break;
             default:
         }
-        return(msg);//+" ("+this._HP+"%)");
+        return(msg+(this._HP)?" ("+this._HP+"%)":"");
     }
     toJSON(){return window.storage.Generic_toJSON("TankShirt", this); }
     static fromJSON(value){return(window.storage.Generic_fromJSON(TankShirt, value.data));}

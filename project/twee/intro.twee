@@ -64,12 +64,11 @@ Those are very present through the game and in the main-story (also check the se
 <p class='author'>Note that there is no back-button implemented. Pressing the back button of your browser will get your game aborted.</br>
 You might see a lot of links that are formated red-strikethrough. Those are currently broken and you shouldnt use them.</p>
 <p class='author'>Loading of savegame is only possible in game. Saving might be disabled in some locations.</p>
-<p class='author'>This game has a NewGame+ feature that you will have to make use of to progress in the game. You can get there after bad end or from the settings panel.</p>
+<p class='author'>This game has a NewGame+ feature that you will have to make use of to progress in the game. You can get there after bad end or from the HELP panel.</p>
 <p class='author'>[[Fetishes ! (spoiler alert)|List_Fetish]]</p></br></br><hr>
 <p> </br></p>
-<p>PS.:some Images used here are Free ones from <a href="https://de.vecteezy.com/?utm_source=vecteezy-download&utm_medium=license-info-pdf&utm_campaign=license-info-document">vecteezy.com</a>. </p> 
-
 <p><a0 onclick='startFI();'>Stranded on a mysterious island...</a></p><hr>
+<p>PS.:some Images used here are Free ones from <a target="_blank" rel="noopener noreferrer" href="https://de.vecteezy.com/?utm_source=vecteezy-download&utm_medium=license-info-pdf&utm_campaign=license-info-document">vecteezy.com</a> or <a target="_blank" rel="noopener noreferrer" href="https://storyset.com/">Storyset</a>. </p> 
 </article>
 <script>
 function startFI() {

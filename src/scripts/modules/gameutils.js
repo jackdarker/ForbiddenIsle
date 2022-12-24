@@ -321,8 +321,8 @@ window.gm.respawn=function(conf={keepInventory:false}){
     }
     if(window.gm.player.Outfit.getItemForSlot(window.gm.OutfitSlotLib.LHand)===null){
       let staff = new window.storage.constructors['StaffWodden']();
-      window.gm.player.Inv.addItem(staff);
-      window.gm.player.Outfit.addItem(staff);
+      //window.gm.player.Inv.addItem(staff);
+      //window.gm.player.Outfit.addItem(staff);
     }
     window.story.state.tmp.msg=msg; //msg for display
     window.story.show(window.story.state.vars.spawnAt);

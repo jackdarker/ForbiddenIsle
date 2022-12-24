@@ -2,6 +2,21 @@
 
 window.gm = window.gm || {}; //game related operations
 window.gm.util = window.gm.util || {};  //utility functions
+class IDGenerator {//extends Singleton{
+  constructor(){
+      if(IDGenerator._instance){ return IDGenerator._instance; }
+      IDGenerator._instance = this;
+      this._idCounter=1;
+      window.storage.registerConstructor(IDGenerator);
+  }
+  static instance() {
+      if(!IDGenerator._instance){return new IDGenerator(); }
+      return IDGenerator._instance;
+  }
+  createID() {this._idCounter++;return(this._idCounter);}
+  toJSON(){return window.storage.Generic_toJSON("IDGenerator", this); }
+  static fromJSON(value){return(window.storage.Generic_fromJSON(IDGenerator, value.data));}
+}
 
 // helper for publisher/subscriber-pattern; myObject.ps =PubSub(); myObject.ps.subscribe(...
 // !! warning, dont use for objects that need to be loaded from savegame
@@ -148,6 +163,11 @@ window.gm.util.addShortKeyHandler=function(){
     }
   });
 };
+window.gm.util.selRandom=function(list){//picks element from []
+  let _i=list.length;
+  if(_i>0) return(list[_.random(0,_i-1)]);
+  else throw new Error("empty list")
+}
 //create pretty name for passage; requires a tag (replace space with _ !) [name:"My_Room"]
 window.gm.util.printLocationName=function(passage){
   let tags = window.story.passage(passage).tags;
@@ -279,6 +299,7 @@ window.gm.initGame= function(forceReset,NGP=null){
         version : window.gm.getSaveVersion(),
         style: 'default', //css profile to use
         log : [],
+        IDGen: new IDGenerator(),
         passageStack : [], //used for passage [back] functionality
         defferedStack : [], //used for deffered events
         onholdStack : [], //used for deffered events
@@ -824,40 +845,42 @@ window.gm.printItemTransfer = function(from,to,wardrobe){
   }
 }
 //prints an equipment with description; used in wardrobe
-window.gm.printEquipment= function( whom,item){
-  var elmt='';
-  var s= window.story.state;
-  var res,name,desc;
-  name=item.name, desc=item.desc;
+window.gm.printEquipment= function( whom,item,node="div#choice",params){
+  let _params= params||{};
+  _params.noUnequip=(params&&params.noUnequip)?params.noUnequip:false;
+  let elmt='', s= window.story.state, res;
   if(item.hasTag('body')) return; //skip bodyparts; 
   let noWear = item.hasTag(['piercing','tattoo']); 
-  let g,entry = document.createElement('p');
-  g = document.createElement('a'),g.href='javascript:void(0)';
-  g.textContent=item.name;g.id=item.id;
-  g.addEventListener("click",(function(evt){document.querySelector("div#"+evt.target.id).toggleAttribute("hidden");}));
-  entry.appendChild(g);
+  let itm,g,entry = document.createElement('p');
+  itm = document.createElement('a'),itm.href='javascript:void(0)';
+  itm.textContent=item.name;itm.id=item.id;
+  itm.addEventListener("click",(function(evt){document.querySelector("div#"+evt.target.id).toggleAttribute("hidden");}));
+  entry.appendChild(itm);
   g = document.createElement('a'),g.href='javascript:void(0)';
   if(noWear===true){
-    g.textContent='';//cannot un-/equip tattoos & piercing 
-  } else if(whom.Outfit.countItem(item.id)<=0){
+    g.disabled =true;g.textContent='';//cannot un-/equip tattoos & piercing 
+  } else if(whom.Outfit.countItem(item.id)<=0){//
     g.textContent='Equip';
+    if(_params.noUnequip) g.disabled=true;
+    itm.textContent+=" x"+item.count();
     g.addEventListener("click",(function(whom,item){  //todo should we display its own page instead oneliner?
       return(function(){var _x=whom.Outfit.addItem(item).msg;window.gm.refreshAllPanel();window.gm.printOutput(_x)});})(whom,item)); //redraw page to update buttons, then print output
-  } else {
+  } else if(item.parent===whom.Outfit) { //
     res = whom.Outfit.canUnequipItem(item.id,false);
     if(res.OK){
-      g.textContent='Unequip';
+      g.textContent='Unequip'; 
+      if(_params.noUnequip) g.disabled=true;
       g.addEventListener("click",(function(whom,item){
         return(function(){var _x=whom.Outfit.removeItem(item.id).msg;window.gm.refreshAllPanel();window.gm.printOutput(_x)});})(whom,item));
     } else {
       g.disabled =true; g.textContent=res.msg;
     }
   }
-  entry.appendChild(g)
+  if(g.textContent!=='' &&! g.disabled) entry.appendChild(g);
   g=document.createElement('div');
   g.id=item.id; g.hidden=true;g.textContent=item.desc;
   entry.appendChild(g)
-  $("div#choice")[0].appendChild(entry); 
+  document.querySelector(node).appendChild(entry);//  $("div#choice")[0].appendChild(entry); 
   /*if(window.story.passage(id))  elmt +=''.concat("[[Info|"+id+"]]");  //Todo passages for items?
       elmt +=''.concat("</br>");
       return(elmt);*/

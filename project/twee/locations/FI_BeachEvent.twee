@@ -30,7 +30,8 @@ Grabing the tree with you hands, you shake it as hard as possible.
 <div id='choice1b' hidden></br>
     </br> ... a branch. 
     </br> A bendy one. That moves by itself and is hissing at you.
-    <p class="tPC">"Look out - Its a snake !"</p> you shout.
+    <p class="tPC">"Look out - Its a snake !"</p> you shout.</br>
+    That could have turned into a nasty surprise if you were bitten. <b>You lost some determination.</b>
 </div>
 <div id='choice1c' hidden></br>
     </br> ... some hit on your head. You received a sturdy branch. Could be useful to poke around or to craft some weapon. 
@@ -39,7 +40,8 @@ Grabing the tree with you hands, you shake it as hard as possible.
 </article><article id="LogPanel"></article></section>
 <script>function foo(){
     let x="1a",rnd=_.random(0,100);
-    if(rnd>90) { //snake
+    if(rnd>85) { //snake
+        window.gm.player.Stats.increment("will",-10);
         x="1b"; 
     } else if(rnd>60) { //sturdy
         x="1c";window.gm.player.Inv.addItem(window.gm.ItemsLib.SturdyBranch());
@@ -54,16 +56,31 @@ Grabing the tree with you hands, you shake it as hard as possible.
 :: FI_SunBath
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 The weather is nice, you are on a tropical island, the beautiful beach all for yourself. 
-<div id='select1' >So why not make use of it and  
-<a0 onclick='window.gm.addTime(60),window.gm.player.Stats.increment("energy",20),window.gm.player.Stats.increment("will",20),window.gm.printTalkLink("div#select1","div#choice1a")'>dooze for a while.</a></br>
-</div><div id='choice1a' hidden></br>
+<a0 onclick="window.story.state.tmp.args=[(function(){window.gm.sex.femBody({state:0});})];window.story.show('GenericPassage');">TODO femBody</a>
+<div id='select10' >So why not make use of it and  
+<a0 onclick='foo();'>doze for a while.</a></br>
+<p class="author">Relaxing increases will and energy slightly and just costs time. But as time passes your hunger grows.</p>
 </div>
-If someone would just be around to help with the sunscreen.
+<div id='choice10a' hidden></br>
+</div>
+<div id='choice10b' hidden></br> <p>While you dooze in the sun your thoughts drift to Maria....</p><b>You got aroused slightly.</b>
+</div>
+<p hidden>If someone would just be around to help with the sunscreen.
 Should you strip naked? There is no one around except Eric lurking somewhere.
-
+</p>
 <%=window.gm.printGoto(window.gm.player.location,{},'next')%>
 </article><article id="LogPanel"></article></section>
-
+<script>function foo(){
+    let x="10a",rnd=_.random(0,100);
+    window.gm.addTime(60),window.gm.player.Stats.increment("energy",20),window.gm.player.Stats.increment("will",5);
+    if(rnd>40) { 
+        x="10b";window.gm.player.Stats.increment("arousal",15);window.gm.refreshSidePanel();
+    } else { //plain
+        window.gm.player.Inv.addItem(window.gm.ItemsLib.Branch());
+    }
+    window.gm.printTalkLink("div#select10","div#choice"+x);
+}
+</script>
 
 :: FI_BeachFoundSuitcase
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
@@ -83,17 +100,41 @@ Der Koffer ist abgeschlossen. ER ist zu schwer und unhandlich um mit ihm zurück
 
 :: FI_BeachEastExplore
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-You got to know this area a little better.</br>
+<div id='select10'>You <a0 onclick='foo()'>walk the beach</a> to get to know it better.</br>
+</div><div id='choice10a' hidden></br>
+</div>
+<div id='choice10b' hidden></br> You found some seaweed. Its not tasty but edidable.</br>
+</div>
 <%=window.gm.printGoto(window.gm.player.location,{},'next')%>
-</article><article id="LogPanel"></article></section
-
+</article><article id="LogPanel"></article></section>
+<script>function foo(){
+    let x="10a",rnd=_.random(0,100);
+    if(rnd>50) { 
+        x="10b";window.gm.player.Inv.addItem(window.gm.ItemsLib.SeaLettuce());
+    } else {
+    }
+    window.gm.printTalkLink("div#select10","div#choice"+x);
+}
+</script>
 
 :: FI_BeachNorthExplore
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-You got to know this area a little better.</br>
+<div id='select10'>You <a0 onclick='foo()'>walk the beach</a> to get to know it better.</br>
+</div><div id='choice10a' hidden></br>
+</div>
+<div id='choice10b' hidden></br> A small fish is stranded and floundering around. It could be edible, especially if you roast it.</br>
+</div>
 <%=window.gm.printGoto(window.gm.player.location,{},'next')%>
-</article><article id="LogPanel"></article></section
-
+</article><article id="LogPanel"></article></section>
+<script>function foo(){
+    let x="10a",rnd=_.random(0,100);
+    if(rnd>50) { 
+        x="10b";window.gm.player.Inv.addItem(window.gm.ItemsLib.RawFish());
+    } else { 
+    }
+    window.gm.printTalkLink("div#select10","div#choice"+x);
+}
+</script>
 
 :: FI_BeachFoundBikini
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
@@ -134,7 +175,7 @@ Walking up the shore along the waterline you look around for anything that could
 <p>A dull black surface burried in the fine, dense mud catches your attention. It does not look like the other stones or shells scattered around. Digging it out with your hands is too troublesome.</p>
 <%if(window.gm.player.Inv.countItem("SturdyBranch")>0){%>
     <div id='select1' >You still carry one of those sturdy branches that you now could make use off. 
-    <%=window.gm.printDo('window.gm.printTalkLink(\"div#select1\",\"div#choice1a\"),window.gm.player.Inv.addItem(\"CookingPot\")',{time:60,energy:-30},'Use the stick to dig')%></br>
+    <%=window.gm.printDo('window.gm.printTalkLink(\"div#select1\",\"div#choice1a\"),window.gm.player.Inv.addItem(window.gm.ItemsLib.CookingPot)',{time:60,energy:-30},'Use the stick to dig')%></br>
     <a0 onclick='window.gm.printTalkLink("div#select1","div#choice1b")'>Walk away</a></br>
     </div><div id='choice1a' hidden></br> As you start to remove the sand around the object you quickly notice that it is made of metal.
         <p class="tPC">'Maybe its a pot of gold... Or a explosive mine.'</p>
@@ -186,31 +227,61 @@ Aus dem Augenwinkel gesehen scheinen die kleinen Erhebungen und Senken die Form 
 
 
 :: FI_BeachWorkout
-<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-Pushups, situps für muskelaufbau. Steigert M-Mutator.
-
-Eric beobachtet dich, gibt dir handson tips.
-
-<%=window.gm.printGoto(window.gm.player.location,{},'next')%>
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<!--solves the _back_ issue but has some problems:
+you only see the actual choice, prev choice get hidden
+no dynamic text unless build from globals
+-->
+<div id='start'>'What kind of activity should I do?'</br>
+<a0 id="pushupsstart" onclick='foo(this)'>Maybe you should work on your arm muscles and do some pushups.</a></br>
+<a0 id="yogastart" onclick='foo(this)'>Doing some stretches to improve flexibility.</a></br>
+</div><div id='pushupsstart' hidden></br> Dropping into the stance, you start doing pushups. The first 20 go smooth, but then it starts to get harder soon.
+    <a0 id="pushup2" onclick='foo(this)'>Continue until it hurts.</a></br>
+    <a0 id="stop" onclick='foo(this)'>Thats enough for now</a></br>
+</div>
+<div id='pushup2' hidden></br> Your arms burn like on fire.
+    <a0 id="pushup3" onclick='foo(this)'>Continue until it hurts.</a></br>
+    <a0 id="stop" onclick='foo(this)'>Thats enough for now</a></br>
+</div>
+<div id='pushup3' hidden></br> That was to much...
+    <a0 id="stop" onclick='foo(this)'>Thats enough for now</a></br>
+</div>
+<div id='yogastart' hidden></br> What did you do in sports before the real workout started? You try to remeber those warm up routines an do some.
+    <a0 id="stop" onclick='foo(this)'>Thats enough for now</a></br>
+</div>
+<div id='stop' hidden></br> Catching your breath, you pickup your stuff and walk away.
+    <a0 id="start" onclick='foo(this)'>Do something else.</a></br>
+    <%=window.gm.printGoto(window.gm.player.location,{},'next')%>
+</div>
+<p hidden>Pushups, situps für muskelaufbau. Steigert M-Mutator.
+Eric beobachtet dich, gibt dir handson tips.<p>
 </article><article id="LogPanel"></article></section>
+<script>function foo(elmt){
+    //hide parent div; show div#next
+    //hide div-nodes following parentnode //Todo
+    let parentid=elmt.parentNode.id;
+    window.gm.printTalkLink("div#"+parentid,"div#"+elmt.id);
+}
+</script>
 
 
 :: FI_BeachSwim
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%if(window.gm.player.Stats.findItemSlot("sk_Swimming")<=-1){%> 
-    Swimming really isn't your kind of thing, let alone doing it in this open sea with big waves rolling in.</br>
+    Swimming really wasn't your kind of thing, let alone doing it in this open sea with big waves rolling in.</br>
     <div id='select10' > Find a spot where the water is a little calmer and 
     <a0 onclick='window.gm.StatsLib.Ability.setup(window.gm.player.Stats,1,"Swimming");window.gm.printTalkLink("div#select10","div#choice10a")'>try a few swims</a>.</br>
-    </div><div id='choice10a' hidden></br>After you have stripped of your cloths you step into the small pool. You swim back and forth and even do a dive. Swimming seems fun.</br>
+    </div><div id='choice10a' hidden></br>After you have stripped of your shoes and shirt, you step into the small pool. You swim back and forth and even do a dive. Swimming seems fun.</br>
     <%=window.gm.printGoto(window.gm.player.location,{},'Return to camp')%>
     </div>
 <%}else if(window.gm.player.Stats.get("sk_Swimming").value>0){%>
     <span class="tPC">'lets do some more swim-training.'</span> With that you strip your outerwear and walk into the sea.
     <div id='select20' > 
     <a0 onclick='window.gm.player.Stats.increment("sk_Swimming",1);window.gm.printTalkLink("div#select20","div#choice20a")'>Swim parallel to beach.</a></br>
+    <% if(window.gm.player.Stats.get("sk_Swimming").value>4){%></br>There are some rocks further away from the shoreline. You wonder if you could possibly swim towward them.<%}%>
     </div><div id='choice20a' hidden></br> You think your skill has gotten better.
         <div id='select30' >
-        <%=window.gm.printDo('window.gm.printTalkLink(\"div#select30\",\"div#choice30a\")',{time:60,energy:-30},'Swim some more lanes')%> or <a0 onclick='window.gm.printTalkLink("div#select30","div#choice30b")'>leave the water.</a></br>
+        <%=window.gm.printDo('window.gm.printTalkLink(\"div#select30\",\"div#choice30a\")',{time:60,energy:-30,difficult:hard},'Swim some more lanes')%> or <a0 onclick='window.gm.printTalkLink("div#select30","div#choice30b")'>leave the water.</a></br>
         </div><div id='choice30a' hidden></br> Lets see if you can [[swim a little|FI_BeachSwimDrown]] bit further out in the sea.
         </div>
         <div id='choice30b' hidden></br> You step out of the water and <%=window.gm.printGoto(window.gm.player.location,{},'redress')%>.
@@ -220,17 +291,42 @@ Eric beobachtet dich, gibt dir handson tips.
     Its not time to splash around.</br>
     <%=window.gm.printGoto(window.gm.player.location,{},'next')%>
 <%}%>
-
 </article><article id="LogPanel"></article></section>
 
 
 
 :: FI_BeachCatchFish
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-Du beschliesst im Meer mit dem Kescher Fische zu fangen, oder es zumindest zu versuchen.
+<div id='select10' > Determined to catch some fish you strip your shoes, shirt and pants. As you now stand just clothed with xxx, you think about stripping xxx too.
+<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10a")'hidden>Do it</a></br>
+<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10b)'>No way</a></br>
+<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10c")' hidden>Already nude</a></br>
+</div><div id='choice10a' hidden></br> You dont know what is coming over you but really like going fully naked into the sea. You strip off xxx and walk eagerly into the welcoming sea.
+</div>
+<div id='choice10b' hidden></br> <span class="tPC">'Swimming naked doesnt seem..appropiate.'</span> Whipping that thought off you quickly walk into the sea. 
+
+</div>
+<div id='choice10c' hidden></br> As you are already walking around in your birthday suite, you dont need to bother to strip. 
+</div>
+
+<p hidden> Where the sea gets deeper and the waves are less noticeable, corals and sea plants grow. Between them cavort fish, crabs and other creatures. <p>
+<p hidden>The fish are curious and come close. But to catch them by hand is absolutely impossible, they are worlds faster than you landlubber.
+With a <b>harpoon or a net</b>, your chances would be much better.
+
+</p>
+
+<p hidden> Treffer, die Harpune hat den Fisch erwischt und er zappelt an dessen Spitze. Glücklich über den Erfolg schwimmst du zu Strand um deinen Fang abzuliefern.
+In your corner of your eye you see a sleek dark shadow. You turn your head and spot a fish, easily recognizable as a shark thanks to its aerodynamic body, silvergray skin and maw.
+Images from dokumentations shoot into your mind where divers armed with electro-staffs or closed in large cages are surrounded by dozen of sharks. Only a few kind of sharks would dare to attack a man. 
+But you cant say for sure if that shark you are facing here would dare the risk to approach you.  
+<p class="tPC">'The blood from the fish might have attracted it, I need to get out of the water !'</p>
+
+You need to swim as fast as you can to the shore | stand your ground | drop the fish
+
+<p>
+<p hidden>Du beschliesst im Meer mit dem Kescher Fische zu fangen, oder es zumindest zu versuchen.
 
 Eine Taucherbrille wäre hilfreich damit du Unterwasser besser siehst.
-
 
 With your prey entwinded in the net, you swim back to the shore quickly. 
 Thats a nice catch. However you arent sure if its edible.
@@ -240,10 +336,15 @@ Als du zurück aufs Meer schaust erkennst du gerade noch wie eine graue Rückenf
 "Whoa. I just hope that wasnt a shark."
 Its a dolphin. Maybe you can make friends if you drop him some fish? 
 
+You go back to where you undressed, but find that some of your garment seems missing.
+After lookng around for a while, you give up and just leave <b>without xxx</b>
+| Instead there is now a different piece of clothing that you where pretty sure didnt own.
 
+</p>
 <%=window.gm.printGoto(window.gm.player.location,{},'next')%>
 </article><article id="LogPanel"></article></section>
-
+<script>function foo(){}
+</script>
 
 :: FI_NightDream
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%></br>

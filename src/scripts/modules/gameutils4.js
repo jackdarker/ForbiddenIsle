@@ -90,6 +90,7 @@ class effMutator extends Effect {
             Legs:0.0,
             Torso:0.0,    //torso
             Skin:0.0,
+            Color:0.0,   
 
             F:0.0,    //feminin
             M:0.0,    //masculin
@@ -110,21 +111,27 @@ class effMutator extends Effect {
         return(sum); //value close to 0: best fit; largest value = overshot
     }
     static vectorForId(id) {
-        let v=effMutator.mutatorDataProto();
+        let G={v:effMutator.mutatorDataProto(),max:effMutator.mutatorDataProto()};
         switch(id){
             case "SquishyMelon":
-                v.F=0.5,v.Ass=0.5,v.Chest=0.4;
+                G.v.F=0.5,G.v.Ass=0.5,G.v.Chest=0.2;
+                G.max.F=0.5,G.max.Ass=0.5,G.max.Chest=0.4;
                 break;
             case "StraightBanana":
-                v.M=0.5,v.Torso=0.1,v.Genital=0.4;
+                G.v.M=0.5,G.v.Torso=0.1,G.v.Genital=0.2;
+                G.max.M=0.5,G.max.Torso=0.1,G.max.Genital=0.4;
                 break;
             case "HairyKiwi":
-                v.F=0.2,v.Hair=0.2,v.Face=0.2;
+                G.v.F=0.2,G.v.Hair=0.2,G.v.Face=0.2;
+                G.max.F=0.2,G.max.Hair=0.6,G.max.Face=0.2;
+                break;
+            case "SeaLettuce":
+                G.v.F=-0.5,G.v.Ass=-0.2,G.v.Chest=-0.2;
                 break;
             default:
                 break;
         }
-        return(v);
+        return(G);
     }
     constructor(){
         super();
@@ -153,16 +160,21 @@ class effMutator extends Effect {
             _item.timestamp=window.gm.getTime();
             _item.factor+=1.0; //TODO sum up or 1+ factor*50% ?
         } else { //else push to stack
-            this.Stack.push({timestamp: window.gm.getTime(),source:mutator,factor:1.0,values:effMutator.vectorForId(mutator)});
+            let G=effMutator.vectorForId(mutator);
+            this.Stack.push({timestamp: window.gm.getTime(),source:mutator,factor:1.0,values:G.v,max:G.max});
         }
     }
     sumupMutators() {
-        let factor,v=effMutator.mutatorDataProto();
+        let factor,v=effMutator.mutatorDataProto(),max=effMutator.mutatorDataProto();
         for(i=this.Stack.length-1;i>=0;i--){
             factor=this.Stack[i].factor;
             for (const key in v) {
                 v[key]+=factor*this.Stack[i].values[key];
+                max[key]=Math.max(max[key],this.Stack[i].max[key]);
             }
+        }
+        for (const key in v) { //limit mutators
+            v[key]=Math.max(0,Math.min(v[key],max[key])); //no neg. mutators? 
         }
         return(v);
     }
@@ -240,7 +252,7 @@ class effFoodEffect extends Effect {
         if(this.data.duration<=0){ 
             this.data.cycles-=1;
             if(this.data.magnitude>=2){
-                this.__trgMutation();
+                //this.__trgMutation();
             }
             if(this.data.cycles<=0){//remove yourself
                 return(function(me){return function(Effects){ 
@@ -289,7 +301,7 @@ class Food extends Item {
             if(on instanceof Character){ 
                 //on.addEffect(effPillEffect.factory(this.id));
                 on.Stats.increment("satiation",this.satiation*(1+window.story.state.NGP.increasedSatiation)),
-                on.Stats.increment("energy",this.energy);;
+                on.Stats.increment("energy",this.energy);
                 on.Effects.get(effMutator.name).addMutator(this.id);
                 _txt=on.name+' ate something. ';
                 return({OK:true, msg:_txt});
@@ -305,11 +317,14 @@ class Food extends Item {
         else if(style===50) this.id=this.name='JuicyPeach';
         else if(style===60) this.id=this.name='SmellyPear';
         else if(style===70) this.id=this.name='HairyKiwi';
+        else if(style===80) this.id=this.name='BreadFruit';
         else if(style===100) this.id=this.name='Oyster';    //https://en.wikipedia.org/wiki/List_of_types_of_seafood
         else if(style===110) this.id=this.name='Loco';
         else if(style===120) this.id=this.name='Sepia';
         else if(style===200) this.id=this.name='SeaGrapes'; //https://en.wikipedia.org/wiki/Edible_seaweed
         else if(style===210) this.id=this.name='SeaLettuce';
+        else if(style===220) this.id=this.name='RawFish';
+        else if(style===230) this.id=this.name='RoastedFish';
         //Cocoabean PewPepper Zwiebel
         //scrub
         else throw new Error(this.id +' doesnt know '+style); 
@@ -406,11 +421,14 @@ ItemsLib['SquishyMelon'] = function(){ let x= new Food();x.style=40;return(x);};
 ItemsLib['JuicyPeach'] = function(){ let x= new Food();x.style=50;return(x);};
 ItemsLib['SmellyPear'] = function(){ let x= new Food();x.style=60;return(x);};
 ItemsLib['HairyKiwi'] = function(){ let x= new Food();x.style=70;return(x);};
+ItemsLib['BreadFruit'] = function(){ let x= new Food();x.style=80;return(x);};
 ItemsLib['Oyster'] = function(){ let x= new Food();x.style=100;return(x);};
 ItemsLib['Loco'] = function(){ let x= new Food();x.style=110;return(x);};
 ItemsLib['Sepia'] = function(){ let x= new Food();x.style=120;return(x);};
 ItemsLib['SeaGrapes'] = function(){ let x= new Food();x.style=200;return(x);};
 ItemsLib['SeaLettuce'] = function(){ let x= new Food();x.style=210;return(x);};
+ItemsLib['RawFish'] = function(){ let x= new Food();x.style=220;return(x);};
+ItemsLib['RoastedFish'] = function(){ let x= new Food();x.style=230;return(x);};
 
 ItemsLib['Branch'] = function(){ let x= new CraftMaterial();x.style=0;return(x);}
 ItemsLib['SturdyBranch'] = function(){ let x= new CraftMaterial();x.style=5;return(x);}

@@ -206,15 +206,15 @@ Your party consist of <%=(function(){var msg=[];for(el of window.story.state._gm
 <p>[[Back|_back_]] [[Mirror]]</p> (Tools and weapons can be changed via Inventory.)</br>
 <%=window.gm.player.name%> has equipped: <%=window.gm.printEquipmentSummary()%></br></br>
 <div id="output"></div>
-<div id="choice"></div>
+<div id="choiceA"></div><hr><div id="choiceB">
 </article><article id="LogPanel"></article></section>
 <script>
 var x = 0, id=''; 
 var whom = window.gm.player;
 var _ids = whom.Wardrobe.getAllIds(); 
-for(var i=0;i<_ids.length;i++){window.gm.printEquipment(whom,whom.Wardrobe.getItem(_ids[i]));}
+for(var i=0;i<_ids.length;i++){window.gm.printEquipment(whom,whom.Wardrobe.getItem(_ids[i]),"#choiceA");}
 _ids = whom.Outfit.getAllIds(); 
-for(var i=0;i<_ids.length;i++){window.gm.printEquipment(whom,whom.Outfit.getItem(_ids[i]));}
+for(var i=0;i<_ids.length;i++){window.gm.printEquipment(whom,whom.Outfit.getItem(_ids[i]),"#choiceB"/*,{noUnequip:true}*/);}
 </script>
 
 :: Settings [_back_ _noshortkey_]

@@ -30,7 +30,7 @@ class BodyPart extends Equipment {
 class BaseBiped extends BodyPart {
     constructor(){
         super('BaseBiped');
-        this.data = {maxGrowth:1.8,growth:1};
+        this.data = {femininity:0.2,maxGrowth:1.8,growth:1};
         this.addTags(['body']);this.slotUse = ['bBase'];
     }
     descLong(fconv){return(fconv('$[I]$ $[have]$ two legs and $[walk]§ upright at a bodysize of around '+this.sizeString(1)+'.'));}
@@ -43,7 +43,7 @@ class BaseHumanoid extends BaseBiped {
     constructor(){
         super();
         this.id = this.name = 'BaseHumanoid';
-        this.data = {maxGrowth:1.8,growth:1};
+        this.data = {femininity:0.2,maxGrowth:1.8,growth:1};
     }
     descLong(fconv){return(fconv('$[My]$ body is that of an human, around '+this.sizeString(1)+' in size.'));}
     toJSON(){return window.storage.Generic_toJSON("BaseHumanoid", this); };
@@ -52,19 +52,19 @@ class BaseHumanoid extends BaseBiped {
 class BaseQuadruped extends BodyPart {
     constructor(){
         super('BaseQuadruped');
-        this.data = {maxGrowth:1.5,growth:1};
+        this.data = {femininity:0.2,maxGrowth:1.5,growth:1};
         this.addTags(['body']);this.slotUse = ['bBase'];
     }
     get descShort(){return this.desc;};
     get desc(){ return '';}
     toJSON(){return window.storage.Generic_toJSON("BaseQuadruped", this); };
     static fromJSON(value){return(window.storage.Generic_fromJSON(BaseQuadruped, value.data));}
-    descLong(fconv){return(fconv('$[I]$ $[am]$ walking on 4 legs like a feral mammal.'));}
+    descLong(fconv){return(fconv('$[I]$ $[am]$ walking on 4 legs like a feral animal.'));}
 }
 class BaseWorm extends BodyPart {
     constructor(){
         super('BaseWorm');
-        this.data = {maxGrowth:0.3,growth:1};
+        this.data = {femininity:0.2,maxGrowth:0.3,growth:1};
         this.addTags(['body']);this.slotUse = ['bBase'];
     }
     get descShort(){return this.desc;};
@@ -76,7 +76,7 @@ class BaseWorm extends BodyPart {
 class BaseInsect extends BodyPart {
     constructor(){
         super('BaseInsect');
-        this.data = {maxGrowth:0.3,growth:1};
+        this.data = {femininity:0.2,maxGrowth:0.3,growth:1};
         this.addTags(['body']);this.slotUse = ['bBase'];
     }
     get descShort(){return this.desc;};

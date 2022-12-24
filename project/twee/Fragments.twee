@@ -8,7 +8,7 @@
 :: FI_NeedsPlayer
 <div id="needs"></div>
 <script>function needs(){
-    let msg="",x=window.gm.player.Stats.get("satiation").value;
+    let msg="",x=window.gm.player.Stats.get("satiation").value,a=window.gm.player.Stats.get("arousal").value;
     if(x>70){
         msg="You are not thirsty/hungry";
     } else if(x>50) {
@@ -20,16 +20,25 @@
     } else {
         msg="<b>You are starving and would eat anything. Check your inventory for something to eat.</b>";
     }
+    if(a>80) {
+        msg+="<b>You couldnt resist a good fuck right now.</b>";
+    } else if(a>40) {
+        msg+="<b>You are flush with arousal.</b>";
+    } else if(a>25) {
+        msg="<b>You are horny.</b>";
+    }
     return(msg);
 }
 window.gm.printOutput(needs(),'#needs');
 </script>
 
+
 :: FI_ChooseActivity
 <%if(window.passage.name=="FI_BeachForest"){%>
-    <%=window.gm.printGoto('FI_ScavengeFruit',{time:30*(1+2*s.NGP.xForestFood),energy:-5*(1+2*s.NGP.xForestFood)},'Pick some fruits that are in your hands reach.')%></br>
-    <%=window.gm.printGoto('FI_ScavengeWood',{time:30,energy:-10},'Look around for some firewood')%></br>
-    <%=window.gm.printGoto('FI_ShakeTree',{time:30,energy:-20},'Shake a tree')%></br>
+    <%=window.gm.printGoto('FI_ForestWalk',{time:60,energy:-5},'Explore the closer area.')%></br>
+    <%=(s.DngSY.exploreForest>=2)?window.gm.printGoto('FI_ScavengeFruit',{time:30*(1+2*s.NGP.xForestFood),energy:-5*(1+2*s.NGP.xForestFood)},'Pick some fruits that are in your hands reach.'):''%></br>
+    <%=(s.DngSY.exploreForest>=1)?window.gm.printGoto('FI_ScavengeWood',{time:30,energy:-10},'Look around for some firewood'):''%></br>
+    <%=(s.DngSY.exploreForest>=4)?window.gm.printGoto('FI_ShakeTree',{time:30,energy:-20},'Shake a tree'):''%></br>
 <%}%>
 <%if(window.passage.name=="FI_BeachForest"){%>
     [[explore western direction (toward beach)]]</br>
