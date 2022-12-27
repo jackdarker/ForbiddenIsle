@@ -41,7 +41,7 @@ Grabing the tree with you hands, you shake it as hard as possible.
 <script>function foo(){
     let x="1a",rnd=_.random(0,100);
     if(rnd>85) { //snake
-        window.gm.player.Stats.increment("will",-10);
+        window.gm.player.Stats.increment("will",-10);window.gm.refreshSidePanel();
         x="1b"; 
     } else if(rnd>60) { //sturdy
         x="1c";window.gm.player.Inv.addItem(window.gm.ItemsLib.SturdyBranch());
@@ -120,7 +120,7 @@ Der Koffer ist abgeschlossen. ER ist zu schwer und unhandlich um mit ihm zurück
 :: FI_BeachNorthExplore
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <div id='select10'>You <a0 onclick='foo()'>walk the beach</a> to get to know it better.</br>
-</div><div id='choice10a' hidden></br>
+</div><div id='choice10a' hidden></br> You dont find anything noticeable.</br>
 </div>
 <div id='choice10b' hidden></br> A small fish is stranded and floundering around. It could be edible, especially if you roast it.</br>
 </div>
@@ -170,27 +170,39 @@ Placing one of your hand next to it you do some raw measurements. Could be house
 
 :: FI_BeachDig
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-Walking up the shore along the waterline you look around for anything that could be of use.</br>
-
-<p>A dull black surface burried in the fine, dense mud catches your attention. It does not look like the other stones or shells scattered around. Digging it out with your hands is too troublesome.</p>
-<%if(window.gm.player.Inv.countItem("SturdyBranch")>0){%>
-    <div id='select1' >You still carry one of those sturdy branches that you now could make use off. 
-    <%=window.gm.printDo('window.gm.printTalkLink(\"div#select1\",\"div#choice1a\"),window.gm.player.Inv.addItem(window.gm.ItemsLib.CookingPot)',{time:60,energy:-30},'Use the stick to dig')%></br>
-    <a0 onclick='window.gm.printTalkLink("div#select1","div#choice1b")'>Walk away</a></br>
-    </div><div id='choice1a' hidden></br> As you start to remove the sand around the object you quickly notice that it is made of metal.
-        <p class="tPC">'Maybe its a pot of gold... Or a explosive mine.'</p>
-        <p>Its a small kettle. Its made from aluminium as the inside, once cleared from the mud, shows blank surface.</p>
-        <p class="tPC">'No gold. Hmm..but could be of use to carry water and or to cook something.'</p> 
+<div id="select1">Walking up the shore along the waterline you <a0 onclick="foo();">look around</a> for anything that could be of use.</div></br>
+<div id="choice1a" hidden>
+    But you didnt find anything useful. <%=window.gm.printGoto(window.gm.player.location,{},'Move on')%>
+</div><div id="choice1b" hidden>
+    <p>A dull black surface burried in the fine, dense mud catches your attention. It does not look like the other stones or shells scattered around. Digging it out with your hands is too troublesome.</p>
+    <%if(window.gm.player.Inv.countItem("SturdyBranch")>0){%>
+        <div id='select10' >You still carry one of those sturdy branches that you now could make use off. 
+        <%=window.gm.printDo('window.gm.printTalkLink(\"div#select10\",\"div#choice10a\"),window.gm.player.Inv.addItem(window.gm.ItemsLib.CookingPot())',{time:60,energy:-30},'Use the stick to dig')%></br>
+        <a0 onclick='window.gm.printTalkLink("div#select10","div#choice10b")'>Walk away</a></br>
+        </div><div id='choice10a' hidden></br> As you start to remove the sand around the object you quickly notice that it is made of metal.
+            <p class="tPC">'Maybe its a pot of gold... Or a explosive mine.'</p>
+            <p>Its a small kettle. Its made from aluminium as the inside, once cleared from the mud, shows blank surface.</p>
+            <p class="tPC">'No gold. Hmm..but could be of use to carry water and or to cook something.'</p> 
+            <%=window.gm.printGoto(window.gm.player.location,{},'Move on')%>
+            </div>
+        <div id='choice10b' hidden></br> <p class="tPC">'Nah, its not worth the effort.'</p><%=window.gm.printGoto(window.gm.player.location,{},'Move on')%>
         </div>
-    <div id='choice1b' hidden></br> <p class="tPC">'Nah, its not worth the effort.'</p><%=window.gm.printGoto(window.gm.player.location,{},'Move on')%>
-    </div>
-<%}else{%>
-    A simple tool would be of help here.</br>
-    <%=window.gm.printGoto(window.gm.player.location,{},'Move on')%>
-<%}%>
+    <%}else{%>
+        A simple tool would be of help here.</br>
+        <%=window.gm.printGoto(window.gm.player.location,{},'Move on')%>
+    <%}%>
+</div>
 
 </article><article id="LogPanel"></article></section>
-
+<script>function foo(){
+    let x="1a",rnd=_.random(0,100);
+    if(window.gm.player.Inv.countItem("CookingPot")<=0) { 
+        x="1b";
+    } else { 
+    }
+    window.gm.printTalkLink("div#select1","div#choice"+x);
+}
+</script>
 
 :: FI_BeachSandSculpt
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
@@ -233,34 +245,40 @@ you only see the actual choice, prev choice get hidden
 no dynamic text unless build from globals
 -->
 <div id='start'>'What kind of activity should I do?'</br>
-<a0 id="pushupsstart" onclick='foo(this)'>Maybe you should work on your arm muscles and do some pushups.</a></br>
-<a0 id="yogastart" onclick='foo(this)'>Doing some stretches to improve flexibility.</a></br>
+<%=window.gm.printDo('foo("start","pushupsstart")',{time:20,energy:-15,difficult:'average'},'Maybe you should work on your arm muscles and do some pushups.')%></br>
+<%=window.gm.printDo('foo("start","yogastart")',{time:20,energy:-15,difficult:'average'},'Doing some stretches to improve flexibility.')%></br>
+<%=window.gm.printGoto(window.gm.player.location,{},'Move on')%></br>
 </div><div id='pushupsstart' hidden></br> Dropping into the stance, you start doing pushups. The first 20 go smooth, but then it starts to get harder soon.
-    <a0 id="pushup2" onclick='foo(this)'>Continue until it hurts.</a></br>
-    <a0 id="stop" onclick='foo(this)'>Thats enough for now</a></br>
+    <%=window.gm.printDo('foo("pushupsstart","pushup2")',{time:20,energy:-15,difficult:'average'},'Continue until it hurts.')%></br>
+    <a0 onclick='foo("pushupsstart","stop")'>Thats enough for now</a></br>
 </div>
 <div id='pushup2' hidden></br> Your arms burn like on fire.
-    <a0 id="pushup3" onclick='foo(this)'>Continue until it hurts.</a></br>
-    <a0 id="stop" onclick='foo(this)'>Thats enough for now</a></br>
+    <%=window.gm.printDo('foo("pushup2","pushup3")',{time:20,energy:-15,difficult:'average'},'Continue until it hurts.')%></br>
+    <a0 onclick='foo("pushup2","stop")'>Thats enough for now</a></br>
 </div>
 <div id='pushup3' hidden></br> That was to much...
-    <a0 id="stop" onclick='foo(this)'>Thats enough for now</a></br>
+    <a0 onclick='foo("pushup3","stop")'>Thats enough for now</a></br>
 </div>
 <div id='yogastart' hidden></br> What did you do in sports before the real workout started? You try to remeber those warm up routines an do some.
-    <a0 id="stop" onclick='foo(this)'>Thats enough for now</a></br>
+    <a0 onclick='foo("yogastart","stop")'>Thats enough for now</a></br>
 </div>
 <div id='stop' hidden></br> Catching your breath, you pickup your stuff and walk away.
-    <a0 id="start" onclick='foo(this)'>Do something else.</a></br>
-    <%=window.gm.printGoto(window.gm.player.location,{},'next')%>
+    <a0 onclick='foo("stop","start")'>Do something else.</a></br>
+    <%=window.gm.printGoto(window.gm.player.location,{},'Move on')%>
 </div>
 <p hidden>Pushups, situps für muskelaufbau. Steigert M-Mutator.
 Eric beobachtet dich, gibt dir handson tips.<p>
 </article><article id="LogPanel"></article></section>
-<script>function foo(elmt){
-    //hide parent div; show div#next
-    //hide div-nodes following parentnode //Todo
-    let parentid=elmt.parentNode.id;
-    window.gm.printTalkLink("div#"+parentid,"div#"+elmt.id);
+<script>function  foo(idhide,idshow){
+    window.gm.printTalkLink("div#"+idhide,"div#"+idshow);
+    switch(idshow){
+        case "choice100a":
+        case "choice100c":
+            window.gm.player.Stats.increment("arousal",-50);
+            break;
+        default:
+    }
+    window.gm.refreshSidePanel();
 }
 </script>
 
@@ -271,8 +289,9 @@ Eric beobachtet dich, gibt dir handson tips.<p>
     Swimming really wasn't your kind of thing, let alone doing it in this open sea with big waves rolling in.</br>
     <div id='select10' > Find a spot where the water is a little calmer and 
     <a0 onclick='window.gm.StatsLib.Ability.setup(window.gm.player.Stats,1,"Swimming");window.gm.printTalkLink("div#select10","div#choice10a")'>try a few swims</a>.</br>
-    </div><div id='choice10a' hidden></br>After you have stripped of your shoes and shirt, you step into the small pool. You swim back and forth and even do a dive. Swimming seems fun.</br>
-    <%=window.gm.printGoto(window.gm.player.location,{},'Return to camp')%>
+    </div><div id='choice10a' hidden></br>Behind some rocks, a natural cavity in the size of a small pool has been formed. Deciding that this is a good place to start, you strip off your shoes and shirt, ans slip into the small pool. You swim back and forth and even do a dive. Swimming seems fun.</br>
+        </br>
+        <%=window.gm.printGoto(window.gm.player.location,{},'next')%>
     </div>
 <%}else if(window.gm.player.Stats.get("sk_Swimming").value>0){%>
     <span class="tPC">'lets do some more swim-training.'</span> With that you strip your outerwear and walk into the sea.
@@ -281,7 +300,7 @@ Eric beobachtet dich, gibt dir handson tips.<p>
     <% if(window.gm.player.Stats.get("sk_Swimming").value>4){%></br>There are some rocks further away from the shoreline. You wonder if you could possibly swim towward them.<%}%>
     </div><div id='choice20a' hidden></br> You think your skill has gotten better.
         <div id='select30' >
-        <%=window.gm.printDo('window.gm.printTalkLink(\"div#select30\",\"div#choice30a\")',{time:60,energy:-30,difficult:hard},'Swim some more lanes')%> or <a0 onclick='window.gm.printTalkLink("div#select30","div#choice30b")'>leave the water.</a></br>
+        <%=window.gm.printDo('window.gm.printTalkLink(\"div#select30\",\"div#choice30a\")',{time:60,energy:-30,difficult:'hard'},'Swim some more lanes')%> or <a0 onclick='window.gm.printTalkLink("div#select30","div#choice30b")'>leave the water.</a></br>
         </div><div id='choice30a' hidden></br> Lets see if you can [[swim a little|FI_BeachSwimDrown]] bit further out in the sea.
         </div>
         <div id='choice30b' hidden></br> You step out of the water and <%=window.gm.printGoto(window.gm.player.location,{},'redress')%>.
@@ -321,9 +340,9 @@ Images from dokumentations shoot into your mind where divers armed with electro-
 But you cant say for sure if that shark you are facing here would dare the risk to approach you.  
 <p class="tPC">'The blood from the fish might have attracted it, I need to get out of the water !'</p>
 
-You need to swim as fast as you can to the shore | stand your ground | drop the fish
+You need to swim as fast as you can to the shore | stand your ground | drop the fish</p>
 
-<p>
+
 <p hidden>Du beschliesst im Meer mit dem Kescher Fische zu fangen, oder es zumindest zu versuchen.
 
 Eine Taucherbrille wäre hilfreich damit du Unterwasser besser siehst.
@@ -349,7 +368,7 @@ After lookng around for a while, you give up and just leave <b>without xxx</b>
 :: FI_NightDream
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%></br>
 The hard work at the day takes it toll on you and the night passes with a deep, dreamless sleep.
-
+<p hidden>
 Your mind switches to dream mode:...
 
 Those drugs in your veins do a good job in letting you go inconscious...
@@ -357,7 +376,58 @@ Those drugs in your veins do a good job in letting you go inconscious...
 if you cant sleep because no warmth- reduce will/energy recoverage
 if you are horny, you get wild dreams- 
 if you cant sleep because disturbance-  
-
+</p>
 <a0 onclick='window.gm.checkMutation("wake"),window.story.show("FI_Wakeup");'>Wake up</a>
 </article><article id="LogPanel"></article></section>
+
+
+:: FI_BeachMasturbate
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%></br>
+For some time now your hardon is begging for some attention.</br>
+Masturbation is not a foreign word for you, but usually you would do that in seclusivness of your private room or lavatory.</br>
+So you have been walking around secretly looking for a secluded place to have a nice privat time. And this here seems as good as any other.</br>
+<div id='select10'> </br>How about releasing some tension? 
+<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10a")'>To risky</a></br>
+<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10b")'>Do some handwork</a></br>
+</div><div id='choice10a' hidden></br><p class="tPC">'To risky. I will just sit it out.'</p>
+    <%=window.gm.printGoto(window.gm.player.location,{},'Move along.')%>
+</div>
+<div id='choice10b' hidden></br>Shifting your pants down a little bit, your half hard member flops out. 
+    <div id='select10b10' >
+    <a0 onclick='window.gm.printTalkLink("div#select10b10","div#choice10b10a")'>Grabing your man meat you start stroking with some good speed.</a></br>
+    </div><div id='choice10b10a' hidden></br>
+        <div id='select100' >As you start shooting your wad, you take aim to 
+        <%=window.gm.printDo('foo("select100","choice100a")',{},'hit a target')%></br>
+        <%=window.gm.printDo('foo("select100","choice100c")',{},'catch it in your hand')%></br>
+        <a0 onclick='window.gm.printTalkLink("div#select100","div#choice100b")' hidden>catch it in a pot</a></br>
+        </div><div id='choice100a' hidden></br>You splatter the vegetation with several ropes of your jizzm.
+            Deeply satisfied you <%=window.gm.printGoto(window.gm.player.location,{},'leave.')%>
+        </div>
+        <div id='choice100b' hidden></br>
+            TODO <%=window.gm.printGoto(window.gm.player.location,{},'leave.')%>
+        </div>
+        <div id='choice100c' hidden></br> While stroking your shaft with one hand, your other cups the tip of your member, giving additional stimulation. 
+            <div id='select100c10' > After you have come down from your high, you feel a stickiness in your hand. What to do with that? 
+            <a0 onclick='window.gm.printTalkLink("div#select100c10","div#choice100c10a")'>Slurp it up</a></br>
+            <a0 onclick='window.gm.printTalkLink("div#select100c10","div#choice100c10b")'>Smear it somewhere</a></br>
+            </div><div id='choice100c10a' hidden></br>TODO <%=window.gm.printGoto(window.gm.player.location,{},'leave.')%>
+            </div>
+            <div id='choice100c10b' hidden></br>TODO <%=window.gm.printGoto(window.gm.player.location,{},'leave.')%>
+            </div>
+        </div>
+    </div>
+</div>
+</article><article id="LogPanel"></article></section>
+<script>function foo(idhide,idshow){
+    window.gm.printTalkLink("div#"+idhide,"div#"+idshow);
+    switch(idshow){
+        case "choice100a":
+        case "choice100c":
+            window.gm.player.Stats.increment("arousal",-50);
+            break;
+        default:
+    }
+    window.gm.refreshSidePanel();
+}
+</script>
 

@@ -130,13 +130,13 @@ You are at the beach where you first set foot on this isle.
     Go get some dry wood to get a fire started. <b>3 dry branches</b> should be enough.
 <%}%>
 </br>[[Eric|TalkEric]] is here.
-</br>[[Check on yourself|FI_InspectSelf]]  [[FI_Sport]]
+</br>[[Check on yourself|FI_InspectSelf]]
 <%if(window.gm.getTimeStruct().daytime==='night'){%> <p>Its getting late. Better go get some [[sleep|FI_GoSleep]].</p><%}else{%>
     <p>You could simply <%=window.gm.printGoto('FI_SunBath',{},'relax')%> here instead of running around and wasting energy. 
     <%if(s.DngSY.campUpgrade.fire>=1){%>Or doing some [[workout|FI_BeachWorkout]] could help with gaining some muscle and confidence.<%}%></p>
     <p>Maybe you should look around the <%=window.gm.printGoto('FI_BeachForest',{time:30,energy:-5},'sparse forest')%> around the hill, 
     </br>or make your <%=window.gm.printGoto('FI_BeachHill',{time:30,energy:-10},'way up')%> again. </br>
-    <%if(!!s.DngSY.exploreBeach){%>You could also walk the sandy beach in <%=window.gm.printGoto('FI_BeachWalkNorth',{time:30,energy:-5},'northern')%> or <%=window.gm.printGoto('FI_BeachWalkEast',{time:30,energy:-5},'eastern')%> direction.</p><%}%>
+    <%if(!!s.DngSY.exploreBeach){%>You could also walk the sandy beach in <%=window.gm.printGoto('FI_BeachNorth',{time:30,energy:-5},'northern')%> or <%=window.gm.printGoto('FI_BeachEast',{time:30,energy:-5},'eastern')%> direction.</p><%}%>
     <p>Of course you could also <%=window.gm.printGoto('FI_BeachWalk',{time:60,energy:-10},'explore the beach')%> some more</p>
 <%}%>
 Pass some time until... (just forwards time):
@@ -151,12 +151,13 @@ Pass some time until... (just forwards time):
 :: FI_GoSleep
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 
-Todo: ts surprisingly cold and the fire burnt already down. Shivering from the cold, you wish to have something wrap yourself into or to cuddle with someone.
+Todo: Its surprisingly cold and the fire burnt already down. Shivering from the cold, you wish to have something wrap yourself into or to cuddle with someone.
 The only one around to cuddle with is Eric and thats [[Not an option]] | [[Ask him]]  
 
 <a0 onclick='sleep()'>Rest a while</a>
 </article><article id="LogPanel"></article></section>
 <script>function sleep(){
+    if(window.story.state.Settings.autoSave) window.gm.toasty.info("auto save"),window.storage.saveBrowser("saveAuto");
     window.gm.forwardTime(700);
     let _b,_s=window.gm.player.Stats.get('satiation').value;
     //more energy if not hungry
@@ -185,7 +186,7 @@ You are greeted by some morning wood. [[Just ignore and stuff it into your pants
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
 <p class="tPC">"Anything left for breakfast? I could kill for some coffee and toast."</p>
-<p class="author">If you have slept while beeing hungry, your recovery is dimished.</p>
+<a0 id='hint1' onclick='(function(me){document.querySelector("#"+id+"~p").toggleAttribute("hidden");})(this);'>Hint</a><p hidden>If you have slept while beeing hungry, your recovery is dimished. You can also eat at other times by consuming food right from inventory.</p>
 <div id="output"></div></br><div id="choice"></div>
 <!--As you arrived late today, you have to eat whats left.
 Eric already ate some XYZ. | Suggest that Eric eats XYZ
@@ -268,26 +269,26 @@ The forest close to the hill is sparse. The trees arent as big as the coconut pa
 
 :: FI_BeachWalk
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-The beach extends [[further north|FI_BeachWalkNorth]] and also in [[eastern direction|FI_BeachWalkEast]]. </br>
+The beach extends [[further north|FI_BeachNorth]] and also in [[eastern direction|FI_BeachEast]]. </br>
 <%if(!!s.DngSY.exploreBeach){%>There isnt much more to find here. Maybe you should look at other places.</br><%}else{s.DngSY.exploreBeach=1;}%>
 <a0 onclick='window.story.show(window.gm.player.location)'>Walk back</a>
 </article><article id="LogPanel"></article></section>
 
 
-:: FI_BeachWalkNorth
+:: FI_BeachNorth
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
-<%=window.gm.images._sizeTo(window.gm.images["Beach"](),200,200)%>
+<%=window.gm.images._sizeTo(window.gm.images["Beach"](),200,200)%></br>
 Further up north your camp on the beach.
 </br>Coconut palms are scattered around. Maybe you could [[get some coconut|FI_BeachCoconut]]?</br>
 <%=window.gm.printGoto('FI_BeachNorthExplore',{time:30,energy:-5},'explore surrounding')%>
-</br><%=window.gm.printGoto('FI_BeachSwim',{},'Go swimming',"hard")%>
+</br><%=window.gm.printGoto('FI_BeachSwim',{time:60,energy:20},'Go swimming')%>
 </br><%=window.story.render("FI_ChooseActivity")%>
 <%=window.gm.printGoto('FI_BeachCamp',{},'return to beach camp')%>
 </article><article id="LogPanel"></article></section>
 
 
-:: FI_BeachWalkEast
+:: FI_BeachEast
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
 Walking the beach in eastern direction.
@@ -321,7 +322,8 @@ Climbing on top of the hill. </br>
 You notice that the top of the hill is mostly solid stone, likely volcanic origin. Some of the edges of the rock are very sharp.  
 <div id='select20' > Could you possibly 
 <%=window.gm.printDo('window.gm.printTalkLink(\"div#select20\",\"div#choice20a\"),window.gm.player.Inv.addItem(window.gm.ItemsLib.HandAxe())',{time:60,energy:-30},'beat off')%> some sharp splinters that you could use as cuttng tool?</br>
-</div><div id='choice20a' hidden></br> With a large stone you start beating on those splintering rock. Its quite a demanding work and you earned yourself several bruises but finally you got something that someone could call a handaxe. 
+</div><div id='choice20a' hidden></br> With a large stone you start beating on those splintering rock. Its quite a demanding work and you earned yourself several bruises but finally you got something that someone could call a <b>handaxe</b>. 
+    <p class="author">You dont need to equip tools to make use of them, just keep them in your inventory.</p>
 </div>
 </br><%=window.story.render("FI_ChooseActivity")%>
 <%=window.gm.printGoto('FI_BeachCamp',{},'return to beach')%>

@@ -120,7 +120,7 @@ class HeadHairHuman extends BodyPart {
     toJSON(){return window.storage.Generic_toJSON("HeadHairHuman", this); };
     static fromJSON(value){return(window.storage.Generic_fromJSON(HeadHairHuman, value.data));}
     descLong(fconv){
-        return(fconv('$[I]$ have '+this.data.color+', '+this.data.style+' hair that is around '+this.sizeString(this.data.growth*this.data.maxGrowth) +' long.'));
+        return(fconv('$[You]$ $[have]$ '+this.data.color+', '+this.data.style+' hair that is around '+this.sizeString(this.data.growth*this.data.maxGrowth) +' long.'));
     }
 }
 class FaceHuman extends BodyPart {

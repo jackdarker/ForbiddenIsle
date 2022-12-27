@@ -21,9 +21,9 @@ I couldn't take a glimpse at them as I clutched on that cargo drop sailing out o
 
 <p class="tNPC1">"I also doubt that we are properly outfitted as jungle explorers are we?</p>
 <p>Guess he is right. You wear some...</p>
-<div id='select10' >
+<div id='select10' > TODO: chooseable start cloths
 <a0 onclick='window.gm.printTalkLink("div#select10","div#choice10a")'>bermuda shorts, colorful button up shirt and cheap flip-flops.</a></br>
-<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10b")'>ripped denim shorts, orange t-shirt and sports sneakers</a>
+<a0 onclick='window.gm.printTalkLink("div#select10","div#choice10b")' hidden>ripped denim shorts, orange t-shirt and sports sneakers</a>
 </div><div id='choice10a' hidden>
     <p>You wear some bermuda shorts, a colorful button up shirt and cheap flip-flops.</p>
     <div id='select20' >
@@ -126,7 +126,7 @@ Tease him and go further...
     <p class="tPC">"You don't have anything edible left with you?"</p>
     <div id='select10' >
     <a0 onclick='window.gm.printTalkLink("div#select10",window.gm.util.selRandom(["div#choice10a","div#choice10b"]))'>Im so hungry.</a></br>
-    </div><div id='choice10a' hidden></br><p class="tNPC1">"I found this Kiwi. Im not that hungry right now and it shouldnt go to waste."</p>
+    </div><div id='choice10a' hidden></br><p class="tNPC1">"I found this banana. Im not that hungry right now and it shouldnt go to waste."</p>
     <div id='select10a10' >
         <a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.StraightBanana()),window.gm.printTalkLink("div#select10a10","div#choice10a10a")'>Take it</a></br>
         </div><div id='choice10a10a' hidden></br><%=window.gm.printLink("You thank him and move along.",'window.story.show(window.gm.player.location);')%>

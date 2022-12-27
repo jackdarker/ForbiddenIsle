@@ -8,9 +8,10 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
         s.Lab=s.Known=null;
     }
     let Settings = {
-      showCombatPictures:true,
-      showNSFWPictures:true,
-      showDungeonMap:true
+        autoSave:true,
+        showCombatPictures:true,
+        showNSFWPictures:true,
+        showDungeonMap:true
     };
     let DngSY = {
         remainingNights: -1,
@@ -299,9 +300,10 @@ class Food extends Item {
             if(on===null) on=context.parent;
             context.removeItem(this.id);
             if(on instanceof Character){ 
-                //on.addEffect(effPillEffect.factory(this.id));
-                on.Stats.increment("satiation",this.satiation*(1+window.story.state.NGP.increasedSatiation)),
+                //on.addEffect(effFoodEffect.factory(this.id));
+                on.Stats.increment("satiation",this.satiation*(1+window.story.state.NGP.increasedSatiation)), //todo oversatiation
                 on.Stats.increment("energy",this.energy);
+                if(this._style>0 && this.parent.parent.Stats.get("arousalRegen").base<1) this.parent.parent.Stats.increment("arousalRegen",0.3);
                 on.Effects.get(effMutator.name).addMutator(this.id);
                 _txt=on.name+' ate something. ';
                 return({OK:true, msg:_txt});
@@ -309,8 +311,8 @@ class Food extends Item {
         } else throw new Error('context is invalid');
     }
     set style(style){
-        this._style = style; this.satiation=10,this.energy=20;
-        if(style===0) this.id=this.name='SnackBar',this.satiation=30,this.energy=50;
+        this._style = style; this.satiation=25,this.energy=20;
+        if(style===0) this.id=this.name='SnackBar',this.satiation=40,this.energy=50;
         else if(style===20) this.id=this.name='BellPepper';
         else if(style===30) this.id=this.name='StraightBanana';
         else if(style===40) this.id=this.name='SquishyMelon';

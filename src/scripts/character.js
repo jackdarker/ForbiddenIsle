@@ -35,7 +35,7 @@ class Character {
         this.Effects._parent = window.gm.util.refToParent(this);
         this.Rel = new StatsDictionary(this._data.rel); //Todo Relation similiar to stats?
         this.Rel._parent = window.gm.util.refToParent(this);
-        this.Skills = new Inventory(this._data.skills);
+        this.Skills = new Inventory(this._data.skills); //for combat skills only
         this.Skills._parent = window.gm.util.refToParent(this);
         //create basic stats
         stHealth.setup(this.Stats,10,10),stEnergy.setup(this.Stats,30,30),stWill.setup(this.Stats,0,0);

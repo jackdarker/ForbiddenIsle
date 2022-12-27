@@ -75,7 +75,7 @@ function clearview(){
     <button id="close-dialog">Back</button> <div><%=(window.story.state._gm.nosave?"save disabled in this scene":"")%></div>
     <form>
     <label><output></output></label></br>
-    <button type="button" id="saveAuto" hidden> </button><button type="button" id="loadAuto">load Auto</button>
+    <button type="button" id="saveAuto" hidden>save Auto</button><button type="button" id="loadAuto">load Auto</button>
     <button type="button" id="deleteAuto">delete Auto</button><label><outputAuto></outputAuto></label></br>
     <button type="button" id="save1" <%=(window.story.state._gm.nosave?"disabled":"")%>>save 1</button><button type="button" id="load1">load 1</button>
     <button type="button" id="delete1">delete 1</button><label><output1></output1></label></br>
@@ -223,7 +223,9 @@ for(var i=0;i<_ids.length;i++){window.gm.printEquipment(whom,whom.Outfit.getItem
 <p class="author">settings are stored in save-game until I find a way to store them in cookies.</p>
 Theme:
 <a href="javascript:window.styleSwitcher.setStyle('light');window.gm.refreshAllPanel();">light</a>
-<a href="javascript:window.styleSwitcher.setStyle('dark');window.gm.refreshAllPanel();">dark</a></br>
+<a href="javascript:window.styleSwitcher.setStyle('dark');window.gm.refreshAllPanel();">dark</a><hr></br>
+auto save: <input type="checkbox" id='autoSave' onclick='toggleSetting(this);' name="autoSave" value="x"> </br>
+<hr>
 show Lewd pictures: <input type="checkbox" id='showNSFWPictures' onclick='toggleSetting(this);' name="showNSFWPictures" value="x"> (If false, lewd graphics are not shown/replaced with SFW.)</br>
 show dungeon map: <input type="checkbox" id='showDungeonMap' onclick='toggleSetting(this);' name="showDungeonMap" value="x"> (If false, the dungeon map is not rendered.)</br>
 show Combat-pictures: <input type="checkbox" id='showCombatPictures' onclick='toggleSetting(this);' name="showCombatPictures" value="x"> (Some graphics are large and take time to render, thus slowing down combat.)</br>
@@ -242,7 +244,7 @@ function toggleSetting(elmt) {
   let toggle=window.story.state.Settings[elmt.id]=!window.story.state.Settings[elmt.id];
   elmt.checked=toggle;
 }
-['showNSFWPictures','showDungeonMap','showCombatPictures'].forEach(x=>(document.querySelector("#"+x).checked=window.story.state.Settings[x]));
+['showNSFWPictures','showDungeonMap','showCombatPictures','autoSave'].forEach(x=>(document.querySelector("#"+x).checked=window.story.state.Settings[x]));
 </script>
 
 :: Settings2 [_back_]
@@ -270,14 +272,15 @@ img.src = imgsrc;//'https://twinery.org/homepage/img/logo.svg';   //todo the loa
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 <%let char=window.gm.player;%>
 Status of <%=char.name%>:   [[Back|_back_]]</br>
-<a0 onclick='window.gm.printOutput(window.gm.printEffectSummary("<%=char.id%>",true,false,false));'>Stats</a>
-<a0 onclick='window.gm.printOutput(window.gm.printEffectSummary("<%=char.id%>",false,false,true));'>Resistance</a>
-<a0 onclick='window.gm.printOutput(window.gm.printEffectSummary("<%=char.id%>",false,true,false));'>Fetish</a>
+<a0 onclick='window.gm.printOutput(window.gm.printEffectSummary("<%=char.id%>",{showstats:true}));'>Stats</a>
+<a0 onclick='window.gm.printOutput(window.gm.printEffectSummary("<%=char.id%>",{showresistance:true}));'>Resistance</a>
+<a0 onclick='window.gm.printOutput(window.gm.printEffectSummary("<%=char.id%>",{showskill:true}));'>Skills</a>
+<a0 onclick='window.gm.printOutput(window.gm.printEffectSummary("<%=char.id%>",{showfetish:true}));'>Fetish</a>
 </br><div id='output'></div></br>   <!--message is rendered here-->
 [[Back|_back_]]</br>
 </article><article id="LogPanel"></article></section>
 <script>
-window.gm.printOutput(window.gm.printEffectSummary(window.gm.player.id,true,false));
+window.gm.printOutput(window.gm.printEffectSummary(window.gm.player.id,{showstats:true}));
 </script>
 
 

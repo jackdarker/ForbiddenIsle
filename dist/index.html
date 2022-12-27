@@ -347,7 +347,8 @@ inv:[],//inventory data, needs to be mapped to Inventory-Instance
 wardrobe:[],//separate wardobe data, needs to be mapped to outfit-Instance
 outfit:[],// needs to be mapped to outfit-Instance
 stats:[],effects:[],rel:[],skills:[]};}}]);function Character(externlist){_classCallCheck(this,Character);this._data=externlist?externlist:Character.defaultData();this.Outfit=new Outfit(this._data.outfit);this.Outfit._parent=window.gm.util.refToParent(this);this.Inv=new Inventory(this._data.inv);this.Inv._parent=window.gm.util.refToParent(this);this.Wardrobe=new Inventory(this._data.wardrobe);this.Wardrobe._parent=window.gm.util.refToParent(this);this.Stats=new StatsDictionary(this._data.stats);this.Stats._parent=window.gm.util.refToParent(this);this.Effects=new Effects(this._data.effects);this.Effects._parent=window.gm.util.refToParent(this);this.Rel=new StatsDictionary(this._data.rel);//Todo Relation similiar to stats?
-this.Rel._parent=window.gm.util.refToParent(this);this.Skills=new Inventory(this._data.skills);this.Skills._parent=window.gm.util.refToParent(this);//create basic stats
+this.Rel._parent=window.gm.util.refToParent(this);this.Skills=new Inventory(this._data.skills);//for combat skills only
+this.Skills._parent=window.gm.util.refToParent(this);//create basic stats
 stHealth.setup(this.Stats,10,10),stEnergy.setup(this.Stats,30,30),stWill.setup(this.Stats,0,0);stSatiation.setup(this.Stats,30,100);var _iterator=_createForOfIteratorHelper(window.gm.combat.TypesDamage),_step;try{for(_iterator.s();!(_step=_iterator.n()).done;){var n=_step.value;stResistance.setup(this.Stats,0,n.id);stArmor.setup(this.Stats,0,n.id);}}catch(err){_iterator.e(err);}finally{_iterator.f();}stAgility.setup(this.Stats,10,100),stIntelligence.setup(this.Stats,10,100),stLuck.setup(this.Stats,10,100);stCharisma.setup(this.Stats,10,100),stPerception.setup(this.Stats,10,100),stStrength.setup(this.Stats,10,100),stEndurance.setup(this.Stats,10,100);stSavageness.setup(this.Stats,0,10),stCorruption.setup(this.Stats,0,100),stArousal.setup(this.Stats,0,50);var _iterator2=_createForOfIteratorHelper(stFetish.listFetish()),_step2;try{for(_iterator2.s();!(_step2=_iterator2.n()).done;){var name=_step2.value;stFetish.setup(this.Stats,0,10,name);}}catch(err){_iterator2.e(err);}finally{_iterator2.f();}this.Skills.addItem(new SkillAttack());this.Skills.addItem(new SkillUseItem());this.Skills.addItem(new SkillStruggle());this.Skills.addItem(new SkillFlee());this.Skills.addItem(new SkillFairyLight());this.Effects.addItem(new effHunger());this.Effects.addItem(new effSanity());this.Effects.addItem(new effLibido());this.Effects.addItem(new effCombatRecovery());this.Effects.addItem(new effSpermDecay());window.storage.registerConstructor(Character);}_createClass(Character,[{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("Character",this);}},{key:"rebuildAfterLoad",value:function rebuildAfterLoad(){//need to recreate parent links
 this.Effects._relinkItems();this.Stats._relinkItems();this.Inv._relinkItems();this.Outfit._relinkItems();this.Wardrobe._relinkItems();this.Rel._relinkItems();this.Skills._relinkItems();}/**
     * calculates how many levels you can upgrade
@@ -1009,11 +1010,12 @@ window.gm.printRelationSummary=function(){var elmt='';var s=window.story.state;v
 var data=window.gm.player.Rel.get(ids[k]);result+='<tr><td>'+data.id+':</td><td>'+data.value+' of '+window.gm.player.Rel.get(ids[k]+"_Max").value+'</td></tr>';}}result+='</table>';return result;};//prints achievements
 window.gm.printAchievements=function(){var result='',ids=[];result+='<table>';var name,msg,x,achv;ids=Object.keys(window.gm.achievements);ids.sort();for(var k=0;k<ids.length;k++){x=window.gm.achievements[ids[k]];achv=window.gm.getAchievementInfo(ids[k]);name=achv.name;msg=!!x?achv.descDone:achv.descToDo;if(!x&&(achv.hidden&0x1)>0){name="???";}if(!x&&(achv.hidden&0x2)>0){msg="???";}result+='<tr><td><input type=\"checkbox\" name=\"y\" value=\"x\" readonly disabled '+(!!x?'checked=\"checked\"':'')+'></td><td>'+name+':</td><td>'+msg+'</td></tr>';}//todo print mom : 10 of 20
 result+='</table>';return result;};//prints a string listing stats and effects
-window.gm.printEffectSummary=function(){var who=arguments.length>0&&arguments[0]!==undefined?arguments[0]:'player';var showstats=arguments.length>1&&arguments[1]!==undefined?arguments[1]:true;var showfetish=arguments.length>2&&arguments[2]!==undefined?arguments[2]:false;var showresistane=arguments.length>3&&arguments[3]!==undefined?arguments[3]:false;var elmt='';var s=window.story.state;var result='';var ids=[];result+='<table>';var ids=window.story.state[who].Stats.getAllIds();ids.sort();//Todo better sort
-for(var k=0;k<ids.length;k++){var data=window.story.state[who].Stats.get(ids[k]);var isFetish=data.id.slice(0,2)==='ft';//Fetish starts with ft
+window.gm.printEffectSummary=function(){var who=arguments.length>0&&arguments[0]!==undefined?arguments[0]:'player';var what=arguments.length>1?arguments[1]:undefined;var _what=what||{};_what.showstats=what&&what.showstats?what.showstats:false,//set at least one flag!
+_what.showfetish=what&&what.showfetish?what.showfetish:false,_what.showresistance=what&&what.showresistance?what.showresistance:false,_what.showskill=what&&what.showskill?what.showskill:false;var elmt='',s=window.story.state,result='';result+='<table>';var ids=window.story.state[who].Stats.getAllIds();ids.sort();//Todo better sort
+for(var k=0;k<ids.length;k++){var data=window.story.state[who].Stats.get(ids[k]);var isFetish=data.id.slice(0,2)==='ft',isSkill=data.id.slice(0,3)==='sk_';//Fetish starts with ft
 var isResistance=data.id.slice(0,4)==='rst_'||data.id.slice(0,4)==='arm_';//
-if(data.hidden!==4){if(isFetish&&showfetish&&!(data.id.slice(-4,-2)==='_M')){//expects names of fetish like ftXXX and limits ftXXX_Min ftXXX_Max
-var min=window.story.state[who].Stats.get(ids[k]+"_Min");var max=window.story.state[who].Stats.get(ids[k]+"_Max");result+='<tr><td>'+(data.hidden&0x1?'???':data.id)+':</td><td>'+(data.hidden&0x2?'???':data.value)+'</td>';result+='<td>'+(data.hidden&0x2?'???':'('+(min.value+' to '+max.value))+')</td></tr>';}if(!isFetish&&!isResistance&&showstats||!isFetish&&isResistance&&showresistane){result+='<tr><td>'+(data.hidden&0x1?'???':data.id)+':</td><td>'+(data.hidden&0x2?'???':data.value)+'</td></tr>';}//todo show modifier list for each stat  agility: BracerLeather +2
+if(data.hidden!==4){if(isFetish&&_what.showfetish&&!(data.id.slice(-4,-2)==='_M')){//expects names of fetish like ftXXX and limits ftXXX_Min ftXXX_Max
+var min=window.story.state[who].Stats.get(ids[k]+"_Min");var max=window.story.state[who].Stats.get(ids[k]+"_Max");result+='<tr><td>'+(data.hidden&0x1?'???':data.id)+':</td><td>'+(data.hidden&0x2?'???':data.value)+'</td>';result+='<td>'+(data.hidden&0x2?'???':'('+(min.value+' to '+max.value))+')</td></tr>';}if(!isFetish&&!isResistance&&!isSkill&&_what.showstats||!isFetish&&isResistance&&!isSkill&&_what.showresistance||!isFetish&&!isResistance&&isSkill&&_what.showskill){result+='<tr><td>'+(data.hidden&0x1?'???':data.id)+':</td><td>'+(data.hidden&0x2?'???':data.value)+'</td></tr>';}//todo show modifier list for each stat  agility: BracerLeather +2
 }}result+='</table>';result+='</br>Active Effects:<table>';ids=window.story.state[who].Effects.getAllIds();ids.sort();//Todo better sort
 for(var i=0;i<ids.length;i++){var data=window.story.state[who].Effects.get(ids[i]);if(data.hidden!==4){result+='<tr><td>'+(data.hidden&0x1?'???':data.name)+':</td><td>'+(data.hidden&0x1?'???':data.desc)+'</td><td>'+(data.hidden&0x2?'???':data.data.duration)+'h left</td></tr>';}}result+='</table>';return result;};///show/hides a dialog defined in body
 window.gm.toggleDialog=function(id){var _id=id;var dialog=document.querySelector(id),closebutton=document.getElementById('close-dialog'),pagebackground=document.querySelector('body');var div;if(!dialog.hasAttribute('open')){if(window.story.state._gm)window.story.state._gm.nokeys=true;// show the dialog 
@@ -2197,7 +2199,7 @@ if('remove'in Element.prototype){// the browser supports .remove() function...
 */var BodyPart=/*#__PURE__*/function(_Equipment2){_inherits(BodyPart,_Equipment2);var _super9=_createSuper(BodyPart);function BodyPart(name){_classCallCheck(this,BodyPart);return _super9.call(this,name);}/*
     * converts a relative size to size in m or cm
     */_createClass(BodyPart,[{key:"sizeString",value:function sizeString(size){var base=this.parent.getItemForSlot(window.gm.OutfitSlotLib.bBase);var bodysize=base.data.maxGrowth*base.data.growth*size;if(bodysize<1)return window.gm.util.formatNumber(bodysize*100,1)+"cm";if(bodysize<0.05)return window.gm.util.formatNumber(bodysize*1000,0)+"mm";return window.gm.util.formatNumber(bodysize,2)+"m";}}]);return BodyPart;}(Equipment);var BaseBiped=/*#__PURE__*/function(_BodyPart){_inherits(BaseBiped,_BodyPart);var _super10=_createSuper(BaseBiped);function BaseBiped(){var _this9;_classCallCheck(this,BaseBiped);_this9=_super10.call(this,'BaseBiped');_this9.data={femininity:0.2,maxGrowth:1.8,growth:1};_this9.addTags(['body']);_this9.slotUse=['bBase'];return _this9;}_createClass(BaseBiped,[{key:"descLong",value:function descLong(fconv){return fconv('$[I]$ $[have]$ two legs and $[walk]§ upright at a bodysize of around '+this.sizeString(1)+'.');}},{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("BaseBiped",this);}},{key:"descShort",get:function get(){return this.desc;}},{key:"desc",get:function get(){return'';}}],[{key:"fromJSON",value:function fromJSON(value){return window.storage.Generic_fromJSON(BaseBiped,value.data);}}]);return BaseBiped;}(BodyPart);var BaseHumanoid=/*#__PURE__*/function(_BaseBiped){_inherits(BaseHumanoid,_BaseBiped);var _super11=_createSuper(BaseHumanoid);function BaseHumanoid(){var _this10;_classCallCheck(this,BaseHumanoid);_this10=_super11.call(this);_this10.id=_this10.name='BaseHumanoid';_this10.data={femininity:0.2,maxGrowth:1.8,growth:1};return _this10;}_createClass(BaseHumanoid,[{key:"descLong",value:function descLong(fconv){return fconv('$[My]$ body is that of an human, around '+this.sizeString(1)+' in size.');}},{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("BaseHumanoid",this);}}],[{key:"fromJSON",value:function fromJSON(value){return window.storage.Generic_fromJSON(BaseHumanoid,value.data);}}]);return BaseHumanoid;}(BaseBiped);var BaseQuadruped=/*#__PURE__*/function(_BodyPart2){_inherits(BaseQuadruped,_BodyPart2);var _super12=_createSuper(BaseQuadruped);function BaseQuadruped(){var _this11;_classCallCheck(this,BaseQuadruped);_this11=_super12.call(this,'BaseQuadruped');_this11.data={femininity:0.2,maxGrowth:1.5,growth:1};_this11.addTags(['body']);_this11.slotUse=['bBase'];return _this11;}_createClass(BaseQuadruped,[{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("BaseQuadruped",this);}},{key:"descLong",value:function descLong(fconv){return fconv('$[I]$ $[am]$ walking on 4 legs like a feral animal.');}},{key:"descShort",get:function get(){return this.desc;}},{key:"desc",get:function get(){return'';}}],[{key:"fromJSON",value:function fromJSON(value){return window.storage.Generic_fromJSON(BaseQuadruped,value.data);}}]);return BaseQuadruped;}(BodyPart);var BaseWorm=/*#__PURE__*/function(_BodyPart3){_inherits(BaseWorm,_BodyPart3);var _super13=_createSuper(BaseWorm);function BaseWorm(){var _this12;_classCallCheck(this,BaseWorm);_this12=_super13.call(this,'BaseWorm');_this12.data={femininity:0.2,maxGrowth:0.3,growth:1};_this12.addTags(['body']);_this12.slotUse=['bBase'];return _this12;}_createClass(BaseWorm,[{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("BaseWorm",this);}},{key:"descLong",value:function descLong(fconv){return fconv('$[I]$ $[am]$ wriggling around like a snake.');}},{key:"descShort",get:function get(){return this.desc;}},{key:"desc",get:function get(){return'';}}],[{key:"fromJSON",value:function fromJSON(value){return window.storage.Generic_fromJSON(BaseWorm,value.data);}}]);return BaseWorm;}(BodyPart);var BaseInsect=/*#__PURE__*/function(_BodyPart4){_inherits(BaseInsect,_BodyPart4);var _super14=_createSuper(BaseInsect);function BaseInsect(){var _this13;_classCallCheck(this,BaseInsect);_this13=_super14.call(this,'BaseInsect');_this13.data={femininity:0.2,maxGrowth:0.3,growth:1};_this13.addTags(['body']);_this13.slotUse=['bBase'];return _this13;}_createClass(BaseInsect,[{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("BaseInsect",this);}},{key:"descLong",value:function descLong(fconv){return fconv('$[My]$ body is like that of an insect.');}},{key:"descShort",get:function get(){return this.desc;}},{key:"desc",get:function get(){return'';}}],[{key:"fromJSON",value:function fromJSON(value){return window.storage.Generic_fromJSON(BaseInsect,value.data);}}]);return BaseInsect;}(BodyPart);var HeadHairHuman=/*#__PURE__*/function(_BodyPart5){_inherits(HeadHairHuman,_BodyPart5);var _super15=_createSuper(HeadHairHuman);_createClass(HeadHairHuman,null,[{key:"dataPrototype",value:function dataPrototype(){return{growth:0.05,maxGrowth:0.3,style:'smooth'};//length relative to bBase
-}},{key:"factory",value:function factory(id){var obj=new HeadHairHuman();obj.setStyle(id,"dark brown");return obj;}}]);function HeadHairHuman(){var _this14;_classCallCheck(this,HeadHairHuman);_this14=_super15.call(this,'HeadHairHuman');_this14.addTags(['body']);_this14.slotUse=['bHeadHair'];_this14.data=HeadHairHuman.dataPrototype();return _this14;}_createClass(HeadHairHuman,[{key:"setStyle",value:function setStyle(id){var color=arguments.length>1&&arguments[1]!==undefined?arguments[1]:'dark grey';this.data.style=id;this.data.color=color;switch(id){case'smooth':case'wavy':case'shaggy':case'curled':break;default:throw new Error("unknown Hair-style "+id);}}},{key:"getStyle",value:function getStyle(){return this.data.style;}},{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("HeadHairHuman",this);}},{key:"descLong",value:function descLong(fconv){return fconv('$[I]$ have '+this.data.color+', '+this.data.style+' hair that is around '+this.sizeString(this.data.growth*this.data.maxGrowth)+' long.');}},{key:"descShort",get:function get(){return'human hair';}},{key:"desc",get:function get(){return this.data.style+' hair';}}],[{key:"fromJSON",value:function fromJSON(value){return window.storage.Generic_fromJSON(HeadHairHuman,value.data);}}]);return HeadHairHuman;}(BodyPart);var FaceHuman=/*#__PURE__*/function(_BodyPart6){_inherits(FaceHuman,_BodyPart6);var _super16=_createSuper(FaceHuman);_createClass(FaceHuman,null,[{key:"dataPrototype",value:function dataPrototype(){return{femininity:0.2,style:'human'};//1 = full female 0= male
+}},{key:"factory",value:function factory(id){var obj=new HeadHairHuman();obj.setStyle(id,"dark brown");return obj;}}]);function HeadHairHuman(){var _this14;_classCallCheck(this,HeadHairHuman);_this14=_super15.call(this,'HeadHairHuman');_this14.addTags(['body']);_this14.slotUse=['bHeadHair'];_this14.data=HeadHairHuman.dataPrototype();return _this14;}_createClass(HeadHairHuman,[{key:"setStyle",value:function setStyle(id){var color=arguments.length>1&&arguments[1]!==undefined?arguments[1]:'dark grey';this.data.style=id;this.data.color=color;switch(id){case'smooth':case'wavy':case'shaggy':case'curled':break;default:throw new Error("unknown Hair-style "+id);}}},{key:"getStyle",value:function getStyle(){return this.data.style;}},{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("HeadHairHuman",this);}},{key:"descLong",value:function descLong(fconv){return fconv('$[You]$ $[have]$ '+this.data.color+', '+this.data.style+' hair that is around '+this.sizeString(this.data.growth*this.data.maxGrowth)+' long.');}},{key:"descShort",get:function get(){return'human hair';}},{key:"desc",get:function get(){return this.data.style+' hair';}}],[{key:"fromJSON",value:function fromJSON(value){return window.storage.Generic_fromJSON(HeadHairHuman,value.data);}}]);return HeadHairHuman;}(BodyPart);var FaceHuman=/*#__PURE__*/function(_BodyPart6){_inherits(FaceHuman,_BodyPart6);var _super16=_createSuper(FaceHuman);_createClass(FaceHuman,null,[{key:"dataPrototype",value:function dataPrototype(){return{femininity:0.2,style:'human'};//1 = full female 0= male
 }},{key:"factory",value:function factory(id){var obj=new FaceHuman();obj.setStyle(id);return obj;}}]);function FaceHuman(){var _this15;_classCallCheck(this,FaceHuman);_this15=_super16.call(this,'FaceHuman');_this15.addTags(['body']);_this15.slotUse=['bFace','bMouth'];_this15.data=FaceHuman.dataPrototype();return _this15;}_createClass(FaceHuman,[{key:"setStyle",value:function setStyle(id){this.data.style=id;switch(id){case'human':break;case'elve':break;default:throw new Error("unknown Face-style "+id);}}},{key:"getStyle",value:function getStyle(){return this.data.style;}},{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("FaceHuman",this);}},{key:"descLong",value:function descLong(fconv){return fconv('$[My]$ face ressembles that of a human.');}},{key:"descShort",get:function get(){return'human face';}},{key:"desc",get:function get(){return'hominid face';}}],[{key:"fromJSON",value:function fromJSON(value){return window.storage.Generic_fromJSON(FaceHuman,value.data);}}]);return FaceHuman;}(BodyPart);var FaceWolf=/*#__PURE__*/function(_BodyPart7){_inherits(FaceWolf,_BodyPart7);var _super17=_createSuper(FaceWolf);_createClass(FaceWolf,null,[{key:"dataPrototype",value:function dataPrototype(){return{style:'wolf',femininity:0.2};}},{key:"factory",value:function factory(id){var obj=new FaceWolf();obj.setStyle(id);return obj;}}]);function FaceWolf(){var _this16;_classCallCheck(this,FaceWolf);_this16=_super17.call(this,'FaceWolf');_this16.addTags(['body']);_this16.slotUse=['bFace','bMouth'];//todo separate mouth-bodypart??
 _this16.data=FaceWolf.dataPrototype();return _this16;}_createClass(FaceWolf,[{key:"setStyle",value:function setStyle(id){this.data.style=id;switch(id){case'cat':case'dog':case'fox':case'wolf':case'lizard':break;case'horse':break;default:throw new Error("unknown Face-style "+id);}}},{key:"getStyle",value:function getStyle(){return this.data.style;}},{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("FaceWolf",this);}},{key:"onEquip",value:function onEquip(context){var old=context.parent.Skills.countItem(SkillBite.name);if(old>0)context.parent.Skills.removeItem(SkillBite.name,old);context.parent.Skills.addItem(new SkillBite());return{OK:true,msg:'shifted'};}},{key:"onUnequip",value:function onUnequip(){var old=this.parent.parent.Skills.countItem(SkillBite.name);if(old>0)this.parent.parent.Skills.removeItem(SkillBite.name,old);return{OK:true,msg:'shifted'};}},{key:"descLong",value:function descLong(fconv){return fconv('$[I]$ $[have]$ a muzzle like a '+this.data.style+'.');}},{key:"attackMod",value:function attackMod(target){var mod=new SkillMod();mod.onHit=[{target:target,eff:[effDamage.factory(11,'slash')]}];//bite damage
 return mod;}},{key:"descShort",get:function get(){return this.desc;}},{key:"desc",get:function get(){return this.data.style+'\'like face.';}}],[{key:"fromJSON",value:function fromJSON(value){return window.storage.Generic_fromJSON(FaceWolf,value.data);}}]);return FaceWolf;}(BodyPart);var FaceHorse=/*#__PURE__*/function(_BodyPart8){_inherits(FaceHorse,_BodyPart8);var _super18=_createSuper(FaceHorse);_createClass(FaceHorse,null,[{key:"dataPrototype",value:function dataPrototype(){return{femininity:0.2,style:'horse'};}},{key:"factory",value:function factory(id){return new FaceHorse();}}]);function FaceHorse(){var _this17;_classCallCheck(this,FaceHorse);_this17=_super18.call(this,'FaceHorse');_this17.addTags(['body']);_this17.slotUse=['bFace','bMouth'];_this17.data=FaceHorse.dataPrototype();return _this17;}_createClass(FaceHorse,[{key:"setStyle",value:function setStyle(id){this.data.style=id;switch(id){case'bunny':case'horse':break;case'deer':break;default:throw new Error("unknown Face-style "+id);}}},{key:"getStyle",value:function getStyle(){return this.data.style;}},{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("FaceHorse",this);}},{key:"descLong",value:function descLong(fconv){return fconv('$[I]$ $[have]$ a muzzle like a '+this.data.style);}},{key:"descShort",get:function get(){return this.data.style+' muzzle';}},{key:"desc",get:function get(){return this.descShort;}}],[{key:"fromJSON",value:function fromJSON(value){return window.storage.Generic_fromJSON(FaceHorse,value.data);}}]);return FaceHorse;}(BodyPart);var FaceLeech=/*#__PURE__*/function(_BodyPart9){_inherits(FaceLeech,_BodyPart9);var _super19=_createSuper(FaceLeech);_createClass(FaceLeech,null,[{key:"dataPrototype",value:function dataPrototype(){return{style:'leech'};}},{key:"factory",value:function factory(id){var obj=new FaceLeech();obj.setStyle(id);return obj;}}]);function FaceLeech(){var _this18;_classCallCheck(this,FaceLeech);_this18=_super19.call(this,'FaceLeech');_this18.addTags(['body']);_this18.slotUse=['bFace','bMouth'];_this18.data=FaceLeech.dataPrototype();return _this18;}_createClass(FaceLeech,[{key:"setStyle",value:function setStyle(id){this.data.style=id;switch(id){case'slug':break;case'leech':break;default:throw new Error("unknown Face-style "+id);}}},{key:"getStyle",value:function getStyle(){return this.data.style;}},{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("FaceLeech",this);}},{key:"onEquip",value:function onEquip(context){var old=context.parent.Skills.countItem(SkillBite.name);if(old>0)context.parent.Skills.removeItem(SkillBite.name,old);context.parent.Skills.addItem(new SkillBite());return{OK:true,msg:'shifted'};}},{key:"onUnequip",value:function onUnequip(){var old=this.parent.parent.Skills.countItem(SkillBite.name);if(old>0)this.parent.parent.Skills.removeItem(SkillBite.name,old);return{OK:true,msg:'shifted'};}},{key:"descLong",value:function descLong(fconv){return fconv('$[I]$ $[have]$ a mouth like a '+this.data.style+'.');}},{key:"attackMod",value:function attackMod(target){var mod=new SkillMod();if(this.data.style==='slug'){mod.onHit=[{target:target,eff:[effDamage.factory(5,'acid',1,'The slug spits some acid that eats at '+target.name+' armor.')]}];}else{mod.onHit=[{target:target,eff:[effDamage.factory(5,'acid')]}];}return mod;}},{key:"descShort",get:function get(){return this.desc;}},{key:"desc",get:function get(){return this.data.style+'\'like face.';}}],[{key:"fromJSON",value:function fromJSON(value){return window.storage.Generic_fromJSON(FaceLeech,value.data);}}]);return FaceLeech;}(BodyPart);var FaceInsect=/*#__PURE__*/function(_BodyPart10){_inherits(FaceInsect,_BodyPart10);var _super20=_createSuper(FaceInsect);_createClass(FaceInsect,null,[{key:"dataPrototype",value:function dataPrototype(){return{style:'wasp'};}},{key:"factory",value:function factory(id){var obj=new FaceInsect();obj.setStyle(id);return obj;}}]);function FaceInsect(){var _this19;_classCallCheck(this,FaceInsect);_this19=_super20.call(this,'FaceInsect');_this19.addTags(['body']);_this19.slotUse=['bFace','bMouth'];_this19.data=FaceInsect.dataPrototype();return _this19;}_createClass(FaceInsect,[{key:"setStyle",value:function setStyle(id){this.data.style=id;switch(id){case'wasp':break;case'bug':break;case'spider':break;default:throw new Error("unknown Face-style "+id);}}},{key:"getStyle",value:function getStyle(){return this.data.style;}},{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("FaceInsect",this);}},{key:"onEquip",value:function onEquip(context){var old=context.parent.Skills.countItem(SkillBite.name);if(old>0)context.parent.Skills.removeItem(SkillBite.name,old);context.parent.Skills.addItem(new SkillBite());return{OK:true,msg:'shifted'};}},{key:"onUnequip",value:function onUnequip(){var old=this.parent.parent.Skills.countItem(SkillBite.name);if(old>0)this.parent.parent.Skills.removeItem(SkillBite.name,old);return{OK:true,msg:'shifted'};}},{key:"descLong",value:function descLong(fconv){return fconv('$[I]$ $[have]$ mandibles like a '+this.data.style+'.');}},{key:"attackMod",value:function attackMod(target){var mod=new SkillMod();mod.onHit=[{target:target,eff:[effDamage.factory(5,'blunt')]}];return mod;}},{key:"descShort",get:function get(){return this.desc;}},{key:"desc",get:function get(){return this.data.style+'\'like face.';}}],[{key:"fromJSON",value:function fromJSON(value){return window.storage.Generic_fromJSON(FaceInsect,value.data);}}]);return FaceInsect;}(BodyPart);var FaceBird=/*#__PURE__*/function(_BodyPart11){_inherits(FaceBird,_BodyPart11);var _super21=_createSuper(FaceBird);_createClass(FaceBird,null,[{key:"dataPrototype",value:function dataPrototype(){return{style:'hawk'};}},{key:"factory",value:function factory(id){var obj=new FaceBird();obj.setStyle(id);return obj;}}]);function FaceBird(){var _this20;_classCallCheck(this,FaceBird);_this20=_super21.call(this,'FaceBird');_this20.addTags(['body']);_this20.slotUse=['bFace','bMouth'];_this20.data=FaceBird.dataPrototype();return _this20;}_createClass(FaceBird,[{key:"setStyle",value:function setStyle(id){this.data.style=id;switch(id){case'wasp':break;case'bug':break;default:throw new Error("unknown Face-style "+id);}}},{key:"getStyle",value:function getStyle(){return this.data.style;}},{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("FaceBird",this);}},{key:"onEquip",value:function onEquip(context){var old=context.parent.Skills.countItem(SkillBite.name);if(old>0)context.parent.Skills.removeItem(SkillBite.name,old);context.parent.Skills.addItem(new SkillBite());return{OK:true,msg:'shifted'};}},{key:"onUnequip",value:function onUnequip(){var old=this.parent.parent.Skills.countItem(SkillBite.name);if(old>0)this.parent.parent.Skills.removeItem(SkillBite.name,old);return{OK:true,msg:'shifted'};}},{key:"descLong",value:function descLong(fconv){return fconv('$[I]$ $[have]$ a beak like a '+this.data.style+'.');}},{key:"attackMod",value:function attackMod(target){var mod=new SkillMod();mod.onHit=[{target:target,eff:[effDamage.factory(5,'blunt')]}];return mod;}},{key:"descShort",get:function get(){return this.desc;}},{key:"desc",get:function get(){return this.data.style+'\'like face.';}}],[{key:"fromJSON",value:function fromJSON(value){return window.storage.Generic_fromJSON(FaceBird,value.data);}}]);return FaceBird;}(BodyPart);/**
@@ -2634,7 +2636,7 @@ bringIron:{tick:'',done:0,cnt:0,min:1},bringSilver:{tick:'',done:0,cnt:0,min:3},
 //,{id:'maidoutfit',tick:'',done:0,cnt:0,min:6}
 //,{id:'ponysuit',tick:'',done:0,cnt:0,min:7}
 //,{id:'bitchsuit',tick:'',done:0,cnt:0,min:9}
-};}return{map:map,data:data};};window.gm.know=function(what){var _n=window.story.state.Know[what];if(_n===null||_n===undefined){window.story.state.Know[what]=1;}};"use strict";window.gm.initGameFlags=function(forceReset){var NGP=arguments.length>1&&arguments[1]!==undefined?arguments[1]:null;var s=window.story.state,map,data;function dataPrototype(){return{visitedTiles:[],mapReveal:[],tmp:{},version:0};}if(forceReset){s.Settings=s.DngSY=null;s.Lab=s.Known=null;}var Settings={showCombatPictures:true,showNSFWPictures:true,showDungeonMap:true};var DngSY={remainingNights:-1,resourceForest:5,//number resource left
+};}return{map:map,data:data};};window.gm.know=function(what){var _n=window.story.state.Know[what];if(_n===null||_n===undefined){window.story.state.Know[what]=1;}};"use strict";window.gm.initGameFlags=function(forceReset){var NGP=arguments.length>1&&arguments[1]!==undefined?arguments[1]:null;var s=window.story.state,map,data;function dataPrototype(){return{visitedTiles:[],mapReveal:[],tmp:{},version:0};}if(forceReset){s.Settings=s.DngSY=null;s.Lab=s.Known=null;}var Settings={autoSave:true,showCombatPictures:true,showNSFWPictures:true,showDungeonMap:true};var DngSY={remainingNights:-1,resourceForest:5,//number resource left
 exploreForest:0,visitedTiles:[],mapReveal:[],dng:'',//current dungeon name
 prevLocation:'',nextLocation:'',//used for nav-logic
 dngMap:{}//dungeon map info
@@ -2672,7 +2674,7 @@ res.OK=true;res.msg="This looks promissing. But some improvements are necessary.
 res.OK=true;res.msg="You expertly craft something.</br>";}else{//learning
 res.OK=true;known[el]=Math.min(known[el]+0.2,1);//todo learnrate
 if(known[el]>=1){res.msg="I mastered this recipe!</br>";}else{res.msg="There is still room for improvement.</br>";}}if(res.OK===true){res.msg+=all[el].result+" was produced.</br>";window.gm.player.Inv.addItem(window.gm.ItemsLib[all[el].result]());break;}}}}catch(err){_iterator92.e(err);}finally{_iterator92.f();}Lab.ingr.forEach(function(v){return window.gm.player.Inv.removeItem(v,1);});Lab.ingr=[];window.gm.brewInit(Lab.mode);window.gm.printOutput(res.msg);};window.gm.qID=window.gm.qID||{};window.gm.questDef=window.gm.questDef||{};{var quest=new Quest("qGarden","Green thumb","");quest.addMileStone(new QuestMilestone(1,"","Find the garden.",QuestMilestone.NOP,QuestMilestone.HIDDEN));quest.addMileStone(new QuestMilestone(100,"","The garden is a mess and you dont have a use for it. So why bother?.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(200,"","Get some tools to clear the garden from the rubble..",QuestMilestone.NOP));window.gm.qID.qGarden=quest.id;window.gm.questDef[quest.id]=quest;quest=new Quest("qBarJob","Serve'em drinks","");quest.addMileStone(new QuestMilestone(1,"","Find the Inn.",QuestMilestone.NOP,QuestMilestone.HIDDEN));quest.addMileStone(new QuestMilestone(100,"","Maybe the owner of the Inn has a job for you?.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(200,"","Earn money by working as a waitress.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(300,"","Work at least 6 shifts between Monday and sunday.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(10000,"","???",QuestMilestone.NOP));window.gm.qID[quest.id]=quest.id;window.gm.questDef[quest.id]=quest;quest=new Quest("qTraderThomas","A Trader to trade","");quest.addMileStone(new QuestMilestone(1,"","Find the Traders house.",QuestMilestone.NOP,QuestMilestone.HIDDEN));quest.addMileStone(new QuestMilestone(100,"","Ask around for the traders absence.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(200,"","Find the lookout point.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(300,"","Report back to the innkeeper.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(500,"","Find the traders carriage on the road to Redwick.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(900,"","Return with Thomas to his store.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(1000,"","NYI",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(10000,"","???",QuestMilestone.NOP));window.gm.qID.qTraderThomas=quest.id;window.gm.questDef[quest.id]=quest;}"use strict";//stuff for ForbiddenIsle
-window.gm.initGameFlags=function(forceReset){var NGP=arguments.length>1&&arguments[1]!==undefined?arguments[1]:null;var s=window.story.state;function dataPrototype(){return{visitedTiles:[],mapReveal:[],tmp:{},version:0};}if(forceReset){s.NGP=s.Settings=s.DngSY=null;s.Lab=s.Known=null;}var Settings={showCombatPictures:true,showNSFWPictures:true,showDungeonMap:true};var DngSY={remainingNights:-1,resourceForest:{wood:5,fruit:5},//number resource left
+window.gm.initGameFlags=function(forceReset){var NGP=arguments.length>1&&arguments[1]!==undefined?arguments[1]:null;var s=window.story.state;function dataPrototype(){return{visitedTiles:[],mapReveal:[],tmp:{},version:0};}if(forceReset){s.NGP=s.Settings=s.DngSY=null;s.Lab=s.Known=null;}var Settings={autoSave:true,showCombatPictures:true,showNSFWPictures:true,showDungeonMap:true};var DngSY={remainingNights:-1,resourceForest:{wood:5,fruit:5},//number resource left
 exploreForest:0,exploreHill:0,exploreBeach:0,campUpgrade:{},//see Data.ods
 talkEric:{},visitedTiles:[],mapReveal:[],dng:'',//current dungeon name
 prevLocation:'',nextLocation:'',//used for nav-logic
@@ -2738,8 +2740,9 @@ this.data.duration=0;}/*this.parent.parent.Stats.increment('energy',10*delta/60)
 return function(me){return function(Effects){Effects.removeItem(me.data.id);};}(this);}}return null;}},{key:"__trgMutation",value:function __trgMutation(){var _i=this.parent.findItemSlot(effMutateHorse.name);if(_i===-1){//todo extend if exist?
 this.parent.parent.addEffect(new effMutateHorse(),effMutateHorse.name);}}},{key:"onApply",value:function onApply(){this.data.duration=120;this.data.time=window.gm.getTime();if(this.data.id='effBrownPill'){this.parent.parent.Stats.addModifier('arm_poison',{id:'arm_poison:'+this.data.name,bonus:25});}}},{key:"onRemove",value:function onRemove(){if(this.data.id='effBrownPill'){this.parent.parent.Stats.addModifier('arm_poison',{id:'arm_poison:'+this.data.name,bonus:25});}this.parent.parent.Stats.addModifier('rst_pierce',{id:'rst_pierce:'+this.data.name,bonus:25});}},{key:"merge",value:function merge(neweffect){if(neweffect.id===this.data.id){this.onApply();//refresh 
 this.data.magnitude+=1;//bonus effect triggers only if added multiple times
-return true;}}},{key:"desc",get:function get(){return this.data.name;}}],[{key:"fromJSON",value:function fromJSON(value){return window.storage.Generic_fromJSON(effFoodEffect,value.data);}}]);return effFoodEffect;}(Effect);var Food=/*#__PURE__*/function(_Item2){_inherits(Food,_Item2);var _super55=_createSuper(Food);function Food(){var _this53;_classCallCheck(this,Food);_this53=_super55.call(this,'Food');_this53.addTags([window.gm.ItemTags.Food]);_this53.price=_this53.basePrice=15;_this53.style=0;return _this53;}_createClass(Food,[{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("Food",this);}},{key:"usable",value:function usable(context){var on=arguments.length>1&&arguments[1]!==undefined?arguments[1]:null;return{OK:true,msg:'eat'};}},{key:"use",value:function use(context){var on=arguments.length>1&&arguments[1]!==undefined?arguments[1]:null;var _txt='';if(context instanceof Inventory){if(on===null)on=context.parent;context.removeItem(this.id);if(on instanceof Character){//on.addEffect(effPillEffect.factory(this.id));
-on.Stats.increment("satiation",this.satiation*(1+window.story.state.NGP.increasedSatiation)),on.Stats.increment("energy",this.energy);on.Effects.get(effMutator.name).addMutator(this.id);_txt=on.name+' ate something. ';return{OK:true,msg:_txt};}}else throw new Error('context is invalid');}},{key:"style",set:function set(style){this._style=style;this.satiation=10,this.energy=20;if(style===0)this.id=this.name='SnackBar',this.satiation=30,this.energy=50;else if(style===20)this.id=this.name='BellPepper';else if(style===30)this.id=this.name='StraightBanana';else if(style===40)this.id=this.name='SquishyMelon';else if(style===50)this.id=this.name='JuicyPeach';else if(style===60)this.id=this.name='SmellyPear';else if(style===70)this.id=this.name='HairyKiwi';else if(style===80)this.id=this.name='BreadFruit';else if(style===100)this.id=this.name='Oyster';//https://en.wikipedia.org/wiki/List_of_types_of_seafood
+return true;}}},{key:"desc",get:function get(){return this.data.name;}}],[{key:"fromJSON",value:function fromJSON(value){return window.storage.Generic_fromJSON(effFoodEffect,value.data);}}]);return effFoodEffect;}(Effect);var Food=/*#__PURE__*/function(_Item2){_inherits(Food,_Item2);var _super55=_createSuper(Food);function Food(){var _this53;_classCallCheck(this,Food);_this53=_super55.call(this,'Food');_this53.addTags([window.gm.ItemTags.Food]);_this53.price=_this53.basePrice=15;_this53.style=0;return _this53;}_createClass(Food,[{key:"toJSON",value:function toJSON(){return window.storage.Generic_toJSON("Food",this);}},{key:"usable",value:function usable(context){var on=arguments.length>1&&arguments[1]!==undefined?arguments[1]:null;return{OK:true,msg:'eat'};}},{key:"use",value:function use(context){var on=arguments.length>1&&arguments[1]!==undefined?arguments[1]:null;var _txt='';if(context instanceof Inventory){if(on===null)on=context.parent;context.removeItem(this.id);if(on instanceof Character){//on.addEffect(effFoodEffect.factory(this.id));
+on.Stats.increment("satiation",this.satiation*(1+window.story.state.NGP.increasedSatiation)),//todo oversatiation
+on.Stats.increment("energy",this.energy);if(this._style>0&&this.parent.parent.Stats.get("arousalRegen").base<1)this.parent.parent.Stats.increment("arousalRegen",0.3);on.Effects.get(effMutator.name).addMutator(this.id);_txt=on.name+' ate something. ';return{OK:true,msg:_txt};}}else throw new Error('context is invalid');}},{key:"style",set:function set(style){this._style=style;this.satiation=25,this.energy=20;if(style===0)this.id=this.name='SnackBar',this.satiation=40,this.energy=50;else if(style===20)this.id=this.name='BellPepper';else if(style===30)this.id=this.name='StraightBanana';else if(style===40)this.id=this.name='SquishyMelon';else if(style===50)this.id=this.name='JuicyPeach';else if(style===60)this.id=this.name='SmellyPear';else if(style===70)this.id=this.name='HairyKiwi';else if(style===80)this.id=this.name='BreadFruit';else if(style===100)this.id=this.name='Oyster';//https://en.wikipedia.org/wiki/List_of_types_of_seafood
 else if(style===110)this.id=this.name='Loco';else if(style===120)this.id=this.name='Sepia';else if(style===200)this.id=this.name='SeaGrapes';//https://en.wikipedia.org/wiki/Edible_seaweed
 else if(style===210)this.id=this.name='SeaLettuce';else if(style===220)this.id=this.name='RawFish';else if(style===230)this.id=this.name='RoastedFish';//Cocoabean PewPepper Zwiebel
 //scrub
@@ -3648,7 +3651,7 @@ window.storage.registerConstructor(Stat);window.storage.registerConstructor(stHe
 window.storage.registerConstructor(effCallHelp);window.storage.registerConstructor(effCombatRecovery);window.storage.registerConstructor(effDamage);window.storage.registerConstructor(effDetermined);window.storage.registerConstructor(effHunger);window.storage.registerConstructor(effLibido);window.storage.registerConstructor(effSanity);window.storage.registerConstructor(effFlying);window.storage.registerConstructor(effBleed);window.storage.registerConstructor(effCombined);window.storage.registerConstructor(effFairyLight);window.storage.registerConstructor(effGrappled);window.storage.registerConstructor(effGrappling);window.storage.registerConstructor(effUngrappling);window.storage.registerConstructor(effEnergized);window.storage.registerConstructor(effNotTired);window.storage.registerConstructor(effPillEffect);window.storage.registerConstructor(effTeaseDamage);window.storage.registerConstructor(effTired);window.storage.registerConstructor(effStunned);window.storage.registerConstructor(effTransformSelf);window.storage.registerConstructor(effGuard);window.storage.registerConstructor(effHeal);window.storage.registerConstructor(effMasochist);window.storage.registerConstructor(effEnergyDrain);window.storage.registerConstructor(effHorsePower);window.storage.registerConstructor(effLapineSpeed);window.storage.registerConstructor(effMutateBunny);window.storage.registerConstructor(effMutateHorse);window.storage.registerConstructor(effMutateWolf);window.storage.registerConstructor(effMutateCat);window.storage.registerConstructor(effMutateHuman);window.storage.registerConstructor(effGrowBreast);window.storage.registerConstructor(effGrowVulva);window.storage.registerConstructor(effLewdMark);window.storage.registerConstructor(effInHeat);window.storage.registerConstructor(effInRut);window.storage.registerConstructor(effSpermDecay);window.storage.registerConstructor(effButtPlugged);window.storage.registerConstructor(effVaginalFertil);window.storage.registerConstructor(effVaginalPregnant);//non-combat skills
 window.storage.registerConstructor(Ability);StatsLib.Ability=Ability;return StatsLib;}(window.gm.StatsLib||{});
 /* twine-user-script #2: "Story JavaScript" */
-</script><tw-tag name="_nosave_" color="yellow"></tw-tag><tw-tag name="_nodeffered_" color="yellow"></tw-tag><tw-tag name="_isdeffered_" color="brown"></tw-tag><tw-tag name="_noshortkey_" color="brown"></tw-tag><tw-tag name="template" color="orange"></tw-tag><tw-tag name="_back_" color="gray"></tw-tag><tw-passagedata pid="1" name="EncounterStartTurn" tags="_nosave_" position="650,25" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;) %&gt;
+</script><tw-tag name="template" color="orange"></tw-tag><tw-tag name="_back_" color="gray"></tw-tag><tw-tag name="_nosave_" color="yellow"></tw-tag><tw-tag name="_nodeffered_" color="yellow"></tw-tag><tw-tag name="_isdeffered_" color="brown"></tw-tag><tw-tag name="_noshortkey_" color="brown"></tw-tag><tw-passagedata pid="1" name="EncounterStartTurn" tags="_nosave_" position="650,25" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;) %&gt;
 &lt;div id=&#39;canvas&#39;&gt;&lt;/div&gt;&lt;/br&gt;
 &lt;div id=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/br&gt; &lt;!--filled by statspanel--&gt;
 &lt;div id=&#39;output&#39;&gt;&lt;/div&gt;&lt;/br&gt;    &lt;!--message is rendered here--&gt;
@@ -3677,9 +3680,9 @@ Which was very difficult since you are far to large - you know?&lt;/br&gt;
     let msg=&quot;&quot;,x=window.gm.player.Stats.get(&quot;satiation&quot;).value,a=window.gm.player.Stats.get(&quot;arousal&quot;).value;
     if(x&gt;70){
         msg=&quot;You are not thirsty/hungry&quot;;
-    } else if(x&gt;50) {
+    } else if(x&gt;40) {
         msg=&quot;You are getting thirsty/hungry&quot;;
-    } else if(x&gt;30) {
+    } else if(x&gt;25) {
         msg=&quot;You are really thirsty/hungry&quot;;
     } else if(x&gt;10) {
         msg=&quot;&lt;b&gt;You are starving. Did you look around if there is something edidable?&lt;/b&gt;&quot;;
@@ -3689,22 +3692,23 @@ Which was very difficult since you are far to large - you know?&lt;/br&gt;
     if(a&gt;80) {
         msg+=&quot;&lt;b&gt;You couldnt resist a good fuck right now.&lt;/b&gt;&quot;;
     } else if(a&gt;40) {
-        msg+=&quot;&lt;b&gt;You are flush with arousal.&lt;/b&gt;&quot;;
+        msg+=&quot;&lt;b&gt;You are flush with arousal.&quot;+(window.gm.player.Stats.get(&quot;arousalRegen&quot;).value&gt;0)?&quot;And it might not dimish soon.&quot;:&quot;&quot;+&quot;&lt;/b&gt;&quot;;
     } else if(a&gt;25) {
         msg=&quot;&lt;b&gt;You are horny.&lt;/b&gt;&quot;;
     }
     return(msg);
 }
 window.gm.printOutput(needs(),&#39;#needs&#39;);
-&lt;/script&gt;</tw-passagedata><tw-passagedata pid="7" name="FI_ChooseActivity" tags="" position="850,100" size="100,100">&lt;%if(window.passage.name==&quot;FI_BeachForest&quot;){%&gt;
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="7" name="FI_ChooseActivity" tags="" position="850,100" size="100,100">&lt;%if(window.passage.name===&quot;FI_BeachForest&quot;){%&gt;
     &lt;%=window.gm.printGoto(&#39;FI_ForestWalk&#39;,{time:60,energy:-5},&#39;Explore the closer area.&#39;)%&gt;&lt;/br&gt;
     &lt;%=(s.DngSY.exploreForest&gt;=2)?window.gm.printGoto(&#39;FI_ScavengeFruit&#39;,{time:30*(1+2*s.NGP.xForestFood),energy:-5*(1+2*s.NGP.xForestFood)},&#39;Pick some fruits that are in your hands reach.&#39;):&#39;&#39;%&gt;&lt;/br&gt;
     &lt;%=(s.DngSY.exploreForest&gt;=1)?window.gm.printGoto(&#39;FI_ScavengeWood&#39;,{time:30,energy:-10},&#39;Look around for some firewood&#39;):&#39;&#39;%&gt;&lt;/br&gt;
     &lt;%=(s.DngSY.exploreForest&gt;=4)?window.gm.printGoto(&#39;FI_ShakeTree&#39;,{time:30,energy:-20},&#39;Shake a tree&#39;):&#39;&#39;%&gt;&lt;/br&gt;
-&lt;%}%&gt;
-&lt;%if(window.passage.name==&quot;FI_BeachForest&quot;){%&gt;
     [[explore western direction (toward beach)]]&lt;/br&gt;
     [[explore northern direction (dense forest and mountains)]]&lt;/br&gt;
+&lt;%}%&gt;
+&lt;%if([&quot;FI_BeachForest&quot;,&quot;FI_BeachNorth&quot;].includes(window.passage.name) &amp;&amp; window.gm.player.Stats.get(&quot;arousal&quot;).value&gt;30){%&gt;
+    &lt;%=window.gm.printGoto(&#39;FI_BeachMasturbate&#39;,{time:30,energy:-10},&#39;Masturbation&#39;)%&gt;&lt;/br&gt;
 &lt;%}%&gt;</tw-passagedata><tw-passagedata pid="8" name="FI_NGPShop" tags="" position="975,100" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;&lt;/br&gt;&lt;%window.gm.player.location=window.passage.name;%&gt;
 &lt;h2&gt;New game plus&lt;/h2&gt;
 This is the New-Game-Plus Screen where you can configure your next play through.&lt;/br&gt;
@@ -3954,7 +3958,7 @@ function clearview(){
     &lt;button id=&quot;close-dialog&quot;&gt;Back&lt;/button&gt; &lt;div&gt;&lt;%=(window.story.state._gm.nosave?&quot;save disabled in this scene&quot;:&quot;&quot;)%&gt;&lt;/div&gt;
     &lt;form&gt;
     &lt;label&gt;&lt;output&gt;&lt;/output&gt;&lt;/label&gt;&lt;/br&gt;
-    &lt;button type=&quot;button&quot; id=&quot;saveAuto&quot; hidden&gt; &lt;/button&gt;&lt;button type=&quot;button&quot; id=&quot;loadAuto&quot;&gt;load Auto&lt;/button&gt;
+    &lt;button type=&quot;button&quot; id=&quot;saveAuto&quot; hidden&gt;save Auto&lt;/button&gt;&lt;button type=&quot;button&quot; id=&quot;loadAuto&quot;&gt;load Auto&lt;/button&gt;
     &lt;button type=&quot;button&quot; id=&quot;deleteAuto&quot;&gt;delete Auto&lt;/button&gt;&lt;label&gt;&lt;outputAuto&gt;&lt;/outputAuto&gt;&lt;/label&gt;&lt;/br&gt;
     &lt;button type=&quot;button&quot; id=&quot;save1&quot; &lt;%=(window.story.state._gm.nosave?&quot;disabled&quot;:&quot;&quot;)%&gt;&gt;save 1&lt;/button&gt;&lt;button type=&quot;button&quot; id=&quot;load1&quot;&gt;load 1&lt;/button&gt;
     &lt;button type=&quot;button&quot; id=&quot;delete1&quot;&gt;delete 1&lt;/button&gt;&lt;label&gt;&lt;output1&gt;&lt;/output1&gt;&lt;/label&gt;&lt;/br&gt;
@@ -4071,7 +4075,9 @@ for(var i=0;i&lt;_ids.length;i++){window.gm.printEquipment(whom,whom.Outfit.getI
 &lt;p class=&quot;author&quot;&gt;settings are stored in save-game until I find a way to store them in cookies.&lt;/p&gt;
 Theme:
 &lt;a href=&quot;javascript:window.styleSwitcher.setStyle(&#39;light&#39;);window.gm.refreshAllPanel();&quot;&gt;light&lt;/a&gt;
-&lt;a href=&quot;javascript:window.styleSwitcher.setStyle(&#39;dark&#39;);window.gm.refreshAllPanel();&quot;&gt;dark&lt;/a&gt;&lt;/br&gt;
+&lt;a href=&quot;javascript:window.styleSwitcher.setStyle(&#39;dark&#39;);window.gm.refreshAllPanel();&quot;&gt;dark&lt;/a&gt;&lt;hr&gt;&lt;/br&gt;
+auto save: &lt;input type=&quot;checkbox&quot; id=&#39;autoSave&#39; onclick=&#39;toggleSetting(this);&#39; name=&quot;autoSave&quot; value=&quot;x&quot;&gt; &lt;/br&gt;
+&lt;hr&gt;
 show Lewd pictures: &lt;input type=&quot;checkbox&quot; id=&#39;showNSFWPictures&#39; onclick=&#39;toggleSetting(this);&#39; name=&quot;showNSFWPictures&quot; value=&quot;x&quot;&gt; (If false, lewd graphics are not shown/replaced with SFW.)&lt;/br&gt;
 show dungeon map: &lt;input type=&quot;checkbox&quot; id=&#39;showDungeonMap&#39; onclick=&#39;toggleSetting(this);&#39; name=&quot;showDungeonMap&quot; value=&quot;x&quot;&gt; (If false, the dungeon map is not rendered.)&lt;/br&gt;
 show Combat-pictures: &lt;input type=&quot;checkbox&quot; id=&#39;showCombatPictures&#39; onclick=&#39;toggleSetting(this);&#39; name=&quot;showCombatPictures&quot; value=&quot;x&quot;&gt; (Some graphics are large and take time to render, thus slowing down combat.)&lt;/br&gt;
@@ -4090,7 +4096,7 @@ function toggleSetting(elmt) {
   let toggle=window.story.state.Settings[elmt.id]=!window.story.state.Settings[elmt.id];
   elmt.checked=toggle;
 }
-[&#39;showNSFWPictures&#39;,&#39;showDungeonMap&#39;,&#39;showCombatPictures&#39;].forEach(x=&gt;(document.querySelector(&quot;#&quot;+x).checked=window.story.state.Settings[x]));
+[&#39;showNSFWPictures&#39;,&#39;showDungeonMap&#39;,&#39;showCombatPictures&#39;,&#39;autoSave&#39;].forEach(x=&gt;(document.querySelector(&quot;#&quot;+x).checked=window.story.state.Settings[x]));
 &lt;/script&gt;</tw-passagedata><tw-passagedata pid="21" name="Settings2" tags="_back_" position="100,350" size="100,100">&lt;!--just test--&gt;
 &lt;section&gt;&lt;!--&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;--&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;) %&gt;
 &lt;div&gt;&lt;canvas id=&quot;exampleCanvas&quot; width=&quot;240&quot; height=&quot;225&quot;&gt;Your browser doesn&#39;t support the canvas tag.    &lt;/canvas&gt;&lt;/div&gt;
@@ -4111,14 +4117,15 @@ img.src = imgsrc;//&#39;https://twinery.org/homepage/img/logo.svg&#39;;   //todo
 &lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="22" name="Status" tags="_back_" position="225,350" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;) %&gt;
 &lt;%let char=window.gm.player;%&gt;
 Status of &lt;%=char.name%&gt;:   [[Back|_back_]]&lt;/br&gt;
-&lt;a0 onclick=&#39;window.gm.printOutput(window.gm.printEffectSummary(&quot;&lt;%=char.id%&gt;&quot;,true,false,false));&#39;&gt;Stats&lt;/a&gt;
-&lt;a0 onclick=&#39;window.gm.printOutput(window.gm.printEffectSummary(&quot;&lt;%=char.id%&gt;&quot;,false,false,true));&#39;&gt;Resistance&lt;/a&gt;
-&lt;a0 onclick=&#39;window.gm.printOutput(window.gm.printEffectSummary(&quot;&lt;%=char.id%&gt;&quot;,false,true,false));&#39;&gt;Fetish&lt;/a&gt;
+&lt;a0 onclick=&#39;window.gm.printOutput(window.gm.printEffectSummary(&quot;&lt;%=char.id%&gt;&quot;,{showstats:true}));&#39;&gt;Stats&lt;/a&gt;
+&lt;a0 onclick=&#39;window.gm.printOutput(window.gm.printEffectSummary(&quot;&lt;%=char.id%&gt;&quot;,{showresistance:true}));&#39;&gt;Resistance&lt;/a&gt;
+&lt;a0 onclick=&#39;window.gm.printOutput(window.gm.printEffectSummary(&quot;&lt;%=char.id%&gt;&quot;,{showskill:true}));&#39;&gt;Skills&lt;/a&gt;
+&lt;a0 onclick=&#39;window.gm.printOutput(window.gm.printEffectSummary(&quot;&lt;%=char.id%&gt;&quot;,{showfetish:true}));&#39;&gt;Fetish&lt;/a&gt;
 &lt;/br&gt;&lt;div id=&#39;output&#39;&gt;&lt;/div&gt;&lt;/br&gt;   &lt;!--message is rendered here--&gt;
 [[Back|_back_]]&lt;/br&gt;
 &lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;
 &lt;script&gt;
-window.gm.printOutput(window.gm.printEffectSummary(window.gm.player.id,true,false));
+window.gm.printOutput(window.gm.printEffectSummary(window.gm.player.id,{showstats:true}));
 &lt;/script&gt;</tw-passagedata><tw-passagedata pid="23" name="Levelup" tags="_back_ _nosave_ _noshortkey_" position="350,350" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;) %&gt;
 [[Back|_back_]]&lt;/br&gt;
 &lt;% let char=window.gm.player;if(char.canLevelUp){%&gt;
@@ -6061,9 +6068,9 @@ I couldn&#39;t take a glimpse at them as I clutched on that cargo drop sailing o
 
 &lt;p class=&quot;tNPC1&quot;&gt;&quot;I also doubt that we are properly outfitted as jungle explorers are we?&lt;/p&gt;
 &lt;p&gt;Guess he is right. You wear some...&lt;/p&gt;
-&lt;div id=&#39;select10&#39; &gt;
+&lt;div id=&#39;select10&#39; &gt; TODO: chooseable start cloths
 &lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select10&quot;,&quot;div#choice10a&quot;)&#39;&gt;bermuda shorts, colorful button up shirt and cheap flip-flops.&lt;/a&gt;&lt;/br&gt;
-&lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select10&quot;,&quot;div#choice10b&quot;)&#39;&gt;ripped denim shorts, orange t-shirt and sports sneakers&lt;/a&gt;
+&lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select10&quot;,&quot;div#choice10b&quot;)&#39; hidden&gt;ripped denim shorts, orange t-shirt and sports sneakers&lt;/a&gt;
 &lt;/div&gt;&lt;div id=&#39;choice10a&#39; hidden&gt;
     &lt;p&gt;You wear some bermuda shorts, a colorful button up shirt and cheap flip-flops.&lt;/p&gt;
     &lt;div id=&#39;select20&#39; &gt;
@@ -6153,7 +6160,7 @@ Tease him and go further...
     &lt;p class=&quot;tPC&quot;&gt;&quot;You don&#39;t have anything edible left with you?&quot;&lt;/p&gt;
     &lt;div id=&#39;select10&#39; &gt;
     &lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select10&quot;,window.gm.util.selRandom([&quot;div#choice10a&quot;,&quot;div#choice10b&quot;]))&#39;&gt;Im so hungry.&lt;/a&gt;&lt;/br&gt;
-    &lt;/div&gt;&lt;div id=&#39;choice10a&#39; hidden&gt;&lt;/br&gt;&lt;p class=&quot;tNPC1&quot;&gt;&quot;I found this Kiwi. Im not that hungry right now and it shouldnt go to waste.&quot;&lt;/p&gt;
+    &lt;/div&gt;&lt;div id=&#39;choice10a&#39; hidden&gt;&lt;/br&gt;&lt;p class=&quot;tNPC1&quot;&gt;&quot;I found this banana. Im not that hungry right now and it shouldnt go to waste.&quot;&lt;/p&gt;
     &lt;div id=&#39;select10a10&#39; &gt;
         &lt;a0 onclick=&#39;window.gm.player.Inv.addItem(window.gm.ItemsLib.StraightBanana()),window.gm.printTalkLink(&quot;div#select10a10&quot;,&quot;div#choice10a10a&quot;)&#39;&gt;Take it&lt;/a&gt;&lt;/br&gt;
         &lt;/div&gt;&lt;div id=&#39;choice10a10a&#39; hidden&gt;&lt;/br&gt;&lt;%=window.gm.printLink(&quot;You thank him and move along.&quot;,&#39;window.story.show(window.gm.player.location);&#39;)%&gt;
@@ -6284,13 +6291,13 @@ You are at the beach where you first set foot on this isle.
     Go get some dry wood to get a fire started. &lt;b&gt;3 dry branches&lt;/b&gt; should be enough.
 &lt;%}%&gt;
 &lt;/br&gt;[[Eric|TalkEric]] is here.
-&lt;/br&gt;[[Check on yourself|FI_InspectSelf]]  [[FI_Sport]]
+&lt;/br&gt;[[Check on yourself|FI_InspectSelf]]
 &lt;%if(window.gm.getTimeStruct().daytime===&#39;night&#39;){%&gt; &lt;p&gt;Its getting late. Better go get some [[sleep|FI_GoSleep]].&lt;/p&gt;&lt;%}else{%&gt;
     &lt;p&gt;You could simply &lt;%=window.gm.printGoto(&#39;FI_SunBath&#39;,{},&#39;relax&#39;)%&gt; here instead of running around and wasting energy. 
     &lt;%if(s.DngSY.campUpgrade.fire&gt;=1){%&gt;Or doing some [[workout|FI_BeachWorkout]] could help with gaining some muscle and confidence.&lt;%}%&gt;&lt;/p&gt;
     &lt;p&gt;Maybe you should look around the &lt;%=window.gm.printGoto(&#39;FI_BeachForest&#39;,{time:30,energy:-5},&#39;sparse forest&#39;)%&gt; around the hill, 
     &lt;/br&gt;or make your &lt;%=window.gm.printGoto(&#39;FI_BeachHill&#39;,{time:30,energy:-10},&#39;way up&#39;)%&gt; again. &lt;/br&gt;
-    &lt;%if(!!s.DngSY.exploreBeach){%&gt;You could also walk the sandy beach in &lt;%=window.gm.printGoto(&#39;FI_BeachWalkNorth&#39;,{time:30,energy:-5},&#39;northern&#39;)%&gt; or &lt;%=window.gm.printGoto(&#39;FI_BeachWalkEast&#39;,{time:30,energy:-5},&#39;eastern&#39;)%&gt; direction.&lt;/p&gt;&lt;%}%&gt;
+    &lt;%if(!!s.DngSY.exploreBeach){%&gt;You could also walk the sandy beach in &lt;%=window.gm.printGoto(&#39;FI_BeachNorth&#39;,{time:30,energy:-5},&#39;northern&#39;)%&gt; or &lt;%=window.gm.printGoto(&#39;FI_BeachEast&#39;,{time:30,energy:-5},&#39;eastern&#39;)%&gt; direction.&lt;/p&gt;&lt;%}%&gt;
     &lt;p&gt;Of course you could also &lt;%=window.gm.printGoto(&#39;FI_BeachWalk&#39;,{time:60,energy:-10},&#39;explore the beach&#39;)%&gt; some more&lt;/p&gt;
 &lt;%}%&gt;
 Pass some time until... (just forwards time):
@@ -6301,12 +6308,13 @@ Pass some time until... (just forwards time):
 &lt;p class=&quot;author&quot;&gt;Todo: Consumption of Energy &amp; time needs some more balancing. Use the pass-time link until you get the sleep option if you run out of energy.&lt;/p&gt;
 &lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="111" name="FI_GoSleep" tags="" position="100,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 
-Todo: ts surprisingly cold and the fire burnt already down. Shivering from the cold, you wish to have something wrap yourself into or to cuddle with someone.
+Todo: Its surprisingly cold and the fire burnt already down. Shivering from the cold, you wish to have something wrap yourself into or to cuddle with someone.
 The only one around to cuddle with is Eric and thats [[Not an option]] | [[Ask him]]  
 
 &lt;a0 onclick=&#39;sleep()&#39;&gt;Rest a while&lt;/a&gt;
 &lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;
 &lt;script&gt;function sleep(){
+    if(window.story.state.Settings.autoSave) window.gm.toasty.info(&quot;auto save&quot;),window.storage.saveBrowser(&quot;saveAuto&quot;);
     window.gm.forwardTime(700);
     let _b,_s=window.gm.player.Stats.get(&#39;satiation&#39;).value;
     //more energy if not hungry
@@ -6329,6 +6337,7 @@ You are greeted by some morning wood. [[Just ignore and stuff it into your pants
 &lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="113" name="FI_Breakfast" tags="" position="350,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%window.gm.player.location=window.passage.name;%&gt;
 &lt;p class=&quot;tPC&quot;&gt;&quot;Anything left for breakfast? I could kill for some coffee and toast.&quot;&lt;/p&gt;
+&lt;a0 id=&#39;hint1&#39; onclick=&#39;(function(me){document.querySelector(&quot;#&quot;+id+&quot;~p&quot;).toggleAttribute(&quot;hidden&quot;);})(this);&#39;&gt;Hint&lt;/a&gt;&lt;p hidden&gt;If you have slept while beeing hungry, your recovery is dimished. You can also eat at other times by consuming food right from inventory.&lt;/p&gt;
 &lt;div id=&quot;output&quot;&gt;&lt;/div&gt;&lt;/br&gt;&lt;div id=&quot;choice&quot;&gt;&lt;/div&gt;
 &lt;!--As you arrived late today, you have to eat whats left.
 Eric already ate some XYZ. | Suggest that Eric eats XYZ
@@ -6397,19 +6406,19 @@ The forest close to the hill is sparse. The trees arent as big as the coconut pa
     &lt;a0 onclick=&#39;window.story.show(window.gm.player.location)&#39;&gt;Walk back&lt;/a&gt;
 &lt;%}%&gt;
 &lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="117" name="FI_BeachWalk" tags="" position="850,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
-The beach extends [[further north|FI_BeachWalkNorth]] and also in [[eastern direction|FI_BeachWalkEast]]. &lt;/br&gt;
+The beach extends [[further north|FI_BeachNorth]] and also in [[eastern direction|FI_BeachEast]]. &lt;/br&gt;
 &lt;%if(!!s.DngSY.exploreBeach){%&gt;There isnt much more to find here. Maybe you should look at other places.&lt;/br&gt;&lt;%}else{s.DngSY.exploreBeach=1;}%&gt;
 &lt;a0 onclick=&#39;window.story.show(window.gm.player.location)&#39;&gt;Walk back&lt;/a&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="118" name="FI_BeachWalkNorth" tags="" position="975,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="118" name="FI_BeachNorth" tags="" position="975,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%window.gm.player.location=window.passage.name;%&gt;
-&lt;%=window.gm.images._sizeTo(window.gm.images[&quot;Beach&quot;](),200,200)%&gt;
+&lt;%=window.gm.images._sizeTo(window.gm.images[&quot;Beach&quot;](),200,200)%&gt;&lt;/br&gt;
 Further up north your camp on the beach.
 &lt;/br&gt;Coconut palms are scattered around. Maybe you could [[get some coconut|FI_BeachCoconut]]?&lt;/br&gt;
 &lt;%=window.gm.printGoto(&#39;FI_BeachNorthExplore&#39;,{time:30,energy:-5},&#39;explore surrounding&#39;)%&gt;
-&lt;/br&gt;&lt;%=window.gm.printGoto(&#39;FI_BeachSwim&#39;,{},&#39;Go swimming&#39;,&quot;hard&quot;)%&gt;
+&lt;/br&gt;&lt;%=window.gm.printGoto(&#39;FI_BeachSwim&#39;,{time:60,energy:20},&#39;Go swimming&#39;)%&gt;
 &lt;/br&gt;&lt;%=window.story.render(&quot;FI_ChooseActivity&quot;)%&gt;
 &lt;%=window.gm.printGoto(&#39;FI_BeachCamp&#39;,{},&#39;return to beach camp&#39;)%&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="119" name="FI_BeachWalkEast" tags="" position="1100,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="119" name="FI_BeachEast" tags="" position="1100,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%window.gm.player.location=window.passage.name;%&gt;
 Walking the beach in eastern direction.
 &lt;/br&gt;&lt;%=window.gm.printGoto(&#39;FI_BeachEastExplore&#39;,{time:30,energy:-20},&#39;explore surrounding&#39;)%&gt;
@@ -6438,7 +6447,8 @@ Climbing on top of the hill. &lt;/br&gt;
 You notice that the top of the hill is mostly solid stone, likely volcanic origin. Some of the edges of the rock are very sharp.  
 &lt;div id=&#39;select20&#39; &gt; Could you possibly 
 &lt;%=window.gm.printDo(&#39;window.gm.printTalkLink(\&quot;div#select20\&quot;,\&quot;div#choice20a\&quot;),window.gm.player.Inv.addItem(window.gm.ItemsLib.HandAxe())&#39;,{time:60,energy:-30},&#39;beat off&#39;)%&gt; some sharp splinters that you could use as cuttng tool?&lt;/br&gt;
-&lt;/div&gt;&lt;div id=&#39;choice20a&#39; hidden&gt;&lt;/br&gt; With a large stone you start beating on those splintering rock. Its quite a demanding work and you earned yourself several bruises but finally you got something that someone could call a handaxe. 
+&lt;/div&gt;&lt;div id=&#39;choice20a&#39; hidden&gt;&lt;/br&gt; With a large stone you start beating on those splintering rock. Its quite a demanding work and you earned yourself several bruises but finally you got something that someone could call a &lt;b&gt;handaxe&lt;/b&gt;. 
+    &lt;p class=&quot;author&quot;&gt;You dont need to equip tools to make use of them, just keep them in your inventory.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/br&gt;&lt;%=window.story.render(&quot;FI_ChooseActivity&quot;)%&gt;
 &lt;%=window.gm.printGoto(&#39;FI_BeachCamp&#39;,{},&#39;return to beach&#39;)%&gt;
@@ -6477,7 +6487,7 @@ Grabing the tree with you hands, you shake it as hard as possible.
 &lt;script&gt;function foo(){
     let x=&quot;1a&quot;,rnd=_.random(0,100);
     if(rnd&gt;85) { //snake
-        window.gm.player.Stats.increment(&quot;will&quot;,-10);
+        window.gm.player.Stats.increment(&quot;will&quot;,-10);window.gm.refreshSidePanel();
         x=&quot;1b&quot;; 
     } else if(rnd&gt;60) { //sturdy
         x=&quot;1c&quot;;window.gm.player.Inv.addItem(window.gm.ItemsLib.SturdyBranch());
@@ -6543,7 +6553,7 @@ Der Koffer ist abgeschlossen. ER ist zu schwer und unhandlich um mit ihm zurück
 }
 &lt;/script&gt;</tw-passagedata><tw-passagedata pid="127" name="FI_BeachNorthExplore" tags="" position="850,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;div id=&#39;select10&#39;&gt;You &lt;a0 onclick=&#39;foo()&#39;&gt;walk the beach&lt;/a&gt; to get to know it better.&lt;/br&gt;
-&lt;/div&gt;&lt;div id=&#39;choice10a&#39; hidden&gt;&lt;/br&gt;
+&lt;/div&gt;&lt;div id=&#39;choice10a&#39; hidden&gt;&lt;/br&gt; You dont find anything noticeable.&lt;/br&gt;
 &lt;/div&gt;
 &lt;div id=&#39;choice10b&#39; hidden&gt;&lt;/br&gt; A small fish is stranded and floundering around. It could be edible, especially if you roast it.&lt;/br&gt;
 &lt;/div&gt;
@@ -6581,26 +6591,39 @@ Placing one of your hand next to it you do some raw measurements. Could be house
 
 &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;next&#39;)%&gt;
 &lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="130" name="FI_BeachDig" tags="" position="1225,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
-Walking up the shore along the waterline you look around for anything that could be of use.&lt;/br&gt;
-
-&lt;p&gt;A dull black surface burried in the fine, dense mud catches your attention. It does not look like the other stones or shells scattered around. Digging it out with your hands is too troublesome.&lt;/p&gt;
-&lt;%if(window.gm.player.Inv.countItem(&quot;SturdyBranch&quot;)&gt;0){%&gt;
-    &lt;div id=&#39;select1&#39; &gt;You still carry one of those sturdy branches that you now could make use off. 
-    &lt;%=window.gm.printDo(&#39;window.gm.printTalkLink(\&quot;div#select1\&quot;,\&quot;div#choice1a\&quot;),window.gm.player.Inv.addItem(window.gm.ItemsLib.CookingPot)&#39;,{time:60,energy:-30},&#39;Use the stick to dig&#39;)%&gt;&lt;/br&gt;
-    &lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select1&quot;,&quot;div#choice1b&quot;)&#39;&gt;Walk away&lt;/a&gt;&lt;/br&gt;
-    &lt;/div&gt;&lt;div id=&#39;choice1a&#39; hidden&gt;&lt;/br&gt; As you start to remove the sand around the object you quickly notice that it is made of metal.
-        &lt;p class=&quot;tPC&quot;&gt;&#39;Maybe its a pot of gold... Or a explosive mine.&#39;&lt;/p&gt;
-        &lt;p&gt;Its a small kettle. Its made from aluminium as the inside, once cleared from the mud, shows blank surface.&lt;/p&gt;
-        &lt;p class=&quot;tPC&quot;&gt;&#39;No gold. Hmm..but could be of use to carry water and or to cook something.&#39;&lt;/p&gt; 
+&lt;div id=&quot;select1&quot;&gt;Walking up the shore along the waterline you &lt;a0 onclick=&quot;foo();&quot;&gt;look around&lt;/a&gt; for anything that could be of use.&lt;/div&gt;&lt;/br&gt;
+&lt;div id=&quot;choice1a&quot; hidden&gt;
+    But you didnt find anything useful. &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;Move on&#39;)%&gt;
+&lt;/div&gt;&lt;div id=&quot;choice1b&quot; hidden&gt;
+    &lt;p&gt;A dull black surface burried in the fine, dense mud catches your attention. It does not look like the other stones or shells scattered around. Digging it out with your hands is too troublesome.&lt;/p&gt;
+    &lt;%if(window.gm.player.Inv.countItem(&quot;SturdyBranch&quot;)&gt;0){%&gt;
+        &lt;div id=&#39;select10&#39; &gt;You still carry one of those sturdy branches that you now could make use off. 
+        &lt;%=window.gm.printDo(&#39;window.gm.printTalkLink(\&quot;div#select10\&quot;,\&quot;div#choice10a\&quot;),window.gm.player.Inv.addItem(window.gm.ItemsLib.CookingPot())&#39;,{time:60,energy:-30},&#39;Use the stick to dig&#39;)%&gt;&lt;/br&gt;
+        &lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select10&quot;,&quot;div#choice10b&quot;)&#39;&gt;Walk away&lt;/a&gt;&lt;/br&gt;
+        &lt;/div&gt;&lt;div id=&#39;choice10a&#39; hidden&gt;&lt;/br&gt; As you start to remove the sand around the object you quickly notice that it is made of metal.
+            &lt;p class=&quot;tPC&quot;&gt;&#39;Maybe its a pot of gold... Or a explosive mine.&#39;&lt;/p&gt;
+            &lt;p&gt;Its a small kettle. Its made from aluminium as the inside, once cleared from the mud, shows blank surface.&lt;/p&gt;
+            &lt;p class=&quot;tPC&quot;&gt;&#39;No gold. Hmm..but could be of use to carry water and or to cook something.&#39;&lt;/p&gt; 
+            &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;Move on&#39;)%&gt;
+            &lt;/div&gt;
+        &lt;div id=&#39;choice10b&#39; hidden&gt;&lt;/br&gt; &lt;p class=&quot;tPC&quot;&gt;&#39;Nah, its not worth the effort.&#39;&lt;/p&gt;&lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;Move on&#39;)%&gt;
         &lt;/div&gt;
-    &lt;div id=&#39;choice1b&#39; hidden&gt;&lt;/br&gt; &lt;p class=&quot;tPC&quot;&gt;&#39;Nah, its not worth the effort.&#39;&lt;/p&gt;&lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;Move on&#39;)%&gt;
-    &lt;/div&gt;
-&lt;%}else{%&gt;
-    A simple tool would be of help here.&lt;/br&gt;
-    &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;Move on&#39;)%&gt;
-&lt;%}%&gt;
+    &lt;%}else{%&gt;
+        A simple tool would be of help here.&lt;/br&gt;
+        &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;Move on&#39;)%&gt;
+    &lt;%}%&gt;
+&lt;/div&gt;
 
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="131" name="FI_BeachSandSculpt" tags="" position="100,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;
+&lt;script&gt;function foo(){
+    let x=&quot;1a&quot;,rnd=_.random(0,100);
+    if(window.gm.player.Inv.countItem(&quot;CookingPot&quot;)&lt;=0) { 
+        x=&quot;1b&quot;;
+    } else { 
+    }
+    window.gm.printTalkLink(&quot;div#select1&quot;,&quot;div#choice&quot;+x);
+}
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="131" name="FI_BeachSandSculpt" tags="" position="100,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 Während du über den feuchten Sand läufst springt dir eine Stelle ins Auge die nicht so glatt und eben wie der Rest ist.
 Zunächst glaubst du darin eine Skulptur zu erkennen wie sie manchmal von Künstlern an Sandstränden modeliert wird.
 Beim Näherkommen stellst du aber fest das es nur einige Bodenunebenheiten sind.
@@ -6636,42 +6659,49 @@ you only see the actual choice, prev choice get hidden
 no dynamic text unless build from globals
 --&gt;
 &lt;div id=&#39;start&#39;&gt;&#39;What kind of activity should I do?&#39;&lt;/br&gt;
-&lt;a0 id=&quot;pushupsstart&quot; onclick=&#39;foo(this)&#39;&gt;Maybe you should work on your arm muscles and do some pushups.&lt;/a&gt;&lt;/br&gt;
-&lt;a0 id=&quot;yogastart&quot; onclick=&#39;foo(this)&#39;&gt;Doing some stretches to improve flexibility.&lt;/a&gt;&lt;/br&gt;
+&lt;%=window.gm.printDo(&#39;foo(&quot;start&quot;,&quot;pushupsstart&quot;)&#39;,{time:20,energy:-15,difficult:&#39;average&#39;},&#39;Maybe you should work on your arm muscles and do some pushups.&#39;)%&gt;&lt;/br&gt;
+&lt;%=window.gm.printDo(&#39;foo(&quot;start&quot;,&quot;yogastart&quot;)&#39;,{time:20,energy:-15,difficult:&#39;average&#39;},&#39;Doing some stretches to improve flexibility.&#39;)%&gt;&lt;/br&gt;
+&lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;Move on&#39;)%&gt;&lt;/br&gt;
 &lt;/div&gt;&lt;div id=&#39;pushupsstart&#39; hidden&gt;&lt;/br&gt; Dropping into the stance, you start doing pushups. The first 20 go smooth, but then it starts to get harder soon.
-    &lt;a0 id=&quot;pushup2&quot; onclick=&#39;foo(this)&#39;&gt;Continue until it hurts.&lt;/a&gt;&lt;/br&gt;
-    &lt;a0 id=&quot;stop&quot; onclick=&#39;foo(this)&#39;&gt;Thats enough for now&lt;/a&gt;&lt;/br&gt;
+    &lt;%=window.gm.printDo(&#39;foo(&quot;pushupsstart&quot;,&quot;pushup2&quot;)&#39;,{time:20,energy:-15,difficult:&#39;average&#39;},&#39;Continue until it hurts.&#39;)%&gt;&lt;/br&gt;
+    &lt;a0 onclick=&#39;foo(&quot;pushupsstart&quot;,&quot;stop&quot;)&#39;&gt;Thats enough for now&lt;/a&gt;&lt;/br&gt;
 &lt;/div&gt;
 &lt;div id=&#39;pushup2&#39; hidden&gt;&lt;/br&gt; Your arms burn like on fire.
-    &lt;a0 id=&quot;pushup3&quot; onclick=&#39;foo(this)&#39;&gt;Continue until it hurts.&lt;/a&gt;&lt;/br&gt;
-    &lt;a0 id=&quot;stop&quot; onclick=&#39;foo(this)&#39;&gt;Thats enough for now&lt;/a&gt;&lt;/br&gt;
+    &lt;%=window.gm.printDo(&#39;foo(&quot;pushup2&quot;,&quot;pushup3&quot;)&#39;,{time:20,energy:-15,difficult:&#39;average&#39;},&#39;Continue until it hurts.&#39;)%&gt;&lt;/br&gt;
+    &lt;a0 onclick=&#39;foo(&quot;pushup2&quot;,&quot;stop&quot;)&#39;&gt;Thats enough for now&lt;/a&gt;&lt;/br&gt;
 &lt;/div&gt;
 &lt;div id=&#39;pushup3&#39; hidden&gt;&lt;/br&gt; That was to much...
-    &lt;a0 id=&quot;stop&quot; onclick=&#39;foo(this)&#39;&gt;Thats enough for now&lt;/a&gt;&lt;/br&gt;
+    &lt;a0 onclick=&#39;foo(&quot;pushup3&quot;,&quot;stop&quot;)&#39;&gt;Thats enough for now&lt;/a&gt;&lt;/br&gt;
 &lt;/div&gt;
 &lt;div id=&#39;yogastart&#39; hidden&gt;&lt;/br&gt; What did you do in sports before the real workout started? You try to remeber those warm up routines an do some.
-    &lt;a0 id=&quot;stop&quot; onclick=&#39;foo(this)&#39;&gt;Thats enough for now&lt;/a&gt;&lt;/br&gt;
+    &lt;a0 onclick=&#39;foo(&quot;yogastart&quot;,&quot;stop&quot;)&#39;&gt;Thats enough for now&lt;/a&gt;&lt;/br&gt;
 &lt;/div&gt;
 &lt;div id=&#39;stop&#39; hidden&gt;&lt;/br&gt; Catching your breath, you pickup your stuff and walk away.
-    &lt;a0 id=&quot;start&quot; onclick=&#39;foo(this)&#39;&gt;Do something else.&lt;/a&gt;&lt;/br&gt;
-    &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;next&#39;)%&gt;
+    &lt;a0 onclick=&#39;foo(&quot;stop&quot;,&quot;start&quot;)&#39;&gt;Do something else.&lt;/a&gt;&lt;/br&gt;
+    &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;Move on&#39;)%&gt;
 &lt;/div&gt;
 &lt;p hidden&gt;Pushups, situps für muskelaufbau. Steigert M-Mutator.
 Eric beobachtet dich, gibt dir handson tips.&lt;p&gt;
 &lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;
-&lt;script&gt;function foo(elmt){
-    //hide parent div; show div#next
-    //hide div-nodes following parentnode //Todo
-    let parentid=elmt.parentNode.id;
-    window.gm.printTalkLink(&quot;div#&quot;+parentid,&quot;div#&quot;+elmt.id);
+&lt;script&gt;function  foo(idhide,idshow){
+    window.gm.printTalkLink(&quot;div#&quot;+idhide,&quot;div#&quot;+idshow);
+    switch(idshow){
+        case &quot;choice100a&quot;:
+        case &quot;choice100c&quot;:
+            window.gm.player.Stats.increment(&quot;arousal&quot;,-50);
+            break;
+        default:
+    }
+    window.gm.refreshSidePanel();
 }
 &lt;/script&gt;</tw-passagedata><tw-passagedata pid="133" name="FI_BeachSwim" tags="" position="350,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%if(window.gm.player.Stats.findItemSlot(&quot;sk_Swimming&quot;)&lt;=-1){%&gt; 
     Swimming really wasn&#39;t your kind of thing, let alone doing it in this open sea with big waves rolling in.&lt;/br&gt;
     &lt;div id=&#39;select10&#39; &gt; Find a spot where the water is a little calmer and 
     &lt;a0 onclick=&#39;window.gm.StatsLib.Ability.setup(window.gm.player.Stats,1,&quot;Swimming&quot;);window.gm.printTalkLink(&quot;div#select10&quot;,&quot;div#choice10a&quot;)&#39;&gt;try a few swims&lt;/a&gt;.&lt;/br&gt;
-    &lt;/div&gt;&lt;div id=&#39;choice10a&#39; hidden&gt;&lt;/br&gt;After you have stripped of your shoes and shirt, you step into the small pool. You swim back and forth and even do a dive. Swimming seems fun.&lt;/br&gt;
-    &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;Return to camp&#39;)%&gt;
+    &lt;/div&gt;&lt;div id=&#39;choice10a&#39; hidden&gt;&lt;/br&gt;Behind some rocks, a natural cavity in the size of a small pool has been formed. Deciding that this is a good place to start, you strip off your shoes and shirt, ans slip into the small pool. You swim back and forth and even do a dive. Swimming seems fun.&lt;/br&gt;
+        &lt;/br&gt;
+        &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;next&#39;)%&gt;
     &lt;/div&gt;
 &lt;%}else if(window.gm.player.Stats.get(&quot;sk_Swimming&quot;).value&gt;0){%&gt;
     &lt;span class=&quot;tPC&quot;&gt;&#39;lets do some more swim-training.&#39;&lt;/span&gt; With that you strip your outerwear and walk into the sea.
@@ -6680,7 +6710,7 @@ Eric beobachtet dich, gibt dir handson tips.&lt;p&gt;
     &lt;% if(window.gm.player.Stats.get(&quot;sk_Swimming&quot;).value&gt;4){%&gt;&lt;/br&gt;There are some rocks further away from the shoreline. You wonder if you could possibly swim towward them.&lt;%}%&gt;
     &lt;/div&gt;&lt;div id=&#39;choice20a&#39; hidden&gt;&lt;/br&gt; You think your skill has gotten better.
         &lt;div id=&#39;select30&#39; &gt;
-        &lt;%=window.gm.printDo(&#39;window.gm.printTalkLink(\&quot;div#select30\&quot;,\&quot;div#choice30a\&quot;)&#39;,{time:60,energy:-30,difficult:hard},&#39;Swim some more lanes&#39;)%&gt; or &lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select30&quot;,&quot;div#choice30b&quot;)&#39;&gt;leave the water.&lt;/a&gt;&lt;/br&gt;
+        &lt;%=window.gm.printDo(&#39;window.gm.printTalkLink(\&quot;div#select30\&quot;,\&quot;div#choice30a\&quot;)&#39;,{time:60,energy:-30,difficult:&#39;hard&#39;},&#39;Swim some more lanes&#39;)%&gt; or &lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select30&quot;,&quot;div#choice30b&quot;)&#39;&gt;leave the water.&lt;/a&gt;&lt;/br&gt;
         &lt;/div&gt;&lt;div id=&#39;choice30a&#39; hidden&gt;&lt;/br&gt; Lets see if you can [[swim a little|FI_BeachSwimDrown]] bit further out in the sea.
         &lt;/div&gt;
         &lt;div id=&#39;choice30b&#39; hidden&gt;&lt;/br&gt; You step out of the water and &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;redress&#39;)%&gt;.
@@ -6717,7 +6747,7 @@ But you cant say for sure if that shark you are facing here would dare the risk 
 
 You need to swim as fast as you can to the shore | stand your ground | drop the fish
 
-&lt;p&gt;
+
 &lt;p hidden&gt;Du beschliesst im Meer mit dem Kescher Fische zu fangen, oder es zumindest zu versuchen.
 
 Eine Taucherbrille wäre hilfreich damit du Unterwasser besser siehst.
@@ -6740,7 +6770,7 @@ After lookng around for a while, you give up and just leave &lt;b&gt;without xxx
 &lt;script&gt;function foo(){}
 &lt;/script&gt;</tw-passagedata><tw-passagedata pid="135" name="FI_NightDream" tags="" position="600,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;&lt;/br&gt;
 The hard work at the day takes it toll on you and the night passes with a deep, dreamless sleep.
-
+&lt;p hidden&gt;
 Your mind switches to dream mode:...
 
 Those drugs in your veins do a good job in letting you go inconscious...
@@ -6748,9 +6778,56 @@ Those drugs in your veins do a good job in letting you go inconscious...
 if you cant sleep because no warmth- reduce will/energy recoverage
 if you are horny, you get wild dreams- 
 if you cant sleep because disturbance-  
-
+&lt;/p&gt;
 &lt;a0 onclick=&#39;window.gm.checkMutation(&quot;wake&quot;),window.story.show(&quot;FI_Wakeup&quot;);&#39;&gt;Wake up&lt;/a&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="136" name="Totem" tags="" position="725,1725" size="100,100">Eine seltsame Stele, möglicherweise von einheimischen Wilden hier aufgestellt.
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="136" name="FI_BeachMasturbate" tags="" position="725,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;&lt;/br&gt;
+For some time now your hardon is begging for some attention.&lt;/br&gt;
+Masturbation is not a foreign word for you, but usually you would do that in seclusivness of your private room or lavatory.&lt;/br&gt;
+So you have been walking around secretly looking for a secluded place to have a nice privat time. And this here seems as good as any other.&lt;/br&gt;
+&lt;div id=&#39;select10&#39;&gt; &lt;/br&gt;How about releasing some tension? 
+&lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select10&quot;,&quot;div#choice10a&quot;)&#39;&gt;To risky&lt;/a&gt;&lt;/br&gt;
+&lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select10&quot;,&quot;div#choice10b&quot;)&#39;&gt;Do some handwork&lt;/a&gt;&lt;/br&gt;
+&lt;/div&gt;&lt;div id=&#39;choice10a&#39; hidden&gt;&lt;/br&gt;&lt;p class=&quot;tPC&quot;&gt;&#39;To risky. I will just sit it out.&#39;&lt;/p&gt;
+    &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;Move along.&#39;)%&gt;
+&lt;/div&gt;
+&lt;div id=&#39;choice10b&#39; hidden&gt;&lt;/br&gt;Shifting your pants down a little bit, your half hard member flops out. 
+    &lt;div id=&#39;select10b10&#39; &gt;
+    &lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select10b10&quot;,&quot;div#choice10b10a&quot;)&#39;&gt;Grabing your man meat you start stroking with some good speed.&lt;/a&gt;&lt;/br&gt;
+    &lt;/div&gt;&lt;div id=&#39;choice10b10a&#39; hidden&gt;&lt;/br&gt;
+        &lt;div id=&#39;select100&#39; &gt;As you start shooting your wad, you take aim to 
+        &lt;%=window.gm.printDo(&#39;foo(&quot;select100&quot;,&quot;choice100a&quot;)&#39;,{},&#39;hit a target&#39;)%&gt;&lt;/br&gt;
+        &lt;%=window.gm.printDo(&#39;foo(&quot;select100&quot;,&quot;choice100c&quot;)&#39;,{},&#39;catch it in your hand&#39;)%&gt;&lt;/br&gt;
+        &lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select100&quot;,&quot;div#choice100b&quot;)&#39; hidden&gt;catch it in a pot&lt;/a&gt;&lt;/br&gt;
+        &lt;/div&gt;&lt;div id=&#39;choice100a&#39; hidden&gt;&lt;/br&gt;You splatter the vegetation with several ropes of your jizzm.
+            Deeply satisfied you &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;leave.&#39;)%&gt;
+        &lt;/div&gt;
+        &lt;div id=&#39;choice100b&#39; hidden&gt;&lt;/br&gt;
+            TODO &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;leave.&#39;)%&gt;
+        &lt;/div&gt;
+        &lt;div id=&#39;choice100c&#39; hidden&gt;&lt;/br&gt; While stroking your shaft with one hand, your other cups the tip of your member, giving additional stimulation. 
+            &lt;div id=&#39;select100c10&#39; &gt; After you have come down from your high, you feel a stickiness in your hand. What to do with that? 
+            &lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select100c10&quot;,&quot;div#choice100c10a&quot;)&#39;&gt;Slurp it up&lt;/a&gt;&lt;/br&gt;
+            &lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select100c10&quot;,&quot;div#choice100c10b&quot;)&#39;&gt;Smear it somewhere&lt;/a&gt;&lt;/br&gt;
+            &lt;/div&gt;&lt;div id=&#39;choice100c10a&#39; hidden&gt;&lt;/br&gt;TODO &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;leave.&#39;)%&gt;
+            &lt;/div&gt;
+            &lt;div id=&#39;choice100c10b&#39; hidden&gt;&lt;/br&gt;TODO &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;leave.&#39;)%&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;
+&lt;script&gt;function foo(idhide,idshow){
+    window.gm.printTalkLink(&quot;div#&quot;+idhide,&quot;div#&quot;+idshow);
+    switch(idshow){
+        case &quot;choice100a&quot;:
+        case &quot;choice100c&quot;:
+            window.gm.player.Stats.increment(&quot;arousal&quot;,-50);
+            break;
+        default:
+    }
+    window.gm.refreshSidePanel();
+}
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="137" name="Totem" tags="" position="850,1725" size="100,100">Eine seltsame Stele, möglicherweise von einheimischen Wilden hier aufgestellt.
 It might depict a 
 Snake: Phalus
 Ape: 
@@ -6760,13 +6837,13 @@ Touch it:  triggers minor Transformations
 
 Whoreship: 
 
-Captured and tied to it: Badend?</tw-passagedata><tw-passagedata pid="137" name="skCooking" tags="" position="825,625" size="100,100">You can create tasty meals from basic ingredients. No need to rely on fastfood.
-[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="138" name="skSporty" tags="" position="725,625" size="100,100">You like to do sports.
-[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="139" name="skTechy" tags="" position="825,525" size="100,100">Tinkering and repairing gadgets is your thing.
-[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="140" name="skMoneymaker" tags="" position="725,525" size="100,100">You often find ways to increase your profit a little bit.
-[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="141" name="NewGamePlus" tags="" position="100,1850" size="100,100">You finished the game in some way but maybe you have missed something. &lt;/br&gt;
+Captured and tied to it: Badend?</tw-passagedata><tw-passagedata pid="138" name="skCooking" tags="" position="825,625" size="100,100">You can create tasty meals from basic ingredients. No need to rely on fastfood.
+[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="139" name="skSporty" tags="" position="725,625" size="100,100">You like to do sports.
+[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="140" name="skTechy" tags="" position="825,525" size="100,100">Tinkering and repairing gadgets is your thing.
+[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="141" name="skMoneymaker" tags="" position="725,525" size="100,100">You often find ways to increase your profit a little bit.
+[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="142" name="NewGamePlus" tags="" position="225,1850" size="100,100">You finished the game in some way but maybe you have missed something. &lt;/br&gt;
 Would you like to start a new game while taking some of your equipment/skills with you?&lt;/br&gt;
-&lt;a0 onclick=&#39;window.gm.newGamePlus()&#39;&gt;Start new game plus&lt;/a&gt;&lt;/br&gt;</tw-passagedata><tw-passagedata pid="142" name="TowerOfKinks" tags="" position="225,1850" size="100,100">ClitPiercing of Stamina
+&lt;a0 onclick=&#39;window.gm.newGamePlus()&#39;&gt;Start new game plus&lt;/a&gt;&lt;/br&gt;</tw-passagedata><tw-passagedata pid="143" name="TowerOfKinks" tags="" position="350,1850" size="100,100">ClitPiercing of Stamina
 
 resistance to   poisoned air, slime, cold
 
@@ -6835,7 +6912,7 @@ pyramids: chaste
     priest, acolythe, anubis, scarab
 
 underworld:
-    succubus, hellhound,</tw-passagedata><tw-passagedata pid="143" name="SucubusTrade" tags="" position="350,1850" size="100,100">&quot;I could help you and increase the size of your load.&quot;
+    succubus, hellhound,</tw-passagedata><tw-passagedata pid="144" name="SucubusTrade" tags="" position="475,1850" size="100,100">&quot;I could help you and increase the size of your load.&quot;
 &quot;Whats the catch?&quot;
 Your apple-sized gonads are heavy with spunk. Staying blueballed like this might set you at risk to give in to the next person offering you a good fuck.
 

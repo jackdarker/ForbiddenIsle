@@ -935,28 +935,30 @@ window.gm.printAchievements= function(){
   return(result);
 };
 //prints a string listing stats and effects
-window.gm.printEffectSummary= function(who='player',showstats=true,showfetish=false,showresistane=false){
-  var elmt='';
-  var s= window.story.state;
-  var result ='';
-  var ids = [];
+window.gm.printEffectSummary= function(who='player',what){
+  let _what = what||{};
+  _what.showstats =(what&&what.showstats)?what.showstats:false,  //set at least one flag!
+  _what.showfetish =(what&&what.showfetish)?what.showfetish:false,
+  _what.showresistance =(what&&what.showresistance)?what.showresistance:false,
+  _what.showskill =(what&&what.showskill)?what.showskill:false;
+  let elmt='', s= window.story.state, result ='';
   result+='<table>';
-  var ids =window.story.state[who].Stats.getAllIds();
-  
+  let ids =window.story.state[who].Stats.getAllIds();
   ids.sort(); //Todo better sort
   for(var k=0;k<ids.length;k++){
       var data = window.story.state[who].Stats.get(ids[k])
-      let isFetish = (data.id.slice(0,2)==='ft'); //Fetish starts with ft
+      let isFetish = (data.id.slice(0,2)==='ft'), isSkill=(data.id.slice(0,3)==='sk_'); //Fetish starts with ft
       let isResistance = (data.id.slice(0,4)==='rst_')||(data.id.slice(0,4)==='arm_'); //
       if(data.hidden!==4){
-        if(isFetish && showfetish && !(data.id.slice(-4,-2)==='_M') ){
+        if(isFetish && _what.showfetish && !(data.id.slice(-4,-2)==='_M') ){
           //expects names of fetish like ftXXX and limits ftXXX_Min ftXXX_Max
           let min = window.story.state[who].Stats.get(ids[k]+"_Min");
           let max = window.story.state[who].Stats.get(ids[k]+"_Max");
           result+='<tr><td>'+((data.hidden & 0x1)?'???':data.id)+':</td><td>'+((data.hidden & 0x2)?'???':data.value)+'</td>';
           result+='<td>'+((data.hidden & 0x2)?'???':'('+(min.value+' to '+max.value))+')</td></tr>';
         }
-        if((!isFetish && !isResistance && showstats) || (!isFetish && isResistance && showresistane)){
+        if((!isFetish && !isResistance && !isSkill && _what.showstats) || (!isFetish && isResistance && !isSkill && _what.showresistance)
+        || (!isFetish && !isResistance && isSkill && _what.showskill)){
           result+='<tr><td>'+((data.hidden & 0x1)?'???':data.id)+':</td><td>'+((data.hidden & 0x2)?'???':data.value)+'</td></tr>';
         }//todo show modifier list for each stat  agility: BracerLeather +2
       }

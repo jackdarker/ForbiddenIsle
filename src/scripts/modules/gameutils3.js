@@ -7,6 +7,7 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
       s.Lab=s.Known=null;
     }
     let Settings = {
+      autoSave:true,
       showCombatPictures:true,
       showNSFWPictures:true,
       showDungeonMap:true
