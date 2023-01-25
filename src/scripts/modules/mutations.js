@@ -510,30 +510,30 @@ window.gm.MutationsLib['changeSavage'] = function(char,value=1,min=0,max=10){
 //todo grow/shrinkHips Ass / bodyshape
 //remove body/-pubes hair
 {
-window.gm.Mutators = window.gm.Mutators || {};
-window.gm.Mutators['HairNeck'] = (function(){
-    let data={m:effMutator.mutatorDataProto(),req:null,revert:""};
-    data.m.Hair=0.3,data.m.F=0.2;
-    data.f=window.gm.MutationsLib['growHeadHair'];data.mag=1;
-    data.req=function(char){let _res={OK:true,msg:''};return(_res);};
-return(data);})();
-window.gm.Mutators['averageBreast'] = (function(){
+    window.gm.Mutators = window.gm.Mutators || {};
+    window.gm.Mutators['HairNeck'] = (function(){
         let data={m:effMutator.mutatorDataProto(),req:null,revert:""};
-        data.m.Chest=0.5,data.m.F=0.5;
-        data.f=window.gm.MutationsLib['growBreast'];data.mag=1;
+        data.m.Hair=0.3,data.m.F=0.2;
+        data.f=window.gm.MutationsLib['growHeadHair'];data.mag=1;
         data.req=function(char){let _res={OK:true,msg:''};return(_res);};
     return(data);})();
-window.gm.Mutators['bigBreast'] = (function(){
-        let data={m:effMutator.mutatorDataProto(),req:null,revert:"averageBreast"};
-        data.m.Chest=0.7,data.m.F=0.5;
-        data.f=window.gm.MutationsLib['growBreast'];data.mag=2;
-        data.req=function(char){let _res={OK:true,msg:''};return(_res);};
-    return(data);})();
-window.gm.Mutators['averageCock'] = (function(){
-        let data={m:effMutator.mutatorDataProto(),req:null,revert:""};
-        data.m.Genital=0.4,data.m.M=0.5;
-        data.f=window.gm.MutationsLib['growPenis'];data.mag=1;
-        data.req=function(char){let _res={OK:true,msg:''};return(_res);};
-    return(data);})();
-//smallCock
+    window.gm.Mutators['averageBreast'] = (function(){
+            let data={m:effMutator.mutatorDataProto(),req:null,revert:""};
+            data.m.Chest=0.5,data.m.F=0.5;
+            data.f=window.gm.MutationsLib['growBreast'];data.mag=1;
+            data.req=function(char){let _res={OK:true,msg:''};return(_res);};
+        return(data);})();
+    window.gm.Mutators['bigBreast'] = (function(){
+            let data={m:effMutator.mutatorDataProto(),req:null,revert:"averageBreast"};
+            data.m.Chest=0.7,data.m.F=0.5;
+            data.f=window.gm.MutationsLib['growBreast'];data.mag=2;
+            data.req=function(char){let _res={OK:true,msg:''};return(_res);};
+        return(data);})();
+    window.gm.Mutators['averageCock'] = (function(){
+            let data={m:effMutator.mutatorDataProto(),req:null,revert:""};
+            data.m.Genital=0.4,data.m.M=0.5;
+            data.f=window.gm.MutationsLib['growPenis'];data.mag=1;
+            data.req=function(char){let _res={OK:true,msg:''};return(_res);};
+        return(data);})();
+    //smallCock
 }

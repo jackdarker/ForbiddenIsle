@@ -105,14 +105,17 @@ Der Koffer ist abgeschlossen. ER ist zu schwer und unhandlich um mit ihm zurück
 </div>
 <div id='choice10b' hidden></br> You found some seaweed. Its not tasty but edidable.</br>
 </div>
+<div id='choice10c' hidden></br> As you walk across the damp sand, a spot that is not as smooth and even as the rest <a0 onclick='window.story.show("FI_BeachSandSculpt");'>catches your eye.</a>></br>
+</div>
 <%=window.gm.printGoto(window.gm.player.location,{},'next')%>
 </article><article id="LogPanel"></article></section>
 <script>function foo(){
     let x="10a",rnd=_.random(0,100);
     if(rnd>50) { 
         x="10b";window.gm.player.Inv.addItem(window.gm.ItemsLib.SeaLettuce());
-    } else {
-    }
+    } else if(rnd>20 && window.gm.player.Stats.get("arousal").value>15) { 
+        x="10c";
+    } 
     window.gm.printTalkLink("div#select10","div#choice"+x);
 }
 </script>
@@ -285,6 +288,7 @@ Eric beobachtet dich, gibt dir handson tips.<p>
 
 :: FI_BeachSwim
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%=window.gm.images._sizeTo(window.gm.images["Sea1"](),600,300)%></br>
 <%if(window.gm.player.Stats.findItemSlot("sk_Swimming")<=-1){%> 
     Swimming really wasn't your kind of thing, let alone doing it in this open sea with big waves rolling in.</br>
     <div id='select10' > Find a spot where the water is a little calmer and 
@@ -311,7 +315,11 @@ Eric beobachtet dich, gibt dir handson tips.<p>
     <%=window.gm.printGoto(window.gm.player.location,{},'next')%>
 <%}%>
 </article><article id="LogPanel"></article></section>
-
+<script>function foo(){
+    const ctrl = document.getElementById("octo1");
+    ctrl.style.visibility="hidden";
+}
+foo();</script>
 
 
 :: FI_BeachCatchFish

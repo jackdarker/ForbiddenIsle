@@ -161,6 +161,7 @@ class Stat {
     get id(){return(this.data.id);}
     get base(){return(this.data.base);}
     get value(){return(this.data.value);}
+    get rmax(){return((this.data.value/this.parent.get(this.id+'Max').value));}  //value/max
     get hidden(){return(this.data.hidden);}
     //this is called to update value of the stat and will trigger calculation of dependend stats; 
     //requires that the stats where added to the dictionary! 

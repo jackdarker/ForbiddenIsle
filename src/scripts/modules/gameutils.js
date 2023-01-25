@@ -49,13 +49,6 @@ window.gm.initGame= function(forceReset,NGP=null){
         wolfVictory: 0
         }; 
     }
-    
-    /*if (!window.gm.achievements||forceReset){  //outside of window.story !
-      window.gm.achievements= {
-        looseEnd: false //add your flags here
-      }
-      window.storage.loadAchivementsFromBrowser();
-    }*/
     if (!s.mom||forceReset){
       s.mom = {
         location : "Kitchen",
@@ -122,7 +115,7 @@ window.gm.initGame= function(forceReset,NGP=null){
         ch.Skills.addItem(new SkillTease());
         ch.Skills.addItem(new SkillSubmit());
       }
-      ch.Effects.addItem(effMutator.factory("")); //Mutationlogic
+      //ch.Effects.addItem(effMutator.factory("")); //Mutationlogic
       s.PlayerVR=ch;
     }
     if (!s.PlayerRL||forceReset){  
@@ -169,20 +162,78 @@ window.gm.initGame= function(forceReset,NGP=null){
     if(NGP){ window.story.state.vars.crowBarLeft = NGP.crowBarLeft; }
     NGP=null; //release memory
 };
+//this initialises game-objects that are not class-based
+window.gm.initGameFlags = function(forceReset,NGP=null){
+  let s= window.story.state,map,data;
+  function dataPrototype(){return({visitedTiles:[],mapReveal:[],tmp:{},version:0});}
+  if (forceReset){  
+    s.Settings=s.DngCV=s.DngDF=s.DngAM=s.DngSY=s.DngMN=s.DngAT=null; 
+    s.DngFM=s.DngSC=s.DngLB=s.DngHC=s.DngPC=null;
+    s.Know = {}
+  }
+  let Know = {};
+  let Settings = {
+    showCombatPictures:true,
+    showNSFWPictures:true,
+    showDungeonMap:true
+  };
+  let DngSY = {
+      remainingNights: 0,
+      dngLevel: 1, //tracks the mainquest you have finished
+      dngOW: false, //if this flag is set while in dng, player is here for some freeplay (no quest)  
+      dildo:0, //1 small oraltraining,
+      pussy:0,
+      visitedTiles: [],mapReveal: [],
+      dng:'', //current dungeon name
+      prevLocation:'', nextLocation:'', //used for nav-logic
+      dngMap:{} //dungeon map info
+  };
+  let DngAM = dataPrototype();
+  let DngAT = dataPrototype();
+  let DngDF = dataPrototype();
+  DngDF.plum={},//which plums got collected
+  DngDF.lapine={};
+  let DngFM = dataPrototype();
+  let DngHC = dataPrototype();
+  let DngPC = dataPrototype();
+  if(s.DngPC){ //update if exist
+    ({map,data}=window.gm.build_DngPC());
+    s.DngPC=window.gm.util.mergePlainObject(DngPC,s.DngPC);
+  }
+  let DngLB = dataPrototype();
+  let DngSC = dataPrototype();
+  let DngCV = dataPrototype();
+  let DngMN = dataPrototype();DngMN.page={}; //which bookpages got collected
+  //see comment in rebuildFromSave why this is done
+  s.Settings=window.gm.util.mergePlainObject(Settings,s.Settings);
+  s.Know=window.gm.util.mergePlainObject(Know,s.Know);
+  s.DngDF=window.gm.util.mergePlainObject(DngDF,s.DngDF);
+  s.DngAM=window.gm.util.mergePlainObject(DngAM,s.DngAM);
+  s.DngSY=window.gm.util.mergePlainObject(DngSY,s.DngSY);
+  s.DngCV=window.gm.util.mergePlainObject(DngCV,s.DngCV);
+  s.DngMN=window.gm.util.mergePlainObject(DngMN,s.DngMN);
+  s.DngAT=window.gm.util.mergePlainObject(DngAT,s.DngAT);
+  s.DngFM=window.gm.util.mergePlainObject(DngFM,s.DngFM);
+  s.DngSC=window.gm.util.mergePlainObject(DngSC,s.DngSC);
+  s.DngHC=window.gm.util.mergePlainObject(DngHC,s.DngHC);
+  s.DngLB=window.gm.util.mergePlainObject(DngLB,s.DngLB);
+  s.DngPC=window.gm.util.mergePlainObject(DngPC,s.DngPC);
+  //todo cleanout obsolete data ( filtering those not defined in template) 
+};
 // update non-class-objects of previous savegame
 let _origRebuildObjects = window.gm.rebuildObjects;
 window.gm.rebuildObjects= function(){ 
   var s = window.story.state;
   _origRebuildObjects();
   window.gm.initGameFlags(false,null);
-}
+};
 // lookup function for sidebar icon
 window.gm.getSidebarPic = function(){ //todo display doll ??
   if(window.story.state.vars.inVR){
     return("assets/icons/icon_swordspade.svg");
   }
   return('assets/icons/icon_cityskyline.svg');
-}
+};
 // lookup function for scene background ( 640x300 )
 window.gm.getScenePic = function(id){
   let x='',y;
@@ -208,7 +259,7 @@ window.gm.getScenePic = function(id){
     return('assets/bg/bg_cave_2.png');
   }
   return('assets/bg_park.png')//return('assets/bg/bg_VR_1.png');//todo placehodler
-}
+};
 window.gm.enterVR=function(){
   let s= window.story.state;
   if(s.vars.inVR) return;
@@ -221,7 +272,7 @@ window.gm.enterVR=function(){
   s._gm.time = s._gm.timeVR,s._gm.day = s._gm.dayVR;
   window.gm.addTime(0);
   window.gm.respawn({keepInventory:true});
-}
+};
 window.gm.leaveVR=function(){
   //todo update effects in VR but stop RL effects
   let s= window.story.state;
@@ -235,7 +286,7 @@ window.gm.leaveVR=function(){
   s._gm.time = s._gm.timeRL,s._gm.day = s._gm.dayRL;
   window.gm.addTime(60);
   //todo copy fetish-stats back to RLPlayer ?
-}
+};
 window.gm.fightArena=function(enc,params,prize,next){
   window.gm.encounters[enc](params);
   window.gm.Encounter.onVictory = function(){
@@ -244,11 +295,11 @@ window.gm.fightArena=function(enc,params,prize,next){
         window.gm.printPassageLink('Next',next));
     }
   window.gm.Encounter.onFlee = (function(){return('After your retreat you find your way back to start-position.</br>'+ window.gm.printLink('Next','window.gm.postDefeat()'));});
-}
+};
 window.gm.cursedChest=function(next){
   let rnd = _.random(0,100); //this is rolling the dice, then call Loot-paasage !
   window.story.state.tmp.args=[window.passage.name,rnd,next];
-}
+};
 //call this after onVictory/onFlee-scene to continue in dng or other location
 //this function is also used to restore after loading save !
 window.gm.postVictory=function(params){
@@ -262,12 +313,12 @@ window.gm.postVictory=function(params){
   } else {
     window.story.show(window.gm.player.location);//history disabled ! window.story.history[window.story.history.length - 1], true);   
   }
-}
+};
 //call this after your onDefeat/onSubmit-scene to respawn at respawn-point; cleansup dng-variables
 window.gm.postDefeat=function(){ 
   window.story.state.dng.id="";window.gm.dng = null;
   window.gm.respawn();
-}
+};
 //after passing out: heal player and remove inventory {keepInventory=false,location=''}
 window.gm.respawn=function(conf={keepInventory:false}){
   for(var name of window.story.state._gm.playerParty){
@@ -300,7 +351,7 @@ window.gm.respawn=function(conf={keepInventory:false}){
         msg+=n.item.name+', ';
       }
     }
-    if(msg.length>0) msg="You lost "+(msg.substr(0,msg.length-2));
+    if(msg.length>0) msg="</br>You lost "+(msg.substr(0,msg.length-2));
   }
   /*if(window.gm.quests.getMilestoneState("qDiedAgain").id===2){
     window.story.show('YouDiedOnce'); 
@@ -322,7 +373,7 @@ window.gm.respawn=function(conf={keepInventory:false}){
     if(window.gm.player.Outfit.getItemForSlot(window.gm.OutfitSlotLib.LHand)===null){
       let staff = new window.storage.constructors['StaffWodden']();
       //window.gm.player.Inv.addItem(staff);
-      //window.gm.player.Outfit.addItem(staff);
+      window.gm.player.Outfit.addItem(staff);
     }
     window.story.state.tmp.msg=msg; //msg for display
     window.story.show(window.story.state.vars.spawnAt);
@@ -664,6 +715,8 @@ window.gm.printBodyDescription= function(whom,onlyvisible=false){
   //msg +='</br>Total lewdness sluty:'+lewd.slut+' bondage:'+lewd.bondage+' sm:'+lewd.sm;
 	return msg+"</br>"+msg2;
 };
+//see combat
+window.gm.printSfx=function(id,msg){};
 // returns singular pronoun for the char depending on gender
 window.gm.util.estimatePronoun= function(whom){
     let isplayer = (whom.name===window.gm.player.name);
@@ -683,8 +736,8 @@ window.gm.util.estimatePronoun= function(whom){
 };
 //returns a function that accept a text and fixes the word-phrases: let fixer = window.gm.util.descFixer(this.actor);msg=fixer('[I] [like] this shit.');
 window.gm.util.descFixer = function(whom){
-  let pron = window.gm.util.estimatePronoun(whom);
-  return(function(pron){ 
+  return(function(whom){ 
+    let char=whom,pron = window.gm.util.estimatePronoun(whom);
     return function(text){
       let repl = [],br = 0, aft,bef,found;
       //search brackets like $[dff]$ $[[sdff]]$ dont find [ ] or \[ \] ; 
@@ -714,7 +767,7 @@ window.gm.util.descFixer = function(whom){
         }
       }
       for(var n of repl){//replace bracket+bracketcontent,
-        n.new = window.gm.util.lookupWord(n.text,pron);
+        n.new = window.gm.util.lookupWord(n.text,pron,char);
         let bef = text.substring(0,n.start), aft = text.substr(n.end+1);
         text= bef+n.new+aft;
       }
@@ -724,7 +777,7 @@ window.gm.util.descFixer = function(whom){
       // A dense fur covers $[my]$ body. A dense fur covers your body.  
       return(text);
     }
-  }(pron))
+  }(whom))
 };
 // add irregular words here
 window.gm.util.wordlist = function buildWordList(list){
@@ -741,7 +794,7 @@ window.gm.util.wordlist = function buildWordList(list){
 }(window.gm.util.wordlist || {});
 
 //looks up a word in the wordlist and retourns the version fitting pronoun
-window.gm.util.lookupWord = function(word,pron){
+window.gm.util.lookupWord = function(word,pron,whom){
   let output = word;
   let x = word.toLowerCase();
   let repl =window.gm.util.wordlist[x];
@@ -751,9 +804,17 @@ window.gm.util.lookupWord = function(word,pron){
       output= output[0].toUpperCase()+output.substr(1);
     }
   } else {
-    if(pron==='he' || pron==='she'|| pron==='shi' ){  
-      output+='s';//wear -> wears
+    switch(x){
+      case 'name':
+          output=whom.name;
+        break;
+      default:
+        if(pron==='he' || pron==='she'|| pron==='shi' ){  
+          output+='s';//wear -> wears
+        }
+        break;
     }
+    
   }
   return(output);
-}
+};

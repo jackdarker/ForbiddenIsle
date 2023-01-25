@@ -570,8 +570,8 @@ class WeaponSlobber extends BodyPart {
     }
     attackMod(target){
         let mod = new SkillMod();
-        let _dmg =5;
-        if(this.data.style==='slime' ) _dmg+=5;
+        let _dmg =2;
+        if(this.data.style==='slime' ) _dmg+=2;
         mod.onHit = [{ target:target, eff: [effDamage.factory(_dmg,'acid',2, this.parent.parent.name+' slobbers '+target.name+' with '+this.data.style+'.' )]}];
         return(mod);
     }
@@ -879,6 +879,7 @@ class HandsPaw extends BodyPart { //paws of ferals
         let _dmg =5;
         if(this.data.style==='cat' || this.data.style==='lizard' ) _dmg+=5;
         mod.onHit = [{ target:target, eff: [effDamage.factory(_dmg,'slash')]}];
+        mod.onCrit = [{ target:target, eff: [effDamage.factory(_dmg,'slash')]}];
         return(mod);
     }
 }
@@ -967,6 +968,14 @@ class HandsHuman extends BodyPart { //hands with digits to use tools
         msg += ['dog','wolf','cat','bunny'].includes(this.data.style)?(this.data.style+'-claws adorn the fingertips'):'';
         msg += ['lizard'].includes(this.data.style)?('Large talons grow from their fingertips.'):'';
         return(fconv(msg));
+    }
+    attackMod(target){
+        let mod = new SkillMod();
+        let _dmg =5;
+        if(this.data.style==='cat' || this.data.style==='lizard' ) _dmg+=5;
+        mod.onHit = [{ target:target, eff: [effDamage.factory(_dmg,'blunt')]}];
+        mod.onCrit = [{ target:target, eff: [effDamage.factory(_dmg,'blunt')]}];
+        return(mod);
     }
 }
 class Wings extends BodyPart { //wings attached to back or as arms  <- todo
