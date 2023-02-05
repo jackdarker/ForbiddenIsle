@@ -6,6 +6,20 @@
 <%=window.gm.printGoto(window.gm.player.location,{},'next')%>
 </article><article id="LogPanel"></article></section>
 
+:: FI_DebugItem [_back_]
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.StraightBanana(),2)'>Banana.</a>
+<a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.SquishyMelon(),2)'>melon.</a>
+<a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.HairyKiwi(),2)'>Kiwi.</a>
+<a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.SeaLettuce(),2)'>SeaLettuce.</a>
+<a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.RawFish(),2)'>RawFish.</a>
+<a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.RawFish(),2)'>RoastedFish.</a>
+<a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.BellPepper(),2)'>BellPepper.</a>
+<a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.RawFish(),2)'>RawFish.</a>
+<a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.RawFish(),2)'>RawFish.</a>
+</br>[[Back|_back_]]
+</article><article id="LogPanel"></article></section>
+
 :: FI_ScavengeFruit
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <% s.tmp.args=[0,0,0];for(var i=(1+2*s.NGP.xForestFood);i>0;i--){s.tmp.args[_.random(0,s.tmp.args.length-1)]+=1;}%>

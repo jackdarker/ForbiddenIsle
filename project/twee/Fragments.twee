@@ -2,7 +2,7 @@
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 [[Back|_back_]]</br> Checking out <%=window.gm.player.name%>:</br>
 <div id='output'><%=window.gm.printBodyDescription(window.gm.player,true)%><div>
-<div id='output2'><%=JSON.stringify(window.gm.player.Effects.get("effMutator").sumupMutators())%><div>
+<div id='output2'><%=JSON.stringify(window.gm.player.Effects.get("effMutator").sumupMutators()).replaceAll(',',', ')%><div>
 </article><article id="LogPanel"></article></section>
 
 :: FI_NeedsPlayer
@@ -40,6 +40,7 @@ window.gm.printOutput(needs(),'#needs');
     <%=(s.DngSY.exploreForest>=2)?window.gm.printGoto('FI_ScavengeFruit',{time:30*(1+2*s.NGP.xForestFood),energy:-5*(1+2*s.NGP.xForestFood)},'Pick some fruits that are in your hands reach.'):''%></br>
     <%=(s.DngSY.exploreForest>=1)?window.gm.printGoto('FI_ScavengeWood',{time:30,energy:-10},'Look around for some firewood'):''%></br>
     <%=(s.DngSY.exploreForest>=4)?window.gm.printGoto('FI_ShakeTree',{time:30,energy:-20},'Shake a tree'):''%></br>
+    [[FI_DebugItem]]</br>
     [[explore western direction (toward beach)]]</br>
     [[explore northern direction (dense forest and mountains)]]</br>
 <%}%>
@@ -84,7 +85,7 @@ This is the New-Game-Plus Screen where you can configure your next play through.
 - Selective: you may decide to reject a transformation 
 
 Specialised TransformParameters
-- FLatChested: Your tits tend to shrink
+- FlatChested: Your tits tend to shrink
 - Bulky: easier to keep a muscular build
 - VagPrefered: More likely to gain a Vag then a cock
 
@@ -96,7 +97,7 @@ StartItems
 - immun boosters: gives you transformation resistance for some time
 
 StartCharacter
-- decent swimmer: you didnt drown in swin training
+- decent swimmer: you didnt drown in swim training
 - Twink: 
 - Girl: you start as a girl
 - less hetero: little closer to bi
@@ -117,7 +118,7 @@ EventMods
 - reduce care package chance
 - disable TribeCapture Badend (unless provoked): 
 - higher chance to find fetish item removal options</p>
-
+</p>
 </article><article id="LogPanel"></article></section>
 <script>
 function NOP(){return({OK:true,msg:""});}

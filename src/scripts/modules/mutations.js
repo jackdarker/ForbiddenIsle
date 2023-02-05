@@ -130,8 +130,17 @@ window.gm.MutationsLib['swapGender'] = function (char,genderItem){
     let msg='';
     let penis = char.getPenis();
     let vulva = char.getVagina();
-    let style=(penis)?penis.getStyle():((vulva)?vulva.getStyle():'human');
-    let newItem =genderItem.factory(style);
+    let style='human';
+    let newItem;
+    if(penis){
+        style=penis.getStyle();
+        newItem=VulvaHuman.factory(style);;
+    } else if(vulva){
+        style=vulva.getStyle();
+        newItem=PenisHuman.factory(style);;
+    }
+    //Todo let newItem =genderItem.factory(style);
+    
     if(newItem.slotUse.includes('bPenis')){
         if(vulva !==null){
             window.gm.player.Outfit.removeItem(vulva.id,true);
@@ -145,7 +154,7 @@ window.gm.MutationsLib['swapGender'] = function (char,genderItem){
     if(newItem.slotUse.includes('bVulva')){
         if(penis!==null){
             window.gm.player.Outfit.removeItem(penis.id,true);
-            msg+= 'Your fine penis shrinks down until it is finally completely absorbed in your body. ';
+            msg+= 'In shock you see your manmeat shrink down quickly. As it is just a tiny nub, it gets pulled into your groin but the change doesnt stop.</br>';
         }
         if(vulva===null){
             window.gm.player.Outfit.addItem(newItem,true);
@@ -155,7 +164,7 @@ window.gm.MutationsLib['swapGender'] = function (char,genderItem){
     if(msg!=='' && char===window.gm.player){
         window.gm.pushDeferredEvent("GenericDeffered",[msg]);
     }
-}
+};
 window.gm.MutationsLib['mutateWolf'] = function (char,magnitude=1){
     let msg='', bb=window.gm.OutfitSlotLib;
     let fconv =window.gm.util.descFixer(char);
@@ -444,12 +453,12 @@ window.gm.MutationsLib['growPenis'] = function(char,magnitude=1){
                 msg+= "Your member swell proudly and gains in girth and length?</br>";
             }
         } else { //shrink
-            if(item.data.growth<0.05){
-                msg+= "You can feel some pressure around your tiny manmeat but nothing happens.</br>";
-            } else {
-                item.data.growth=Math.max(0.05,item.data.growth-0.25);
-                msg+= "You can feel some pressure engulfing your manmeat. With horror you can feel it shrinking down even further !</br>";
-            }
+                if(item.data.growth<0.05){
+                    msg+= "You can feel some pressure around your tiny manmeat but nothing happens.</br>";
+                } else {
+                    item.data.growth=Math.max(0.05,item.data.growth-0.25);
+                    msg+= "You can feel some pressure engulfing your manmeat. With horror you can feel it shrinking down even further !</br>";
+                }
         }
         msg += "</br>"+item.descLong(window.gm.util.descFixer(char))+"</br>";
     }
@@ -533,7 +542,20 @@ window.gm.MutationsLib['changeSavage'] = function(char,value=1,min=0,max=10){
             let data={m:effMutator.mutatorDataProto(),req:null,revert:""};
             data.m.Genital=0.4,data.m.M=0.5;
             data.f=window.gm.MutationsLib['growPenis'];data.mag=1;
-            data.req=function(char){let _res={OK:true,msg:''};return(_res);};
+            data.req=function(char){let _res={OK:true,msg:''};_res.OK=(char.Outfit.countItem("PenisHuman")>0);return(_res);};
         return(data);})();
+    window.gm.Mutators['M2F'] = (function(){
+            let data={m:effMutator.mutatorDataProto(),req:null,revert:""};
+            data.m.Genital=1,data.m.F=0.5,data.m.M=0;
+            data.f=window.gm.MutationsLib['swapGender'];
+            data.req=function(char){let _res={OK:true,msg:''};_res.OK=(char.Outfit.countItem("PenisHuman")>0);return(_res);};
+        return(data);})();
+    window.gm.Mutators['shrinkMaleness'] = (function(){
+        let data={m:effMutator.mutatorDataProto(),req:null,revert:""};
+        data.m.Genital=0.5,data.m.F=0.5,data.m.M=0;
+        data.f=window.gm.MutationsLib['growPenis'];data.mag=-1;
+        data.req=function(char){let _res={OK:true,msg:''};_res.OK=(char.Outfit.countItem("PenisHuman")>0);return(_res);};
+        return(data);})();
+
     //smallCock
 }

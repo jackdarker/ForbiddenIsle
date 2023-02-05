@@ -116,6 +116,9 @@ class effMutator extends Effect {
     static vectorForId(id) {
         let G={v:effMutator.mutatorDataProto(),max:effMutator.mutatorDataProto()};
         switch(id){
+            case "BellPepper":
+                G.v.F=0.2,G.v.M=-0.1,G.v.Genital=0.2;
+                break;
             case "SquishyMelon":
                 G.v.F=0.5,G.v.Ass=0.5,G.v.Chest=0.2;
                 G.max.F=0.5,G.max.Ass=0.5,G.max.Chest=0.4;
@@ -131,6 +134,10 @@ class effMutator extends Effect {
             case "SeaLettuce":
                 G.v.F=-0.5,G.v.Ass=-0.2,G.v.Chest=-0.2;
                 break;
+            case "RawFish":
+                G.v.F=-0.5;
+                G.max.Genital=1;
+            break;
             default:
                 break;
         }
@@ -172,8 +179,8 @@ class effMutator extends Effect {
         for(i=this.Stack.length-1;i>=0;i--){
             factor=this.Stack[i].factor;
             for (const key in v) {
-                v[key]+=factor*this.Stack[i].values[key];
-                max[key]=Math.max(max[key],this.Stack[i].max[key]);
+                v[key]+=factor*this.Stack[i].values[key]; //add v
+                max[key]=Math.max(max[key],this.Stack[i].max[key]); //max of max
             }
         }
         for (const key in v) { //limit mutators
@@ -419,7 +426,7 @@ window.gm.ItemsLib = (function (ItemsLib){
     window.storage.registerConstructor(CraftMaterial);
     window.storage.registerConstructor(Tool);
 ItemsLib['SnackBar'] = function(){ let x= new Food();x.style=0;return(x);};
-ItemsLib['BellPepper'] = function(){ let x= new Food();x.style=30;return(x);};
+ItemsLib['BellPepper'] = function(){ let x= new Food();x.style=20;return(x);};
 ItemsLib['StraightBanana'] = function(){ let x= new Food();x.style=30;return(x);};
 ItemsLib['SquishyMelon'] = function(){ let x= new Food();x.style=40;return(x);};
 ItemsLib['JuicyPeach'] = function(){ let x= new Food();x.style=50;return(x);};
