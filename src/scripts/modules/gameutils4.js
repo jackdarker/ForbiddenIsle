@@ -14,15 +14,8 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
         showNSFWPictures:true,
         showDungeonMap:true
     };
-    s.PlayerVR.Effects.addItem(effMutator.factory("")); //Mutationlogic
     let DngSY = {
         remainingNights: -1,
-        resourceForest: {wood:5,fruit:5},   //number resource left
-        exploreForest:0,
-        exploreHill:0,
-        exploreBeach:0,
-        campUpgrade:{}, //see Data.ods
-        talkEric:{},
         visitedTiles: [],mapReveal: [],
         dng:'', //current dungeon name
         prevLocation:'', nextLocation:'', //used for nav-logic
@@ -30,13 +23,12 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
     };
     let Lab={} //see brewInit
     let Known={ //flags for things you know, see Data.ods
-      recipes:{}  //'LustPotion:20%'
-      ,places:{},study:{}
+        places:{},study:{}
     }
     if(!NGP) { //init if missing
         NGP={token:0,tokenUsed:0,xForestFood:0,increasedSatiation:0,willOnSatiated:0}
     }else{ //grant NGP-options; window.gm.player is not valid yet!
-        if(!!NGP.ProteinBars) window.story.state.PlayerVR.Inv.addItem(window.gm.ItemsLib["SnackBar"](),12);
+        //if(!!NGP.ProteinBars) window.story.state.PlayerVR.Inv.addItem(window.gm.ItemsLib["SnackBar"](),12);
     }
     if(!window.gm.achievements){//||forceReset) { 
         window.gm.resetAchievements();
@@ -54,26 +46,11 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
 window.gm.resetAchievements = function() { //declare achievements here
     window.gm.achievements={
         looseEnd: 0 //
-        ,swamToFar: 0
-        ,starveBreakfast:0
-        ,survive7days: 0
-        ,insaneTFHuman: 0
       }
       window.gm.achievementsInfo={ //this is kept separate to not bloat savegame
           //hidden bitmask: 0= all visisble, 1= Name ???, 2= Todo ???
           looseEnd: {set:1, hidden:3, name:"loose end", descToDo:"Find a loose end.",descDone:"Found a link without target. Gained a NGPtoken."} //
-          ,starveBreakfast: {set:1, hidden:3, name:"starved at breakfast", descToDo:"Have nothing to eat at breakfast and no will.",descDone:"You starved at breakfast because you had no food left and no will to go and find something."} //
-          ,swamToFar: {set:1, hidden:2, name:"swam to far", descToDo:"swim to far into the sea",descDone:"You swam to far and drowned."} //
-          ,survive7days: {set:1, hidden:1, name:"survive 7 days", descToDo:"Make it to day 8.",descDone:"You survived a week. But this is only the beginning."} //
-          ,insaneTFHuman: {set:1, hidden:1, name:"insane human TF", descToDo:"Got insane by transforming to much.",descDone:"You stayed human but all the TF are stressing you to much."} //
-      }
-}
-window.gm.checkMutation= function(trigger){ //
-    var f=window.gm.player.Effects.get("effMutator").findMutation(trigger);
-    if(f) {
-        f();
-        //window.story.state.tmp.args=[(function(){window.gm.sex.growBreast({state:0});})];window.story.show('GenericPassage');
-    }  
+         }
 }
 
 class effMutator extends Effect {

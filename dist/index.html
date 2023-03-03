@@ -2702,32 +2702,23 @@ res.OK=true;res.msg="This looks promissing. But some improvements are necessary.
 res.OK=true;res.msg="You expertly craft something.</br>";}else{//learning
 res.OK=true;known[el]=Math.min(known[el]+0.2,1);//todo learnrate
 if(known[el]>=1){res.msg="I mastered this recipe!</br>";}else{res.msg="There is still room for improvement.</br>";}}if(res.OK===true){res.msg+=all[el].result+" was produced.</br>";window.gm.player.Inv.addItem(window.gm.ItemsLib[all[el].result]());break;}}}}catch(err){_iterator98.e(err);}finally{_iterator98.f();}Lab.ingr.forEach(function(v){return window.gm.player.Inv.removeItem(v,1);});Lab.ingr=[];window.gm.brewInit(Lab.mode);window.gm.printOutput(res.msg);};window.gm.qID=window.gm.qID||{};window.gm.questDef=window.gm.questDef||{};{var quest=new Quest("qGarden","Green thumb","");quest.addMileStone(new QuestMilestone(1,"","Find the garden.",QuestMilestone.NOP,QuestMilestone.HIDDEN));quest.addMileStone(new QuestMilestone(100,"","The garden is a mess and you dont have a use for it. So why bother?.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(200,"","Get some tools to clear the garden from the rubble..",QuestMilestone.NOP));window.gm.qID.qGarden=quest.id;window.gm.questDef[quest.id]=quest;quest=new Quest("qBarJob","Serve'em drinks","");quest.addMileStone(new QuestMilestone(1,"","Find the Inn.",QuestMilestone.NOP,QuestMilestone.HIDDEN));quest.addMileStone(new QuestMilestone(100,"","Maybe the owner of the Inn has a job for you?.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(200,"","Earn money by working as a waitress.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(300,"","Work at least 6 shifts between Monday and sunday.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(10000,"","???",QuestMilestone.NOP));window.gm.qID[quest.id]=quest.id;window.gm.questDef[quest.id]=quest;quest=new Quest("qTraderThomas","A Trader to trade","");quest.addMileStone(new QuestMilestone(1,"","Find the Traders house.",QuestMilestone.NOP,QuestMilestone.HIDDEN));quest.addMileStone(new QuestMilestone(100,"","Ask around for the traders absence.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(200,"","Find the lookout point.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(300,"","Report back to the innkeeper.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(500,"","Find the traders carriage on the road to Redwick.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(900,"","Return with Thomas to his store.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(1000,"","NYI",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(10000,"","???",QuestMilestone.NOP));window.gm.qID.qTraderThomas=quest.id;window.gm.questDef[quest.id]=quest;}"use strict";//stuff for ForbiddenIsle
-window.gm.initGameFlags=function(forceReset){var NGP=arguments.length>1&&arguments[1]!==undefined?arguments[1]:null;var s=window.story.state;function dataPrototype(){return{visitedTiles:[],mapReveal:[],tmp:{},version:0};}if(forceReset){s.NGP=s.Settings=s.DngSY=null;s.Lab=s.Known=null;}var Settings={autoSave:true,showCombatPictures:true,showNSFWPictures:true,showDungeonMap:true};s.PlayerVR.Effects.addItem(effMutator.factory(""));//Mutationlogic
-var DngSY={remainingNights:-1,resourceForest:{wood:5,fruit:5},//number resource left
-exploreForest:0,exploreHill:0,exploreBeach:0,campUpgrade:{},//see Data.ods
-talkEric:{},visitedTiles:[],mapReveal:[],dng:'',//current dungeon name
+window.gm.initGameFlags=function(forceReset){var NGP=arguments.length>1&&arguments[1]!==undefined?arguments[1]:null;var s=window.story.state;function dataPrototype(){return{visitedTiles:[],mapReveal:[],tmp:{},version:0};}if(forceReset){s.NGP=s.Settings=s.DngSY=null;s.Lab=s.Known=null;}var Settings={autoSave:true,showCombatPictures:true,showNSFWPictures:true,showDungeonMap:true};var DngSY={remainingNights:-1,visitedTiles:[],mapReveal:[],dng:'',//current dungeon name
 prevLocation:'',nextLocation:'',//used for nav-logic
 dngMap:{}//dungeon map info
 };var Lab={};//see brewInit
 var Known={//flags for things you know, see Data.ods
-recipes:{}//'LustPotion:20%'
-,places:{},study:{}};if(!NGP){//init if missing
+places:{},study:{}};if(!NGP){//init if missing
 NGP={token:0,tokenUsed:0,xForestFood:0,increasedSatiation:0,willOnSatiated:0};}else{//grant NGP-options; window.gm.player is not valid yet!
-if(!!NGP.ProteinBars)window.story.state.PlayerVR.Inv.addItem(window.gm.ItemsLib["SnackBar"](),12);}if(!window.gm.achievements){//||forceReset) { 
+//if(!!NGP.ProteinBars) window.story.state.PlayerVR.Inv.addItem(window.gm.ItemsLib["SnackBar"](),12);
+}if(!window.gm.achievements){//||forceReset) { 
 window.gm.resetAchievements();}window.storage.loadAchivementsFromBrowser();//see comment in rebuildFromSave why this is done
 s.Settings=window.gm.util.mergePlainObject(Settings,s.Settings);s.NGP=window.gm.util.mergePlainObject(NGP,s.NGP);s.DngSY=window.gm.util.mergePlainObject(DngSY,s.DngSY);s.Lab=window.gm.util.mergePlainObject(Lab,s.Lab);s.Known=window.gm.util.mergePlainObject(Known,s.Known);//todo cleanout obsolete data ( filtering those not defined in template) 
 };window.gm.resetAchievements=function(){//declare achievements here
 window.gm.achievements={looseEnd:0//
-,swamToFar:0,starveBreakfast:0,survive7days:0,insaneTFHuman:0};window.gm.achievementsInfo={//this is kept separate to not bloat savegame
+};window.gm.achievementsInfo={//this is kept separate to not bloat savegame
 //hidden bitmask: 0= all visisble, 1= Name ???, 2= Todo ???
 looseEnd:{set:1,hidden:3,name:"loose end",descToDo:"Find a loose end.",descDone:"Found a link without target. Gained a NGPtoken."}//
-,starveBreakfast:{set:1,hidden:3,name:"starved at breakfast",descToDo:"Have nothing to eat at breakfast and no will.",descDone:"You starved at breakfast because you had no food left and no will to go and find something."}//
-,swamToFar:{set:1,hidden:2,name:"swam to far",descToDo:"swim to far into the sea",descDone:"You swam to far and drowned."}//
-,survive7days:{set:1,hidden:1,name:"survive 7 days",descToDo:"Make it to day 8.",descDone:"You survived a week. But this is only the beginning."}//
-,insaneTFHuman:{set:1,hidden:1,name:"insane human TF",descToDo:"Got insane by transforming to much.",descDone:"You stayed human but all the TF are stressing you to much."}//
-};};window.gm.checkMutation=function(trigger){//
-var f=window.gm.player.Effects.get("effMutator").findMutation(trigger);if(f){f();//window.story.state.tmp.args=[(function(){window.gm.sex.growBreast({state:0});})];window.story.show('GenericPassage');
-}};var effMutator=/*#__PURE__*/function(_Effect2){_inherits(effMutator,_Effect2);var _super53=_createSuper(effMutator);_createClass(effMutator,null,[{key:"factory",value:function factory(type){var eff=new effMutator();//eff.type = type;eff.data.id=eff.data.name='eff'+type;
+};};var effMutator=/*#__PURE__*/function(_Effect2){_inherits(effMutator,_Effect2);var _super53=_createSuper(effMutator);_createClass(effMutator,null,[{key:"factory",value:function factory(type){var eff=new effMutator();//eff.type = type;eff.data.id=eff.data.name='eff'+type;
 return eff;}},{key:"mutatorDataProto",value:function mutatorDataProto(){return{Ass:0.0,//Ass
 Chest:0.0,//Chest
 Face:0.0,//Face
@@ -3722,7 +3713,7 @@ window.storage.registerConstructor(Stat);window.storage.registerConstructor(stHe
 window.storage.registerConstructor(effCallHelp);window.storage.registerConstructor(effCombatRecovery);window.storage.registerConstructor(effDamage);window.storage.registerConstructor(effDetermined);window.storage.registerConstructor(effHunger);window.storage.registerConstructor(effLibido);window.storage.registerConstructor(effSanity);window.storage.registerConstructor(effFlying);window.storage.registerConstructor(effBleed);window.storage.registerConstructor(effCombined);window.storage.registerConstructor(effFairyLight);window.storage.registerConstructor(effGrappled);window.storage.registerConstructor(effGrappling);window.storage.registerConstructor(effUngrappling);window.storage.registerConstructor(effEnergized);window.storage.registerConstructor(effNotTired);window.storage.registerConstructor(effPillEffect);window.storage.registerConstructor(effPoiseDamage);window.storage.registerConstructor(effTeaseDamage);window.storage.registerConstructor(effTired);window.storage.registerConstructor(effStunned);window.storage.registerConstructor(effTransformSelf);window.storage.registerConstructor(effGuard);window.storage.registerConstructor(effProtect);window.storage.registerConstructor(effHeal);window.storage.registerConstructor(effMasochist);window.storage.registerConstructor(effEnergyDrain);window.storage.registerConstructor(effHorsePower);window.storage.registerConstructor(effLapineSpeed);window.storage.registerConstructor(effMutateBunny);window.storage.registerConstructor(effMutateHorse);window.storage.registerConstructor(effMutateWolf);window.storage.registerConstructor(effMutateCat);window.storage.registerConstructor(effMutateHuman);window.storage.registerConstructor(effGrowBreast);window.storage.registerConstructor(effGrowVulva);window.storage.registerConstructor(effLewdMark);window.storage.registerConstructor(effInHeat);window.storage.registerConstructor(effInRut);window.storage.registerConstructor(effSpermDecay);window.storage.registerConstructor(effButtPlugged);window.storage.registerConstructor(effVaginalFertil);window.storage.registerConstructor(effVaginalPregnant);//non-combat skills
 window.storage.registerConstructor(Ability);StatsLib.Ability=Ability;return StatsLib;}(window.gm.StatsLib||{});
 /* twine-user-script #2: "Story JavaScript" */
-</script><tw-tag name="_nodeffered_" color="yellow"></tw-tag><tw-tag name="_isdeffered_" color="brown"></tw-tag><tw-tag name="_noshortkey_" color="brown"></tw-tag><tw-tag name="template" color="orange"></tw-tag><tw-tag name="_back_" color="gray"></tw-tag><tw-tag name="_nosave_" color="yellow"></tw-tag><tw-passagedata pid="1" name="EncounterStartTurn" tags="_nosave_" position="650,25" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;) %&gt;
+</script><tw-tag name="template" color="orange"></tw-tag><tw-tag name="_back_" color="gray"></tw-tag><tw-tag name="_nosave_" color="yellow"></tw-tag><tw-tag name="_nodeffered_" color="yellow"></tw-tag><tw-tag name="_isdeffered_" color="brown"></tw-tag><tw-tag name="_noshortkey_" color="brown"></tw-tag><tw-passagedata pid="1" name="EncounterStartTurn" tags="_nosave_" position="650,25" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;) %&gt;
 &lt;div id=&#39;canvas&#39;&gt;&lt;/div&gt;&lt;/br&gt;
 &lt;div id=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/br&gt; &lt;!--filled by statspanel--&gt;
 &lt;div id=&#39;output&#39;&gt;&lt;/div&gt;&lt;/br&gt;    &lt;!--message is rendered here--&gt;
@@ -6095,12 +6086,12 @@ You might see a lot of links that are formated red-strikethrough. Those are curr
 &lt;p class=&#39;author&#39;&gt;This game has a NewGame+ feature that you will have to make use of to progress in the game. You can get there after bad end or from the HELP panel.&lt;/p&gt;
 &lt;p class=&#39;author&#39;&gt;[[Fetishes ! (spoiler alert)|List_Fetish]]&lt;/p&gt;&lt;/br&gt;&lt;/br&gt;&lt;hr&gt;
 &lt;p&gt; &lt;/br&gt;&lt;/p&gt;
-&lt;p&gt;&lt;a0 onclick=&#39;startFI();&#39;&gt;Stranded on a mysterious island...&lt;/a&gt;&lt;/p&gt;&lt;hr&gt;
+&lt;p&gt;&lt;a0 onclick=&#39;startZG();&#39;&gt;Traveling through the wasteland...&lt;/a&gt;&lt;/p&gt;&lt;hr&gt;
 &lt;p&gt;PS.:some Images used here are Free ones from &lt;a target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; href=&quot;https://de.vecteezy.com/?utm_source=vecteezy-download&amp;utm_medium=license-info-pdf&amp;utm_campaign=license-info-document&quot;&gt;vecteezy.com&lt;/a&gt; or &lt;a target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; href=&quot;https://storyset.com/&quot;&gt;Storyset&lt;/a&gt;. &lt;/p&gt; 
 &lt;/article&gt;
 &lt;script&gt;
-function startFI() {
-    window.story.state.vars.spawnAt=&quot;FI_Entry&quot;; //
+function startZG() {
+    window.story.state.vars.spawnAt=&quot;ZU_Entry&quot;; //
     window.gm.enterVR();
     window.gm.forwardTime(1200);
     window.gm.player.levelUp(5);window.gm.player.autoLeveling();
@@ -6933,91 +6924,108 @@ Touch it:  triggers minor Transformations
 
 Whoreship: 
 
-Captured and tied to it: Badend?</tw-passagedata><tw-passagedata pid="139" name="skCooking" tags="" position="825,625" size="100,100">You can create tasty meals from basic ingredients. No need to rely on fastfood.
-[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="140" name="skSporty" tags="" position="725,625" size="100,100">You like to do sports.
-[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="141" name="skTechy" tags="" position="825,525" size="100,100">Tinkering and repairing gadgets is your thing.
-[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="142" name="skMoneymaker" tags="" position="725,525" size="100,100">You often find ways to increase your profit a little bit.
-[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="143" name="NewGamePlus" tags="" position="350,1850" size="100,100">You finished the game in some way but maybe you have missed something. &lt;/br&gt;
+Captured and tied to it: Badend?</tw-passagedata><tw-passagedata pid="139" name="ZU_GladiatorCell" tags="" position="1100,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;%window.gm.player.location=window.passage.name;%&gt;
+This cell is your home, at least for now.&lt;/br&gt;
+&lt;/br&gt;[[Check on yourself|FI_InspectSelf]]
+&lt;%if(window.gm.getTimeStruct().daytime===&#39;night&#39;){%&gt; &lt;p&gt;Its getting late. Better go get some [[sleep|ZU_GoSleep]].&lt;/p&gt;&lt;%}else{%&gt; 
+&lt;%}%&gt;
+Pass some time until... (just forwards time):
+&lt;a0 onclick=&#39;window.gm.forwardTime(1200);window.story.show(&quot;ZU_GladiatorCell&quot;);&#39; &lt;%=(window.gm.getTimeStruct().daytime===&#39;morning&#39;)?&#39;&#39;:&#39;hidden&#39;%&gt;&gt; midday&lt;/a&gt;
+&lt;a0 onclick=&#39;window.gm.forwardTime(1600);window.story.show(&quot;ZU_GladiatorCell&quot;);&#39; &lt;%=(window.gm.getTimeStruct().daytime===&#39;noon&#39;)?&#39;&#39;:&#39;hidden&#39;%&gt;&gt; afternoon&lt;/a&gt;
+&lt;a0 onclick=&#39;window.gm.forwardTime(2000);window.story.show(&quot;ZU_GladiatorCell&quot;);&#39; &lt;%=(window.gm.getTimeStruct().daytime===&#39;afternoon&#39;)?&#39;&#39;:&#39;hidden&#39;%&gt;&gt; evening&lt;/a&gt;
+&lt;a0 onclick=&#39;window.gm.forwardTime(2200);window.story.show(&quot;ZU_GladiatorCell&quot;);&#39; &lt;%=(window.gm.getTimeStruct().daytime===&#39;evening&#39;)?&#39;&#39;:&#39;hidden&#39;%&gt;&gt; night&lt;/a&gt;
+
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="140" name="ZU_Entry" tags="" position="1225,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;%window.gm.player.location=window.passage.name;%&gt;
+&lt;h2&gt;Your unfortunate journey brought you here&lt;/h2&gt; 
+&lt;p&gt;...While traveling the wasteland, some bandits surprised your resting carawan.&lt;/p&gt;
+&lt;p&gt;[[Fight]] | [[Run off into the dark]] | [[Sit it out]]&lt;/p&gt;
+&lt;p&gt;Now you are following with your hands bound to a place called Zhuul.&lt;/p&gt;
+&lt;p&gt;After a days walk, a city comes into view. Compared to the deserted wastes you passed through until now, the surrounding of the city seems much more lively.&lt;/p&gt;
+&lt;p&gt;Without much of a rest, you are lead to a place close outside the walls of the city. And it quickly dawns on you whats going to happen: a slave auction&lt;/p&gt;
+&lt;p&gt;A middle aged man in some leather armor bought you. &lt;/p&gt;
+&lt;a0 onclick=&#39;window.story.show(&quot;ZU_GladiatorIntro&quot;)&#39;&gt;You are now owned by him&lt;/a&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="141" name="ZU_GladiatorIntro" tags="" position="100,1850" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;%window.gm.player.location=window.passage.name;%&gt;
+&lt;p&gt;&quot;I&#39;m Thesus, owner of gladiator school. I will give you a chance to fight for your life in our arena.&quot;&lt;/p&gt;
+Comply to his terms and tell him about your skills: none | sword fight | wrestling | throwing | actor
+&lt;p&gt;Shows you your place to stay&lt;/p&gt;
+&lt;p&gt;&quot;You are not allowed to leave my home unless I say so. Maybe if you do well, I will let you walk outside.&quot;&lt;/p&gt;
+&lt;p&gt; Leaving the city is not allowed in general and I would advise against doing so in general. 
+The city is an supple oasis compared to its surrounding. A lot of nasty things can occur to someone trying to make his way through the wastes. Let alone a runaway slave.&quot; &lt;/p&gt;
+
+[[ZU_GoSleep]]
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="142" name="ZU_GoSleep" tags="" position="225,1850" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;p&gt;You lay down on your bunk to rest.&lt;/p&gt;
+
+&lt;a0 onclick=&#39;sleep()&#39;&gt;Rest a while&lt;/a&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;
+&lt;script&gt;function sleep(){
+    if(window.story.state.Settings.autoSave) window.gm.toasty.info(&quot;auto save&quot;),window.storage.saveBrowser(&quot;saveAuto&quot;);
+    window.gm.forwardTime(700);
+    let _b,_s=window.gm.player.Stats.get(&#39;satiation&#39;).value;
+    //more energy if not hungry
+    _b=30+(_s&gt;70)?100:((_s&gt;30)?50:20);
+    window.gm.player.Stats.increment(&quot;energy&quot;,_b); //Todo move to wakeup?
+    window.gm.player.Stats.increment(&quot;will&quot;,_b/2);
+    window.story.show(&quot;ZU_NightDream&quot;);
+}
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="143" name="ZU_NightDream" tags="" position="350,1850" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;&lt;/br&gt;
+The hard work at the day takes it toll on you and the night passes with a deep, dreamless sleep.
+
+&lt;a0 onclick=&#39;window.story.show(&quot;ZU_Wakeup&quot;);&#39;&gt;Wake up&lt;/a&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="144" name="ZU_Wakeup" tags="" position="475,1850" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;%window.gm.player.location=window.passage.name;%&gt;
+A new day arise and wakes you from your slumber.&lt;/br&gt;
+&lt;%if(window.gm.player.Stats.get(&quot;arousal&quot;).value&gt;33){%&gt;
+    You are greeted by some morning wood. [[Just ignore and stuff it into your pants]] [[Give it some strokes]]
+&lt;%}%&gt;
+
+&lt;%=window.gm.printGoto(&quot;ZU_GladiatorMorning&quot;,{},&#39;Morning&#39;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="145" name="ZU_GladiatorMorningFT" tags="" position="600,1850" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;%window.gm.player.location=window.passage.name;%&gt;
+Some brute pulls you from your cell onto a sandy ring somewhere in your masters home.&lt;/br&gt;
+Trainer yells &lt;p&gt;&quot;Every morning I expect you to show up here on time or I will make you regret it !&quot;&lt;/p&gt;
+&lt;p&gt;&quot;Some of you dont even know how to hold a sword, so we all have to work hard to give you a chance in the upcoming arena event.&quot;&lt;/p&gt;
+&lt;p&gt;&quot;And if I dont see you put effort into it I see little chance to your survival.&quot;&lt;/p&gt;
+
+&lt;%=window.gm.printGoto(&quot;ZU_GladiatorMorning&quot;,{},&#39;Start training&#39;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="146" name="ZU_GladiatorMorning" tags="" position="725,1850" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;%window.gm.player.location=window.passage.name;%&gt;
+Dont be late or you get punished&lt;/br&gt;
+&lt;p&gt;&quot;Today we will train with...&quot;&lt;/p&gt;
+[[sword]] | [[short sword and shield]] | [[spear and net]] | [[dual wield staff]] | [[unarmed]] | [[fitness]]
+&lt;%=window.gm.printGoto(&quot;ZU_TrainSword&quot;,{},&#39;sword&#39;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="147" name="ZU_TrainSword" tags="" position="850,1850" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;%window.gm.player.location=window.passage.name;%&gt;
+Trying your best to understand how to use a blade, your skill improves somewhat.&lt;/br&gt;
+| as you have some sword skill, you are shown some advanced techniques.&lt;/br&gt;
+&lt;%=window.gm.printGoto(&quot;ZU_GladiatorMidday&quot;,{time:180},&#39;finish training&#39;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="148" name="ZU_GladiatorMidday" tags="" position="975,1850" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;%window.gm.player.location=window.passage.name;%&gt;
+You are quite exhausted after that training session and hope to get a breather.&lt;/br&gt;
+Some of your comrades are waiting around, either trying to sneak some idle time or talking to each other.&lt;/br&gt;
+There are also other servants, but they are seemingly busy and wouldnt waste some time on you.&lt;/br&gt;
+[[Approach X]] | [[go into city]] | 
+Right now you are just to exhausted so you &lt;%=window.gm.printGoto(&quot;ZU_GladiatorAfternoon&quot;,{time:180},&#39;just rest&#39;)%&gt;.&lt;/br&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="149" name="ZU_GladiatorAfternoon" tags="" position="1100,1850" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;%window.gm.player.location=window.passage.name;%&gt;
+The afternnoon passes by with another training session that continues until &lt;%=window.gm.printGoto(&quot;ZU_GladiatorEvening&quot;,{time:180},&#39;early evening&#39;)%&gt;.&lt;/br&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="150" name="ZU_GladiatorEvening" tags="" position="1225,1850" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;%window.gm.player.location=window.passage.name;%&gt;
+As you dont have any other work to do, you are now able to &lt;%=window.gm.printGoto(&quot;ZU_GladiatorExplore&quot;,{},&#39;explore this place&#39;)%&gt; some more.&lt;/br&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="151" name="ZU_GladiatorExplore" tags="" position="100,1975" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;%window.gm.player.location=window.passage.name;%&gt;
+Explore gladiator school....&lt;/br&gt;
+It might be advisable to &lt;%=window.gm.printGoto(&quot;ZU_GladiatorCell&quot;,{time:180},&#39;return to your cell&#39;)%&gt;.&lt;/br&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="152" name="skCooking" tags="" position="825,625" size="100,100">You can create tasty meals from basic ingredients. No need to rely on fastfood.
+[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="153" name="skSporty" tags="" position="725,625" size="100,100">You like to do sports.
+[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="154" name="skTechy" tags="" position="825,525" size="100,100">Tinkering and repairing gadgets is your thing.
+[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="155" name="skMoneymaker" tags="" position="725,525" size="100,100">You often find ways to increase your profit a little bit.
+[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="156" name="NewGamePlus" tags="" position="725,1975" size="100,100">You finished the game in some way but maybe you have missed something. &lt;/br&gt;
 Would you like to start a new game while taking some of your equipment/skills with you?&lt;/br&gt;
-&lt;a0 onclick=&#39;window.gm.newGamePlus()&#39;&gt;Start new game plus&lt;/a&gt;&lt;/br&gt;</tw-passagedata><tw-passagedata pid="144" name="TowerOfKinks" tags="" position="475,1850" size="100,100">ClitPiercing of Stamina
-
-resistance to   poisoned air, slime, cold
-
-reduce energy drain of 2 items by 1
-reduce hunger by 2 but increases thirst by 1
-
-amplifies all items with cold resistance by 33%
-
-reduces mallus-effects from items on legs by 25% 
-
-improves charisma by 2
-
-improves energy-regeneration by 2/h
-
-for each piercing, add 2 to energy-regeneration
-
-improves appearane to bondage-inclined foes but induces bondage-fetish
-
-slowly increaes milk-fetish when worn visible
-
-increases relation to lupines by 1
-
-increases chance to sneak around an enemy 
-
-increases chance of valuables in loot
-
-increases chance of items with stronger effects (good or bad)
-
-requires masochism-fetish of 10
-
-requires 1 energy/h to work
-
-trader to buy tools, items and food
-librarian to identify hidden item-enchantments or remove curse
-artesan to unlock items, improve items, repair items
-medic to remove parasites and addiction, create potions
-campfire to rest, fasttravel, storage-chest
-
-every third dungeon is handdrawn and has boss
-other dungeons are randomized with same theme like boss-level
-
-you can revisit boss-levels; foe-respawn after 48h
-
-castle:
-    archer, knight, nun
-    boss: gryphon
-
-desert: hot, dry, quicksand, sandstorm
-    naga, cheetah, lizardman
-    boss: 
-
-forest: 
-    dryad, hunter, wolf
-    boss: witch
-
-caves: cold, wet, slippery, dark
-    slime, imp, gnoll
-
-jungle: hot, humid, poisonous
-    panther, giant-snake, raptor
-
-laboratory: chemicals
-    tentacle, golem, alchemmist
-
-pyramids: chaste
-    priest, acolythe, anubis, scarab
-
-underworld:
-    succubus, hellhound,</tw-passagedata><tw-passagedata pid="145" name="SucubusTrade" tags="" position="600,1850" size="100,100">&quot;I could help you and increase the size of your load.&quot;
-&quot;Whats the catch?&quot;
-Your apple-sized gonads are heavy with spunk. Staying blueballed like this might set you at risk to give in to the next person offering you a good fuck.
-
-Even while they are full to the brim, your sperm glands still run their curse, adding more spunk to your swollen scrotum. Your balls have enlarged again and their size and wheight now matches grapefruits.
-How much further ould they grow?
-
-After delivering quite a load, your gonads can ease up and shrink back a bit.
-
-Try as you might, but masturbating might get you riled up but you ant sent yourself over the edge. You need a real fuck to find release.</tw-passagedata></tw-storydata>
+&lt;a0 onclick=&#39;window.gm.newGamePlus()&#39;&gt;Start new game plus&lt;/a&gt;&lt;/br&gt;</tw-passagedata></tw-storydata>
 		<script>
 		(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";window.either=function(){for(var n=[],t=0;t<arguments.length;t++)if(arguments[t]instanceof Array)for(var r=0;r<arguments[t].length;r++)n.push(arguments[t][r]);else n.push(arguments[t]);return n[_.random(n.length-1)]},window.hasVisited=function(){var n=null;if(1===arguments.length)return null!=(n=window.story.passage(arguments[0]))&&window.story.history.includes(n.id);for(var t=0;t<arguments.length;t++)if(null===(n=window.story.passage(arguments[t]))||!1===window.story.history.includes(n.id))return!1;return!0},window.visited=function(){for(var n=[],t=[],r=0;r<arguments.length;r++){var e=window.story.passage(arguments[r]);null!==e&&(t=window.story.history.filter(function(n){return n===e.id})),n.push(t.length)}return Math.min.apply(Math,n)},window.renderToSelector=function(n,t){var r=window.story.passage(t);null!==r&&$(n).html(r.render())},window.getStyles=function(){return $.when.apply($,$.map(arguments,function(n){return $.get(n,function(n){$("<style>"+n+"</style>").appendTo("head")})}))};

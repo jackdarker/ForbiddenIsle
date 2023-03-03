@@ -1,0 +1,122 @@
+:: ZU_Entry
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+<h2>Your unfortunate journey brought you here</h2> 
+<p>...While traveling the wasteland, some bandits surprised your resting carawan.</p>
+<p>[[Fight]] | [[Run off into the dark]] | [[Sit it out]]</p>
+<p>Now you are following with your hands bound to a place called Zhuul.</p>
+<p>After a days walk, a city comes into view. Compared to the deserted wastes you passed through until now, the surrounding of the city seems much more lively.</p>
+<p>Without much of a rest, you are lead to a place close outside the walls of the city. And it quickly dawns on you whats going to happen: a slave auction</p>
+<p>A middle aged man in some leather armor bought you. </p>
+<a0 onclick='window.story.show("ZU_GladiatorIntro")'>You are now owned by him</a>
+</article><article id="LogPanel"></article></section>
+
+:: ZU_GladiatorIntro
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+<p>"I'm Thesus, owner of gladiator school. I will give you a chance to fight for your life in our arena."</p>
+Comply to his terms and tell him about your skills: none | sword fight | wrestling | throwing | actor
+<p>Shows you your place to stay</p>
+<p>"You are not allowed to leave my home unless I say so. Maybe if you do well, I will let you walk outside."</p>
+<p> Leaving the city is not allowed in general and I would advise against doing so in general. 
+The city is an supple oasis compared to its surrounding. A lot of nasty things can occur to someone trying to make his way through the wastes. Let alone a runaway slave." </p>
+
+[[ZU_GoSleep]]
+</article><article id="LogPanel"></article></section>
+
+:: ZU_GoSleep
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<p>You lay down on your bunk to rest.</p>
+
+<a0 onclick='sleep()'>Rest a while</a>
+</article><article id="LogPanel"></article></section>
+<script>function sleep(){
+    if(window.story.state.Settings.autoSave) window.gm.toasty.info("auto save"),window.storage.saveBrowser("saveAuto");
+    window.gm.forwardTime(700);
+    let _b,_s=window.gm.player.Stats.get('satiation').value;
+    //more energy if not hungry
+    _b=30+(_s>70)?100:((_s>30)?50:20);
+    window.gm.player.Stats.increment("energy",_b); //Todo move to wakeup?
+    window.gm.player.Stats.increment("will",_b/2);
+    window.story.show("ZU_NightDream");
+}
+</script>
+
+:: ZU_NightDream
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%></br>
+The hard work at the day takes it toll on you and the night passes with a deep, dreamless sleep.
+
+<a0 onclick='window.story.show("ZU_Wakeup");'>Wake up</a>
+</article><article id="LogPanel"></article></section>
+
+:: ZU_Wakeup
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+A new day arise and wakes you from your slumber.</br>
+<%if(window.gm.player.Stats.get("arousal").value>33){%>
+    You are greeted by some morning wood. [[Just ignore and stuff it into your pants]] [[Give it some strokes]]
+<%}%>
+
+<%=window.gm.printGoto("ZU_GladiatorMorning",{},'Morning')%>
+</article><article id="LogPanel"></article></section>
+
+:: ZU_GladiatorMorningFT
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+Some brute pulls you from your cell onto a sandy ring somewhere in your masters home.</br>
+Trainer yells <p>"Every morning I expect you to show up here on time or I will make you regret it !"</p>
+<p>"Some of you dont even know how to hold a sword, so we all have to work hard to give you a chance in the upcoming arena event."</p>
+<p>"And if I dont see you put effort into it I see little chance to your survival."</p>
+
+<%=window.gm.printGoto("ZU_GladiatorMorning",{},'Start training')%>
+</article><article id="LogPanel"></article></section>
+
+:: ZU_GladiatorMorning
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+Dont be late or you get punished</br>
+<p>"Today we will train with..."</p>
+[[sword]] | [[short sword and shield]] | [[spear and net]] | [[dual wield staff]] | [[unarmed]] | [[fitness]]
+<%=window.gm.printGoto("ZU_TrainSword",{},'sword')%>
+</article><article id="LogPanel"></article></section>
+
+:: ZU_TrainSword
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+Trying your best to understand how to use a blade, your skill improves somewhat.</br>
+| as you have some sword skill, you are shown some advanced techniques.</br>
+<%=window.gm.printGoto("ZU_GladiatorMidday",{time:180},'finish training')%>
+</article><article id="LogPanel"></article></section>
+
+
+:: ZU_GladiatorMidday
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+You are quite exhausted after that training session and hope to get a breather.</br>
+Some of your comrades are waiting around, either trying to sneak some idle time or talking to each other.</br>
+There are also other servants, but they are seemingly busy and wouldnt waste some time on you.</br>
+[[Approach X]] | [[go into city]] | 
+Right now you are just to exhausted so you <%=window.gm.printGoto("ZU_GladiatorAfternoon",{time:180},'just rest')%>.</br>
+</article><article id="LogPanel"></article></section>
+
+
+:: ZU_GladiatorAfternoon
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+The afternnoon passes by with another training session that continues until <%=window.gm.printGoto("ZU_GladiatorEvening",{time:180},'early evening')%>.</br>
+</article><article id="LogPanel"></article></section>
+
+
+:: ZU_GladiatorEvening
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+As you dont have any other work to do, you are now able to <%=window.gm.printGoto("ZU_GladiatorExplore",{},'explore this place')%> some more.</br>
+</article><article id="LogPanel"></article></section>
+
+
+:: ZU_GladiatorExplore
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+Explore gladiator school....</br>
+It might be advisable to <%=window.gm.printGoto("ZU_GladiatorCell",{time:180},'return to your cell')%>.</br>
+</article><article id="LogPanel"></article></section>

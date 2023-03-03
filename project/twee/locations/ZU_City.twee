@@ -1,0 +1,14 @@
+:: ZU_GladiatorCell
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+This cell is your home, at least for now.</br>
+</br>[[Check on yourself|FI_InspectSelf]]
+<%if(window.gm.getTimeStruct().daytime==='night'){%> <p>Its getting late. Better go get some [[sleep|ZU_GoSleep]].</p><%}else{%> 
+<%}%>
+Pass some time until... (just forwards time):
+<a0 onclick='window.gm.forwardTime(1200);window.story.show("ZU_GladiatorCell");' <%=(window.gm.getTimeStruct().daytime==='morning')?'':'hidden'%>> midday</a>
+<a0 onclick='window.gm.forwardTime(1600);window.story.show("ZU_GladiatorCell");' <%=(window.gm.getTimeStruct().daytime==='noon')?'':'hidden'%>> afternoon</a>
+<a0 onclick='window.gm.forwardTime(2000);window.story.show("ZU_GladiatorCell");' <%=(window.gm.getTimeStruct().daytime==='afternoon')?'':'hidden'%>> evening</a>
+<a0 onclick='window.gm.forwardTime(2200);window.story.show("ZU_GladiatorCell");' <%=(window.gm.getTimeStruct().daytime==='evening')?'':'hidden'%>> night</a>
+
+</article><article id="LogPanel"></article></section>
