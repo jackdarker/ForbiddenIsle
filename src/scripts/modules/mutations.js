@@ -544,18 +544,23 @@ window.gm.MutationsLib['changeSavage'] = function(char,value=1,min=0,max=10){
             data.f=window.gm.MutationsLib['growPenis'];data.mag=1;
             data.req=function(char){let _res={OK:true,msg:''};_res.OK=(char.Outfit.countItem("PenisHuman")>0);return(_res);};
         return(data);})();
-    window.gm.Mutators['M2F'] = (function(){
-            let data={m:effMutator.mutatorDataProto(),req:null,revert:""};
-            data.m.Genital=1,data.m.F=0.5,data.m.M=0;
-            data.f=window.gm.MutationsLib['swapGender'];
-            data.req=function(char){let _res={OK:true,msg:''};_res.OK=(char.Outfit.countItem("PenisHuman")>0);return(_res);};
-        return(data);})();
     window.gm.Mutators['shrinkMaleness'] = (function(){
         let data={m:effMutator.mutatorDataProto(),req:null,revert:""};
         data.m.Genital=0.5,data.m.F=0.5,data.m.M=0;
         data.f=window.gm.MutationsLib['growPenis'];data.mag=-1;
         data.req=function(char){let _res={OK:true,msg:''};_res.OK=(char.Outfit.countItem("PenisHuman")>0);return(_res);};
         return(data);})();
+    window.gm.Mutators['M2F'] = (function(){
+        let data={m:effMutator.mutatorDataProto(),req:null,revert:""};
+        data.m.Genital=1,data.m.F=0.5,data.m.M=0;
+        data.f=window.gm.MutationsLib['swapGender'];
+        data.req=function(char){let _res={OK:false,msg:''},item;
+            if(char.Outfit.countItem("PenisHuman")>0){ 
+                item=char.Outfit.getItem("PenisHuman");
+                if(item.data.growth<0.1) _res.OK=true;
+            }
+            return(_res);};
+    return(data);})();
 
     //smallCock
 }

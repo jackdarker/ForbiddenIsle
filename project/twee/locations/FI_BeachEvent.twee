@@ -13,10 +13,14 @@
 <a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.HairyKiwi(),2)'>Kiwi.</a>
 <a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.SeaLettuce(),2)'>SeaLettuce.</a>
 <a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.RawFish(),2)'>RawFish.</a>
-<a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.RawFish(),2)'>RoastedFish.</a>
+<a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.RoastedFish(),2)'>RoastedFish.</a>
 <a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.BellPepper(),2)'>BellPepper.</a>
 <a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.RawFish(),2)'>RawFish.</a>
 <a0 onclick='window.gm.player.Inv.addItem(window.gm.ItemsLib.RawFish(),2)'>RawFish.</a>
+<hr>
+</br> Only press 1 button at a time:
+<a0 onclick='var x=window.gm.Mutators["shrinkMaleness"];if(x.req(window.gm.player).OK)x.f(window.gm.player,x.mag);'>shrinkcock.</a>
+<a0 onclick='var x=window.gm.Mutators["M2F"];if(x.req(window.gm.player).OK)x.f(window.gm.player,x.mag);'>M2F.</a>
 </br>[[Back|_back_]]
 </article><article id="LogPanel"></article></section>
 
