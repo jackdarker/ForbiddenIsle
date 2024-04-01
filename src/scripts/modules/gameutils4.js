@@ -1,9 +1,7 @@
 "use strict";
-//stuff for ForbiddenIsle
+//stuff for LatecCYOA
 window.gm.initGameFlags = function(forceReset,NGP=null) {
     let s= window.story.state;
-    
-    function dataPrototype(){return({visitedTiles:[],mapReveal:[],tmp:{},version:0});}
     if (forceReset) { 
         s.NGP=s.Settings=s.DngSY=null; 
         s.Lab=s.Known=null;
@@ -14,7 +12,6 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
         showNSFWPictures:true,
         showDungeonMap:true
     };
-    s.PlayerVR.Effects.addItem(effMutator.factory("")); //Mutationlogic
     let DngSY = {
         remainingNights: -1,
         resourceForest: {wood:5,fruit:5},   //number resource left
@@ -50,6 +47,14 @@ window.gm.initGameFlags = function(forceReset,NGP=null) {
     s.Lab=window.gm.util.mergePlainObject(Lab,s.Lab);
     s.Known=window.gm.util.mergePlainObject(Known,s.Known);
     //todo cleanout obsolete data ( filtering those not defined in template) 
+}
+//overrides for Latec
+window.gm.InspectSelf = function() {
+    let msg="",s=window.story.state;
+    if(s.DngNG.tmp.qBabble===1){ msg+= "</br>A datapad is in your possession."; }
+    if(s.DngNG.tmp.qBabble===2){msg+= "</br>The babble companion is talking by an in-ear speaker to you.";}
+    msg += window.gm.printBodyDescription(window.gm.player,true);
+    return msg+"</br>"
 }
 window.gm.resetAchievements = function() { //declare achievements here
     window.gm.achievements={
