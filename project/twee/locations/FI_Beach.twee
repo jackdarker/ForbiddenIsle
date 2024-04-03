@@ -1,3 +1,47 @@
+:: FI_Entryold3
+<section><article>
+<h2>Your unfortunate journey brought you here</h2> 
+<p id="canvas">cnvas</p>
+    <p>
+      <span id="box" class="diagram left"></span>
+      I love boxes. Presents come in boxes.
+      When I find a new box I'm always excited to find out what's inside.
+    </p>
+    <p>
+      <span id="pyramid" class="diagram right"></span>
+      When I was a kid I dreamed of going on an expedition inside a pyramid
+      and finding a undiscovered tomb full of mummies and treasure.
+    </p></article></article></section>
+<script>
+function loaded(){//window.three.enterPage();window.three.setupScene("TestB","canvas");window.three.addModel("TestB","assets/dude/RobotExpressive.glb");
+window.three.main();
+}
+if (window.three)  {loaded();}
+else document.addEventListener("DOMContentLoaded", loaded);
+</script>
+
+:: FI_Entryold2
+<canvas id="c"></canvas><section><article>
+<h2>Your unfortunate journey brought you here</h2> 
+<p id="canvas">cnvas</p>
+    <p>
+      <span id="box" class="diagram left"></span>
+      I love boxes. Presents come in boxes.
+      When I find a new box I'm always excited to find out what's inside.
+    </p>
+    <p>
+      <span id="pyramid" class="diagram right"></span>
+      When I was a kid I dreamed of going on an expedition inside a pyramid
+      and finding a undiscovered tomb full of mummies and treasure.
+    </p></article></article></section>
+<script>
+function loaded(){//window.three.enterPage();window.three.setupScene("TestB","canvas");window.three.addModel("TestB","assets/dude/RobotExpressive.glb");
+window.three.main();
+}
+if (window.three)  {loaded();}
+else document.addEventListener("DOMContentLoaded", loaded);
+</script>
+
 :: FI_Entry
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
@@ -13,6 +57,16 @@ Hörte sich nach Spaß am Strand und heißen Nächten an.
 Aber das Wasser-Flugzeug crasht. Nichtsdestotrotz soll die Fauna & Flora erkundet werden damit die Insel Schutzstatus bekommt. 
 Da müssen die Belange der Menschen zurückstehen, schließlich sind sie die Eindringlinge hier. Prof. Medea ist da strikt. -->
 
+    <p id="canvas">
+      <span data-diagram="box" class="left"></span>
+      I love boxes. Presents come in boxes.
+      When I find a new box I'm always excited to find out what's inside.
+    </p>
+    <p id="canvas2">
+      <span data-diagram="pyramid" class="right"></span>
+      When I was a kid I dreamed of going on an expedition inside a pyramid
+      and finding a undiscovered tomb full of mummies and treasure.
+    </p>
 <p>With some friends you take a break from college and enjoy a vacation in a subtropical island kingdom. </p>
 <p>On the local party mile, you get into a fight when a local snob hits on your lady. Apparently, this was the offspring of an important person, so you and your companions are taken into custody.
 The cops seem dubious to you because you get stuffed into a transport plane together with other cargo. The destination of your journey is unclear.</p>
@@ -26,6 +80,12 @@ What now? There are no parachutes left but there are 2 cargo pallets that for so
 Maybe you should look for your friends and find out if there is someone on the island who can take you away.</p>
 Will this be a fun or frightening adventure? <a0 onclick='window.story.show("FI_BeachStart")'>Lets find out.</a>
 </article><article id="LogPanel"></article></section>
+<script>
+function loaded(){window.three.setupScene("TestB","canvas",()=>{});window.three.setupScene("TestC","canvas2");window.three.addModel("TestB","assets/dude/RobotExpressive.glb");
+}
+if (window.three)  {loaded();}
+else document.addEventListener("DOMContentLoaded", loaded);
+</script>
 
 
 :: FI_BeachStart

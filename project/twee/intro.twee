@@ -63,6 +63,7 @@ Those are very present through the game and in the main-story (also check the se
 <article><%window.gm.initGame();window.gm.player.location=window.passage.name;%>
 <p class='author'>Note that there is no back-button implemented. Pressing the back button of your browser will get your game aborted.</br>
 You might see a lot of links that are formated red-strikethrough. Those are currently broken and you shouldnt use them.</p>
+<p class='author'>You have to load this page from a webserver and cant just open it on your device. This is because Threejs is used which enforce CORS.</p>
 <p class='author'>Loading of savegame is only possible in game. Saving might be disabled in some locations.</p>
 <p class='author'>This game has a NewGame+ feature that you will have to make use of to progress in the game. You can get there after bad end or from the HELP panel.</p>
 <p class='author'>[[Fetishes ! (spoiler alert)|List_Fetish]]</p></br></br><hr>
@@ -78,3 +79,4 @@ function startFI() {
     window.gm.player.levelUp(5);window.gm.player.autoLeveling();
 }
 </script>
+

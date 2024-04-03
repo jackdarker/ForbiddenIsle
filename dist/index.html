@@ -37,12 +37,47 @@ var SVG=function(){"use strict";const t={},e=[];function n(e,i){if(Array.isArray
 <link rel="alternate stylesheet" href="./css/gray.css" title='gray' type="text/css" media="screen, projection" disabled="">
 <link rel="alternate stylesheet" href="./css/dark.css" title='dark' type="text/css" media="screen, projection" disabled="">
 <script src="imagesMaps.js"></script><script src="imagesBattlers.js"></script><script src="imagesEquip.js"></script><script src="imagesIcons.js"></script><script src="imagesScene.js"></script>
+<script type="importmap">
+	{
+	  "imports": {
+		"three": "./node_modules/three/build/three.module.js"
+	  }
+	}
+  </script>
+<script type="module" src="ThreeMod.js"></script>
 </head>
 	<body>
 		<tw-story tags></tw-story>
 		<!-- UUID://19BBDE76-3ABE-45CB-96B4-93BA376663D7// --><tw-storydata name="ForbiddenIsle" startnode="88" creator="Tweego" creator-version="2.1.1+81d1d71" ifid="19BBDE76-3ABE-45CB-96B4-93BA376663D7" zoom="1" format="snowman" format-version="2.0.3" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">/* twine-user-stylesheet #1: "user.min.css" */
 html{this:that;font-weight:700}carrots{color:red}
 /* twine-user-stylesheet #2: "Story Stylesheet" */
+#c {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: -1;
+    }
+    .diagram {
+      display: inline-block;
+      width: 5em;
+      height: 3em;
+    }
+    [data-diagram] {
+      display: inline-block;
+      width: 5em;
+      height: 3em;
+    }
+    .left {
+      float: left;
+      margin-right: .25em;
+    }
+    .right {
+      float: right;
+      margin-left: .25em;
+    }
 /*cube svg*/
 .cube-unit {
   fill-opacity: .9;
@@ -2701,9 +2736,8 @@ if(!known[el]){//new
 res.OK=true;res.msg="This looks promissing. But some improvements are necessary.</br>";known[el]=0;}else if(known[el]>=1){//master
 res.OK=true;res.msg="You expertly craft something.</br>";}else{//learning
 res.OK=true;known[el]=Math.min(known[el]+0.2,1);//todo learnrate
-if(known[el]>=1){res.msg="I mastered this recipe!</br>";}else{res.msg="There is still room for improvement.</br>";}}if(res.OK===true){res.msg+=all[el].result+" was produced.</br>";window.gm.player.Inv.addItem(window.gm.ItemsLib[all[el].result]());break;}}}}catch(err){_iterator98.e(err);}finally{_iterator98.f();}Lab.ingr.forEach(function(v){return window.gm.player.Inv.removeItem(v,1);});Lab.ingr=[];window.gm.brewInit(Lab.mode);window.gm.printOutput(res.msg);};window.gm.qID=window.gm.qID||{};window.gm.questDef=window.gm.questDef||{};{var quest=new Quest("qGarden","Green thumb","");quest.addMileStone(new QuestMilestone(1,"","Find the garden.",QuestMilestone.NOP,QuestMilestone.HIDDEN));quest.addMileStone(new QuestMilestone(100,"","The garden is a mess and you dont have a use for it. So why bother?.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(200,"","Get some tools to clear the garden from the rubble..",QuestMilestone.NOP));window.gm.qID.qGarden=quest.id;window.gm.questDef[quest.id]=quest;quest=new Quest("qBarJob","Serve'em drinks","");quest.addMileStone(new QuestMilestone(1,"","Find the Inn.",QuestMilestone.NOP,QuestMilestone.HIDDEN));quest.addMileStone(new QuestMilestone(100,"","Maybe the owner of the Inn has a job for you?.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(200,"","Earn money by working as a waitress.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(300,"","Work at least 6 shifts between Monday and sunday.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(10000,"","???",QuestMilestone.NOP));window.gm.qID[quest.id]=quest.id;window.gm.questDef[quest.id]=quest;quest=new Quest("qTraderThomas","A Trader to trade","");quest.addMileStone(new QuestMilestone(1,"","Find the Traders house.",QuestMilestone.NOP,QuestMilestone.HIDDEN));quest.addMileStone(new QuestMilestone(100,"","Ask around for the traders absence.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(200,"","Find the lookout point.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(300,"","Report back to the innkeeper.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(500,"","Find the traders carriage on the road to Redwick.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(900,"","Return with Thomas to his store.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(1000,"","NYI",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(10000,"","???",QuestMilestone.NOP));window.gm.qID.qTraderThomas=quest.id;window.gm.questDef[quest.id]=quest;}"use strict";//stuff for ForbiddenIsle
-window.gm.initGameFlags=function(forceReset){var NGP=arguments.length>1&&arguments[1]!==undefined?arguments[1]:null;var s=window.story.state;function dataPrototype(){return{visitedTiles:[],mapReveal:[],tmp:{},version:0};}if(forceReset){s.NGP=s.Settings=s.DngSY=null;s.Lab=s.Known=null;}var Settings={autoSave:true,showCombatPictures:true,showNSFWPictures:true,showDungeonMap:true};s.PlayerVR.Effects.addItem(effMutator.factory(""));//Mutationlogic
-var DngSY={remainingNights:-1,resourceForest:{wood:5,fruit:5},//number resource left
+if(known[el]>=1){res.msg="I mastered this recipe!</br>";}else{res.msg="There is still room for improvement.</br>";}}if(res.OK===true){res.msg+=all[el].result+" was produced.</br>";window.gm.player.Inv.addItem(window.gm.ItemsLib[all[el].result]());break;}}}}catch(err){_iterator98.e(err);}finally{_iterator98.f();}Lab.ingr.forEach(function(v){return window.gm.player.Inv.removeItem(v,1);});Lab.ingr=[];window.gm.brewInit(Lab.mode);window.gm.printOutput(res.msg);};window.gm.qID=window.gm.qID||{};window.gm.questDef=window.gm.questDef||{};{var quest=new Quest("qGarden","Green thumb","");quest.addMileStone(new QuestMilestone(1,"","Find the garden.",QuestMilestone.NOP,QuestMilestone.HIDDEN));quest.addMileStone(new QuestMilestone(100,"","The garden is a mess and you dont have a use for it. So why bother?.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(200,"","Get some tools to clear the garden from the rubble..",QuestMilestone.NOP));window.gm.qID.qGarden=quest.id;window.gm.questDef[quest.id]=quest;quest=new Quest("qBarJob","Serve'em drinks","");quest.addMileStone(new QuestMilestone(1,"","Find the Inn.",QuestMilestone.NOP,QuestMilestone.HIDDEN));quest.addMileStone(new QuestMilestone(100,"","Maybe the owner of the Inn has a job for you?.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(200,"","Earn money by working as a waitress.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(300,"","Work at least 6 shifts between Monday and sunday.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(10000,"","???",QuestMilestone.NOP));window.gm.qID[quest.id]=quest.id;window.gm.questDef[quest.id]=quest;quest=new Quest("qTraderThomas","A Trader to trade","");quest.addMileStone(new QuestMilestone(1,"","Find the Traders house.",QuestMilestone.NOP,QuestMilestone.HIDDEN));quest.addMileStone(new QuestMilestone(100,"","Ask around for the traders absence.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(200,"","Find the lookout point.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(300,"","Report back to the innkeeper.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(500,"","Find the traders carriage on the road to Redwick.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(900,"","Return with Thomas to his store.",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(1000,"","NYI",QuestMilestone.NOP));quest.addMileStone(new QuestMilestone(10000,"","???",QuestMilestone.NOP));window.gm.qID.qTraderThomas=quest.id;window.gm.questDef[quest.id]=quest;}"use strict";//stuff for LatecCYOA
+window.gm.initGameFlags=function(forceReset){var NGP=arguments.length>1&&arguments[1]!==undefined?arguments[1]:null;var s=window.story.state;if(forceReset){s.NGP=s.Settings=s.DngSY=null;s.Lab=s.Known=null;}var Settings={autoSave:true,showCombatPictures:true,showNSFWPictures:true,showDungeonMap:true};var DngSY={remainingNights:-1,resourceForest:{wood:5,fruit:5},//number resource left
 exploreForest:0,exploreHill:0,exploreBeach:0,campUpgrade:{},//see Data.ods
 talkEric:{},visitedTiles:[],mapReveal:[],dng:'',//current dungeon name
 prevLocation:'',nextLocation:'',//used for nav-logic
@@ -2716,7 +2750,8 @@ NGP={token:0,tokenUsed:0,xForestFood:0,increasedSatiation:0,willOnSatiated:0};}e
 if(!!NGP.ProteinBars)window.story.state.PlayerVR.Inv.addItem(window.gm.ItemsLib["SnackBar"](),12);}if(!window.gm.achievements){//||forceReset) { 
 window.gm.resetAchievements();}window.storage.loadAchivementsFromBrowser();//see comment in rebuildFromSave why this is done
 s.Settings=window.gm.util.mergePlainObject(Settings,s.Settings);s.NGP=window.gm.util.mergePlainObject(NGP,s.NGP);s.DngSY=window.gm.util.mergePlainObject(DngSY,s.DngSY);s.Lab=window.gm.util.mergePlainObject(Lab,s.Lab);s.Known=window.gm.util.mergePlainObject(Known,s.Known);//todo cleanout obsolete data ( filtering those not defined in template) 
-};window.gm.resetAchievements=function(){//declare achievements here
+};//overrides for Latec
+window.gm.InspectSelf=function(){var msg="",s=window.story.state;if(s.DngNG.tmp.qBabble===1){msg+="</br>A datapad is in your possession.";}if(s.DngNG.tmp.qBabble===2){msg+="</br>The babble companion is talking by an in-ear speaker to you.";}msg+=window.gm.printBodyDescription(window.gm.player,true);return msg+"</br>";};window.gm.resetAchievements=function(){//declare achievements here
 window.gm.achievements={looseEnd:0//
 ,swamToFar:0,starveBreakfast:0,survive7days:0,insaneTFHuman:0};window.gm.achievementsInfo={//this is kept separate to not bloat savegame
 //hidden bitmask: 0= all visisble, 1= Name ???, 2= Todo ???
@@ -6091,6 +6126,7 @@ Those are very present through the game and in the main-story (also check the se
 &lt;/article&gt;</tw-passagedata><tw-passagedata pid="88" name="Intro" tags="" position="975,1100" size="100,100">&lt;article&gt;&lt;%window.gm.initGame();window.gm.player.location=window.passage.name;%&gt;
 &lt;p class=&#39;author&#39;&gt;Note that there is no back-button implemented. Pressing the back button of your browser will get your game aborted.&lt;/br&gt;
 You might see a lot of links that are formated red-strikethrough. Those are currently broken and you shouldnt use them.&lt;/p&gt;
+&lt;p class=&#39;author&#39;&gt;You have to load this page from a webserver and cant just open it on your device. This is because Threejs is used which enforce CORS.&lt;/p&gt;
 &lt;p class=&#39;author&#39;&gt;Loading of savegame is only possible in game. Saving might be disabled in some locations.&lt;/p&gt;
 &lt;p class=&#39;author&#39;&gt;This game has a NewGame+ feature that you will have to make use of to progress in the game. You can get there after bad end or from the HELP panel.&lt;/p&gt;
 &lt;p class=&#39;author&#39;&gt;[[Fetishes ! (spoiler alert)|List_Fetish]]&lt;/p&gt;&lt;/br&gt;&lt;/br&gt;&lt;hr&gt;
@@ -6252,7 +6288,45 @@ Tease him and go further...
 &lt;/p&gt;
 
 &lt;%=window.gm.printLink(&quot;Back&quot;,&#39;window.story.show(window.gm.player.location);&#39;)%&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="105" name="FI_Entry" tags="" position="600,1350" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="105" name="FI_Entryold3" tags="" position="600,1350" size="100,100">&lt;section&gt;&lt;article&gt;
+&lt;h2&gt;Your unfortunate journey brought you here&lt;/h2&gt; 
+&lt;p id=&quot;canvas&quot;&gt;cnvas&lt;/p&gt;
+    &lt;p&gt;
+      &lt;span id=&quot;box&quot; class=&quot;diagram left&quot;&gt;&lt;/span&gt;
+      I love boxes. Presents come in boxes.
+      When I find a new box I&#39;m always excited to find out what&#39;s inside.
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;span id=&quot;pyramid&quot; class=&quot;diagram right&quot;&gt;&lt;/span&gt;
+      When I was a kid I dreamed of going on an expedition inside a pyramid
+      and finding a undiscovered tomb full of mummies and treasure.
+    &lt;/p&gt;&lt;/article&gt;&lt;/article&gt;&lt;/section&gt;
+&lt;script&gt;
+function loaded(){//window.three.enterPage();window.three.setupScene(&quot;TestB&quot;,&quot;canvas&quot;);window.three.addModel(&quot;TestB&quot;,&quot;assets/dude/RobotExpressive.glb&quot;);
+window.three.main();
+}
+if (window.three)  {loaded();}
+else document.addEventListener(&quot;DOMContentLoaded&quot;, loaded);
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="106" name="FI_Entryold2" tags="" position="725,1350" size="100,100">&lt;canvas id=&quot;c&quot;&gt;&lt;/canvas&gt;&lt;section&gt;&lt;article&gt;
+&lt;h2&gt;Your unfortunate journey brought you here&lt;/h2&gt; 
+&lt;p id=&quot;canvas&quot;&gt;cnvas&lt;/p&gt;
+    &lt;p&gt;
+      &lt;span id=&quot;box&quot; class=&quot;diagram left&quot;&gt;&lt;/span&gt;
+      I love boxes. Presents come in boxes.
+      When I find a new box I&#39;m always excited to find out what&#39;s inside.
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;span id=&quot;pyramid&quot; class=&quot;diagram right&quot;&gt;&lt;/span&gt;
+      When I was a kid I dreamed of going on an expedition inside a pyramid
+      and finding a undiscovered tomb full of mummies and treasure.
+    &lt;/p&gt;&lt;/article&gt;&lt;/article&gt;&lt;/section&gt;
+&lt;script&gt;
+function loaded(){//window.three.enterPage();window.three.setupScene(&quot;TestB&quot;,&quot;canvas&quot;);window.three.addModel(&quot;TestB&quot;,&quot;assets/dude/RobotExpressive.glb&quot;);
+window.three.main();
+}
+if (window.three)  {loaded();}
+else document.addEventListener(&quot;DOMContentLoaded&quot;, loaded);
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="107" name="FI_Entry" tags="" position="850,1350" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%window.gm.player.location=window.passage.name;%&gt;
 &lt;h2&gt;Your unfortunate journey brought you here&lt;/h2&gt; 
 &lt;!--&lt;p class=&quot;done&quot;&gt;You and your companion find yourself left on this island. 
@@ -6266,6 +6340,16 @@ Hörte sich nach Spaß am Strand und heißen Nächten an.
 Aber das Wasser-Flugzeug crasht. Nichtsdestotrotz soll die Fauna &amp; Flora erkundet werden damit die Insel Schutzstatus bekommt. 
 Da müssen die Belange der Menschen zurückstehen, schließlich sind sie die Eindringlinge hier. Prof. Medea ist da strikt. --&gt;
 
+    &lt;p id=&quot;canvas&quot;&gt;
+      &lt;span data-diagram=&quot;box&quot; class=&quot;left&quot;&gt;&lt;/span&gt;
+      I love boxes. Presents come in boxes.
+      When I find a new box I&#39;m always excited to find out what&#39;s inside.
+    &lt;/p&gt;
+    &lt;p id=&quot;canvas2&quot;&gt;
+      &lt;span data-diagram=&quot;pyramid&quot; class=&quot;right&quot;&gt;&lt;/span&gt;
+      When I was a kid I dreamed of going on an expedition inside a pyramid
+      and finding a undiscovered tomb full of mummies and treasure.
+    &lt;/p&gt;
 &lt;p&gt;With some friends you take a break from college and enjoy a vacation in a subtropical island kingdom. &lt;/p&gt;
 &lt;p&gt;On the local party mile, you get into a fight when a local snob hits on your lady. Apparently, this was the offspring of an important person, so you and your companions are taken into custody.
 The cops seem dubious to you because you get stuffed into a transport plane together with other cargo. The destination of your journey is unclear.&lt;/p&gt;
@@ -6278,7 +6362,13 @@ What now? There are no parachutes left but there are 2 cargo pallets that for so
 &lt;p&gt;Probably a search party will arrive soon but would it be good to be found by them? The cops and the cargo seemed to be very shady: Eric had taken one of the packages from the pallet. It consists of suspiciuous compressed white powder. 
 Maybe you should look for your friends and find out if there is someone on the island who can take you away.&lt;/p&gt;
 Will this be a fun or frightening adventure? &lt;a0 onclick=&#39;window.story.show(&quot;FI_BeachStart&quot;)&#39;&gt;Lets find out.&lt;/a&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="106" name="FI_BeachStart" tags="" position="725,1350" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;
+&lt;script&gt;
+function loaded(){window.three.setupScene(&quot;TestB&quot;,&quot;canvas&quot;,()=&gt;{});window.three.setupScene(&quot;TestC&quot;,&quot;canvas2&quot;);window.three.addModel(&quot;TestB&quot;,&quot;assets/dude/RobotExpressive.glb&quot;);
+}
+if (window.three)  {loaded();}
+else document.addEventListener(&quot;DOMContentLoaded&quot;, loaded);
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="108" name="FI_BeachStart" tags="" position="975,1350" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%window.gm.player.location=window.passage.name;%&gt;
 &lt;%=window.gm.images._sizeTo(window.gm.images[&quot;Beach&quot;](),200,200)%&gt;
 &lt;!--&lt;p class=&quot;done&quot;&gt;Panic.
@@ -6290,7 +6380,7 @@ Maybe you should return to the &lt;%=window.gm.printGoto(&#39;FI_HillStart&#39;,
 It would be a good idea to &lt;%=window.gm.printGoto(&#39;FI_HillStart&#39;,{time:20,energy:-20},&#39;walk up&#39;)%&gt; there to get a better overview.&lt;/p&gt; 
 &lt;p class=&quot;author&quot;&gt;This action requires some time and energy (see your statusbar on the left). If you run out of energy you should eat (if you have something in your inventory) or rest somewhere. &lt;/br&gt;
 Eating also fills your saturation bar. Your saturation dimishs over time (even if you rest) and if the bar is empty, things are going to get worse.&lt;/p&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="107" name="FI_HillStart" tags="" position="850,1350" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="109" name="FI_HillStart" tags="" position="1100,1350" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%window.gm.player.location=window.passage.name;%&gt;
 You made your way up the hill.
 &lt;/br&gt;The isle extends further up northwest, guessing the direction by the sun, for at least 10miles. There is a line of steep mountains there.  
@@ -6304,7 +6394,7 @@ You made your way up the hill.
 
 &lt;/br&gt;[[Make your way toward the mountain.]] There is a dense jungle in between. Might dangerous or though at its best. You have no reason to go there.
 
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="108" name="FI_BeachFireStart" tags="" position="975,1350" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="110" name="FI_BeachFireStart" tags="" position="1225,1350" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;p class=&quot;tPC&quot;&gt;&quot;Here look I got enough wood and it is dry enough for a nice fire.&quot;&lt;/p&gt;
 &lt;p class=&quot;tNPC1&quot;&gt;&quot;It should do for tonite. But we will have to collect some more tomorrow.&quot;&lt;/p&gt;
 &lt;p&gt;Piling up the twigs into a pyramid something dawns on you.&lt;/p&gt;
@@ -6324,7 +6414,7 @@ He sets another twig at fire and places it were the first one died.&lt;/br&gt;
     What a crude joke. &lt;/br&gt;
     Well, at least we have a [[bonfire|FI_BeachFire]] now.     
 &lt;/div&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="109" name="FI_BeachFire" tags="" position="1100,1350" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="111" name="FI_BeachFire" tags="" position="100,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%window.gm.player.location=window.passage.name;%&gt;
 The center of your camp is a small fireplace. &lt;/br&gt;
 
@@ -6354,7 +6444,7 @@ However, you will have to immolate &lt;b&gt;2 thin branches or 1 sturdy one each
     }
     window.gm.printOutput(res.msg);
 }
-&lt;/script&gt;</tw-passagedata><tw-passagedata pid="110" name="FI_BeachCamp" tags="" position="1225,1350" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="112" name="FI_BeachCamp" tags="" position="225,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%window.gm.player.location=window.passage.name;%&gt;
 You are at the beach where you first set foot on this isle. 
 &lt;/br&gt;Its &lt;%=window.gm.getTimeStruct().daytime%&gt;.
@@ -6382,7 +6472,7 @@ Pass some time until... (just forwards time):
 &lt;a0 onclick=&#39;window.gm.forwardTime(2000);window.story.show(&quot;FI_BeachCamp&quot;);&#39; &lt;%=(window.gm.getTimeStruct().daytime===&#39;afternoon&#39;)?&#39;&#39;:&#39;hidden&#39;%&gt;&gt; evening&lt;/a&gt;
 &lt;a0 onclick=&#39;window.gm.forwardTime(2200);window.story.show(&quot;FI_BeachCamp&quot;);&#39; &lt;%=(window.gm.getTimeStruct().daytime===&#39;evening&#39;)?&#39;&#39;:&#39;hidden&#39;%&gt;&gt; night&lt;/a&gt;
 &lt;p class=&quot;author&quot;&gt;Todo: Consumption of Energy &amp; time needs some more balancing. Use the pass-time link until you get the sleep option if you run out of energy.&lt;/p&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="111" name="FI_GoSleep" tags="" position="100,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="113" name="FI_GoSleep" tags="" position="350,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 
 Todo: Its surprisingly cold and the fire burnt already down. Shivering from the cold, you wish to have something wrap yourself into or to cuddle with someone.
 The only one around to cuddle with is Eric and thats [[Not an option]] | [[Ask him]]  
@@ -6399,7 +6489,7 @@ The only one around to cuddle with is Eric and thats [[Not an option]] | [[Ask h
     window.gm.player.Stats.increment(&quot;will&quot;,_b/2);
     window.story.show(&quot;FI_NightDream&quot;);
 }
-&lt;/script&gt;</tw-passagedata><tw-passagedata pid="112" name="FI_Wakeup" tags="" position="225,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="114" name="FI_Wakeup" tags="" position="475,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%window.gm.player.location=window.passage.name;%&gt;
 A new day arise and wakes you from your slumber.&lt;/br&gt;
 &lt;%if(window.gm.player.Stats.get(&quot;arousal&quot;).value&gt;33){%&gt;
@@ -6410,7 +6500,7 @@ You are greeted by some morning wood. [[Just ignore and stuff it into your pants
 &lt;%}else{%&gt;
     &lt;%=window.gm.printGoto(&quot;FI_Breakfast&quot;,{},&#39;Breakfast&#39;)%&gt;
 &lt;%}%&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="113" name="FI_Breakfast" tags="" position="350,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="115" name="FI_Breakfast" tags="" position="600,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%window.gm.player.location=window.passage.name;%&gt;
 &lt;p class=&quot;tPC&quot;&gt;&quot;Anything left for breakfast? I could kill for some coffee and toast.&quot;&lt;/p&gt;
 &lt;a0 id=&#39;hint1&#39; onclick=&#39;(function(me){document.querySelector(&quot;#&quot;+id+&quot;~p&quot;).toggleAttribute(&quot;hidden&quot;);})(this);&#39;&gt;Hint&lt;/a&gt;&lt;p hidden&gt;If you have slept while beeing hungry, your recovery is dimished. You can also eat at other times by consuming food right from inventory.&lt;/p&gt;
@@ -6445,7 +6535,7 @@ function foo2(){
     else window.story.show(&quot;FI_BeachCamp&quot;);
 }
 foo();
-&lt;/script&gt;</tw-passagedata><tw-passagedata pid="114" name="FI_BeachCoconut" tags="" position="475,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="116" name="FI_BeachCoconut" tags="" position="725,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%window.gm.player.location=window.passage.name;%&gt;
 
 &lt;p&gt;Some of the palm trees bear coconuts. Maybe you could throw a branch and try to hit one to make it fall down?
@@ -6464,12 +6554,12 @@ You dont think you can climb that high anyway.
         window.gm.printOutput(&quot;Your throw missed. Try again !&quot;);window.gm.player.Stats.increment(&quot;will&quot;,-5);window.gm.refreshSidePanel();
     }
 }
-&lt;/script&gt;</tw-passagedata><tw-passagedata pid="115" name="FI_BeachForest" tags="" position="600,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="117" name="FI_BeachForest" tags="" position="850,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%window.gm.player.location=window.passage.name;%&gt;
 The forest close to the hill is sparse. The trees arent as big as the coconut palms closer to the beach. A lot of bushes and plants are growing here making it difficult to pass through.
 &lt;/br&gt;&lt;%=window.story.render(&quot;FI_ChooseActivity&quot;)%&gt;
 &lt;%=window.gm.printGoto(&#39;FI_BeachCamp&#39;,{},&#39;return to beach&#39;)%&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="116" name="FI_ForestWalk" tags="" position="725,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="118" name="FI_ForestWalk" tags="" position="975,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;% if(!s.DngSY.exploreForest){ s.DngSY.exploreBeach=1;%&gt;
     The forest here is not as dense as you expected. Still its difficult to get forward without a cleared path.&lt;/br&gt;
     The first thing you literally trip over is a scrawny twig. Maybe it would be useful to look for a club in case dangerous animals attack you. 
@@ -6481,11 +6571,11 @@ The forest close to the hill is sparse. The trees arent as big as the coconut pa
     There isnt much more to find here. Maybe you should look at other places.&lt;/br&gt;
     &lt;a0 onclick=&#39;window.story.show(window.gm.player.location)&#39;&gt;Walk back&lt;/a&gt;
 &lt;%}%&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="117" name="FI_BeachWalk" tags="" position="850,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="119" name="FI_BeachWalk" tags="" position="1100,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 The beach extends [[further north|FI_BeachNorth]] and also in [[eastern direction|FI_BeachEast]]. &lt;/br&gt;
 &lt;%if(!!s.DngSY.exploreBeach){%&gt;There isnt much more to find here. Maybe you should look at other places.&lt;/br&gt;&lt;%}else{s.DngSY.exploreBeach=1;}%&gt;
 &lt;a0 onclick=&#39;window.story.show(window.gm.player.location)&#39;&gt;Walk back&lt;/a&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="118" name="FI_BeachNorth" tags="" position="975,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="120" name="FI_BeachNorth" tags="" position="1225,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%window.gm.player.location=window.passage.name;%&gt;
 &lt;%=window.gm.images._sizeTo(window.gm.images[&quot;Beach&quot;](),200,200)%&gt;&lt;/br&gt;
 Further up north your camp on the beach.
@@ -6494,7 +6584,7 @@ Further up north your camp on the beach.
 &lt;/br&gt;&lt;%=window.gm.printGoto(&#39;FI_BeachSwim&#39;,{time:60,energy:20},&#39;Go swimming&#39;)%&gt;
 &lt;/br&gt;&lt;%=window.story.render(&quot;FI_ChooseActivity&quot;)%&gt;
 &lt;%=window.gm.printGoto(&#39;FI_BeachCamp&#39;,{},&#39;return to beach camp&#39;)%&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="119" name="FI_BeachEast" tags="" position="1100,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="121" name="FI_BeachEast" tags="" position="100,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%window.gm.player.location=window.passage.name;%&gt;
 Walking the beach in eastern direction.
 &lt;/br&gt;&lt;%=window.gm.printGoto(&#39;FI_BeachEastExplore&#39;,{time:30,energy:-20},&#39;explore surrounding&#39;)%&gt;
@@ -6507,7 +6597,7 @@ Walking the beach in eastern direction.
     
 &lt;/br&gt;&lt;%=window.story.render(&quot;FI_ChooseActivity&quot;)%&gt;
 &lt;%=window.gm.printGoto(&#39;FI_BeachCamp&#39;,{},&#39;return to beach camp&#39;)%&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="120" name="FI_BeachHill" tags="" position="1225,1475" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="122" name="FI_BeachHill" tags="" position="225,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%window.gm.player.location=window.passage.name;%&gt;
 Climbing on top of the hill. &lt;/br&gt;
 &lt;a0 onclick=&#39;var itm=window.gm.player.Outfit.getItemForSlot(window.gm.OutfitSlotLib.Breast),itm.HP=itm.HP-25;&#39;&gt;tear shirt&lt;/a&gt;
@@ -6528,18 +6618,18 @@ You notice that the top of the hill is mostly solid stone, likely volcanic origi
 &lt;/div&gt;
 &lt;/br&gt;&lt;%=window.story.render(&quot;FI_ChooseActivity&quot;)%&gt;
 &lt;%=window.gm.printGoto(&#39;FI_BeachCamp&#39;,{},&#39;return to beach&#39;)%&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="121" name="FI_ScavengeWood" tags="" position="100,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="123" name="FI_ScavengeWood" tags="" position="350,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;div id=&#39;select1&#39; &gt;Its to difficult to break those sturdy branches from the trees. Maybe there are some lying around that you just need to &lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select1&quot;,&quot;div#choice1a&quot;);window.gm.player.Inv.addItem(window.gm.ItemsLib.Branch(),1)&#39;&gt;pick up.&lt;/a&gt;
 &lt;/div&gt;&lt;div id=&#39;choice1a&#39; hidden&gt; Picked up a branch from the ground.
 &lt;/div&gt;
 &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;next&#39;)%&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="122" name="FI_DebugItem" tags="_back_" position="225,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="124" name="FI_DebugItem" tags="_back_" position="475,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;a0 onclick=&#39;window.gm.player.Inv.addItem(window.gm.ItemsLib.StraightBanana(),2)&#39;&gt;Banana.&lt;/a&gt;
 &lt;a0 onclick=&#39;window.gm.player.Inv.addItem(window.gm.ItemsLib.SquishyMelon(),2)&#39;&gt;melon.&lt;/a&gt;
 &lt;a0 onclick=&#39;window.gm.player.Inv.addItem(window.gm.ItemsLib.HairyKiwi(),2)&#39;&gt;Kiwi.&lt;/a&gt;
 &lt;a0 onclick=&#39;window.gm.player.Inv.addItem(window.gm.ItemsLib.SeaLettuce(),2)&#39;&gt;SeaLettuce.&lt;/a&gt;
 &lt;a0 onclick=&#39;window.gm.player.Inv.addItem(window.gm.ItemsLib.RawFish(),2)&#39;&gt;RawFish.&lt;/a&gt;
-&lt;a0 onclick=&#39;window.gm.player.Inv.addItem(window.gm.ItemsLib.RawFish(),2)&#39;&gt;RoastedFish.&lt;/a&gt;
+&lt;a0 onclick=&#39;window.gm.player.Inv.addItem(window.gm.ItemsLib.RoastedFish(),2)&#39;&gt;RoastedFish.&lt;/a&gt;
 &lt;a0 onclick=&#39;window.gm.player.Inv.addItem(window.gm.ItemsLib.BellPepper(),2)&#39;&gt;BellPepper.&lt;/a&gt;
 &lt;a0 onclick=&#39;window.gm.player.Inv.addItem(window.gm.ItemsLib.RawFish(),2)&#39;&gt;RawFish.&lt;/a&gt;
 &lt;a0 onclick=&#39;window.gm.player.Inv.addItem(window.gm.ItemsLib.RawFish(),2)&#39;&gt;RawFish.&lt;/a&gt;
@@ -6548,7 +6638,7 @@ You notice that the top of the hill is mostly solid stone, likely volcanic origi
 &lt;a0 onclick=&#39;var x=window.gm.Mutators[&quot;shrinkMaleness&quot;];if(x.req(window.gm.player).OK)x.f(window.gm.player,x.mag);&#39;&gt;shrinkcock.&lt;/a&gt;
 &lt;a0 onclick=&#39;var x=window.gm.Mutators[&quot;M2F&quot;];if(x.req(window.gm.player).OK)x.f(window.gm.player,x.mag);&#39;&gt;M2F.&lt;/a&gt;
 &lt;/br&gt;[[Back|_back_]]
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="123" name="FI_ScavengeFruit" tags="" position="350,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="125" name="FI_ScavengeFruit" tags="" position="600,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;% s.tmp.args=[0,0,0];for(var i=(1+2*s.NGP.xForestFood);i&gt;0;i--){s.tmp.args[_.random(0,s.tmp.args.length-1)]+=1;}%&gt;
 &lt;%if(s.tmp.args[0]&gt;0){%&gt;&lt;div id=&#39;select1&#39;&gt;A smaller tree picks your interest. Some bananas are growing on it, at least you guess those are bananas. Did they grow as single fruits? Either way &lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select1&quot;,&quot;div#choice1a&quot;);window.gm.player.Inv.addItem(window.gm.ItemsLib.StraightBanana(),&lt;%=s.tmp.args[0]%&gt;)&#39;&gt;collect it.&lt;/a&gt;
 &lt;/div&gt;&lt;div id=&#39;choice1a&#39; hidden&gt; Got some bananas.&lt;/div&gt;&lt;%}%&gt;
@@ -6557,7 +6647,7 @@ You notice that the top of the hill is mostly solid stone, likely volcanic origi
 &lt;%if(s.tmp.args[2]&gt;0){%&gt;&lt;div id=&#39;select3&#39;&gt;A bush carries some midsized, oval fruits covered in brown hairs. &lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select3&quot;,&quot;div#choice3a&quot;);window.gm.player.Inv.addItem(window.gm.ItemsLib.HairyKiwi(),&lt;%=s.tmp.args[2]%&gt;)&#39;&gt;Get some.&lt;/a&gt;
 &lt;/div&gt;&lt;div id=&#39;choice3a&#39; hidden&gt; Got some Kiwi.&lt;/div&gt;&lt;%}%&gt;
 &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;next&#39;)%&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="124" name="FI_ShakeTree" tags="" position="475,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="126" name="FI_ShakeTree" tags="" position="725,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 Grabing the tree with you hands, you shake it as hard as possible. 
 &lt;div id=&#39;select1&#39; &gt;
 &lt;a0 onclick=&#39;foo()&#39;&gt;Your effort is rewarded with...&lt;/a&gt;&lt;/br&gt;
@@ -6587,7 +6677,7 @@ Grabing the tree with you hands, you shake it as hard as possible.
     }
     window.gm.printTalkLink(&quot;div#select1&quot;,&quot;div#choice&quot;+x);
 }
-&lt;/script&gt;</tw-passagedata><tw-passagedata pid="125" name="FI_SunBath" tags="" position="600,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="127" name="FI_SunBath" tags="" position="850,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 The weather is nice, you are on a tropical island, the beautiful beach all for yourself. 
 &lt;a0 onclick=&quot;window.story.state.tmp.args=[(function(){window.gm.sex.femBody({state:0});})];window.story.show(&#39;GenericPassage&#39;);&quot;&gt;TODO femBody&lt;/a&gt;
 &lt;div id=&#39;select10&#39; &gt;So why not make use of it and  
@@ -6613,7 +6703,7 @@ Should you strip naked? There is no one around except Eric lurking somewhere.
     }
     window.gm.printTalkLink(&quot;div#select10&quot;,&quot;div#choice&quot;+x);
 }
-&lt;/script&gt;</tw-passagedata><tw-passagedata pid="126" name="FI_BeachFoundSuitcase" tags="" position="725,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="128" name="FI_BeachFoundSuitcase" tags="" position="975,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 Neben dem Schwappen der anrollenden Wellen kannst du ein seltsames Schaben hören. Du schaust dich um und siehst eine Kiste oder Koffer die auf dem vorgelagerten Riff festhängt. 
 Was für ein Glücksfund. Du müsstest allerdings bis zum Riff schwimmen um da ran zukommen. Und dann wieder zurück.
 [[Ignore]] &quot;Zu riskant, das lohnt nicht.&quot;
@@ -6626,7 +6716,7 @@ Der Koffer ist abgeschlossen. ER ist zu schwer und unhandlich um mit ihm zurück
 ... suncream
 
 &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;next&#39;)%&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="127" name="FI_BeachEastExplore" tags="" position="850,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="129" name="FI_BeachEastExplore" tags="" position="1100,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;div id=&#39;select10&#39;&gt;You &lt;a0 onclick=&#39;foo()&#39;&gt;walk the beach&lt;/a&gt; to get to know it better.&lt;/br&gt;
 &lt;/div&gt;&lt;div id=&#39;choice10a&#39; hidden&gt;&lt;/br&gt;
 &lt;/div&gt;
@@ -6645,7 +6735,7 @@ Der Koffer ist abgeschlossen. ER ist zu schwer und unhandlich um mit ihm zurück
     } 
     window.gm.printTalkLink(&quot;div#select10&quot;,&quot;div#choice&quot;+x);
 }
-&lt;/script&gt;</tw-passagedata><tw-passagedata pid="128" name="FI_BeachNorthExplore" tags="" position="975,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="130" name="FI_BeachNorthExplore" tags="" position="1225,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;div id=&#39;select10&#39;&gt;You &lt;a0 onclick=&#39;foo()&#39;&gt;walk the beach&lt;/a&gt; to get to know it better.&lt;/br&gt;
 &lt;/div&gt;&lt;div id=&#39;choice10a&#39; hidden&gt;&lt;/br&gt; You dont find anything noticeable.&lt;/br&gt;
 &lt;/div&gt;
@@ -6661,7 +6751,7 @@ Der Koffer ist abgeschlossen. ER ist zu schwer und unhandlich um mit ihm zurück
     }
     window.gm.printTalkLink(&quot;div#select10&quot;,&quot;div#choice&quot;+x);
 }
-&lt;/script&gt;</tw-passagedata><tw-passagedata pid="129" name="FI_BeachFoundBikini" tags="" position="1100,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="131" name="FI_BeachFoundBikini" tags="" position="100,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 Dir fällt etwas buntes auf dort wo der Sandstrand in Vegetation übergeht. Als du näher kommst erkennst du es ist...
 
 ein Bikini. D.h. ein Oberteil und der Slip. Wie kommen die hier her? Läuft hier jemand nackt herum? 
@@ -6672,7 +6762,7 @@ Du versuchst dich daran zu erinnern ob einer deiner Freunde sowas getragen hat. 
 ein Kescher. Könnte nützlich zum Fangen von Fisch sein.
 
 &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;next&#39;)%&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="130" name="FI_BeachPawPrints" tags="" position="1225,1600" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="132" name="FI_BeachPawPrints" tags="" position="225,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 As you wwalk along the beach you spot some pawprints in the fne sand.
 It looks like this:
 
@@ -6684,7 +6774,7 @@ Placing one of your hand next to it you do some raw measurements. Could be house
 &quot;No, this has to be some real animal&quot; 
 
 &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;next&#39;)%&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="131" name="FI_BeachDig" tags="" position="100,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="133" name="FI_BeachDig" tags="" position="350,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;div id=&quot;select1&quot;&gt;Walking up the shore along the waterline you &lt;a0 onclick=&quot;foo();&quot;&gt;look around&lt;/a&gt; for anything that could be of use.&lt;/div&gt;&lt;/br&gt;
 &lt;div id=&quot;choice1a&quot; hidden&gt;
     But you didnt find anything useful. &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;Move on&#39;)%&gt;
@@ -6717,7 +6807,7 @@ Placing one of your hand next to it you do some raw measurements. Could be house
     }
     window.gm.printTalkLink(&quot;div#select1&quot;,&quot;div#choice&quot;+x);
 }
-&lt;/script&gt;</tw-passagedata><tw-passagedata pid="132" name="FI_BeachSandSculpt" tags="" position="225,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="134" name="FI_BeachSandSculpt" tags="" position="475,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 Während du über den feuchten Sand läufst springt dir eine Stelle ins Auge die nicht so glatt und eben wie der Rest ist.
 Zunächst glaubst du darin eine Skulptur zu erkennen wie sie manchmal von Künstlern an Sandstränden modeliert wird.
 Beim Näherkommen stellst du aber fest das es nur einige Bodenunebenheiten sind.
@@ -6747,7 +6837,7 @@ Aus dem Augenwinkel gesehen scheinen die kleinen Erhebungen und Senken die Form 
    
 &lt;/div&gt;
 
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="133" name="FI_BeachWorkout" tags="" position="350,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;) %&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="135" name="FI_BeachWorkout" tags="" position="600,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;) %&gt;
 &lt;!--solves the _back_ issue but has some problems:
 you only see the actual choice, prev choice get hidden
 no dynamic text unless build from globals
@@ -6788,7 +6878,7 @@ Eric beobachtet dich, gibt dir handson tips.&lt;p&gt;
     }
     window.gm.refreshSidePanel();
 }
-&lt;/script&gt;</tw-passagedata><tw-passagedata pid="134" name="FI_BeachSwim" tags="" position="475,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="136" name="FI_BeachSwim" tags="" position="725,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;%=window.gm.images._sizeTo(window.gm.images[&quot;Sea1&quot;](),600,300)%&gt;&lt;/br&gt;
 &lt;%if(window.gm.player.Stats.findItemSlot(&quot;sk_Swimming&quot;)&lt;=-1){%&gt; 
     Swimming really wasn&#39;t your kind of thing, let alone doing it in this open sea with big waves rolling in.&lt;/br&gt;
@@ -6820,7 +6910,7 @@ Eric beobachtet dich, gibt dir handson tips.&lt;p&gt;
     const ctrl = document.getElementById(&quot;octo1&quot;);
     ctrl.style.visibility=&quot;hidden&quot;;
 }
-foo();&lt;/script&gt;</tw-passagedata><tw-passagedata pid="135" name="FI_BeachCatchFish" tags="" position="600,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
+foo();&lt;/script&gt;</tw-passagedata><tw-passagedata pid="137" name="FI_BeachCatchFish" tags="" position="850,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;
 &lt;div id=&#39;select10&#39; &gt; Determined to catch some fish you strip your shoes, shirt and pants. As you now stand just clothed with xxx, you think about stripping xxx too.
 &lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select10&quot;,&quot;div#choice10a&quot;)&#39;hidden&gt;Do it&lt;/a&gt;&lt;/br&gt;
 &lt;a0 onclick=&#39;window.gm.printTalkLink(&quot;div#select10&quot;,&quot;div#choice10b)&#39;&gt;No way&lt;/a&gt;&lt;/br&gt;
@@ -6868,7 +6958,7 @@ After lookng around for a while, you give up and just leave &lt;b&gt;without xxx
 &lt;%=window.gm.printGoto(window.gm.player.location,{},&#39;next&#39;)%&gt;
 &lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;
 &lt;script&gt;function foo(){}
-&lt;/script&gt;</tw-passagedata><tw-passagedata pid="136" name="FI_NightDream" tags="" position="725,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;&lt;/br&gt;
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="138" name="FI_NightDream" tags="" position="975,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;&lt;/br&gt;
 The hard work at the day takes it toll on you and the night passes with a deep, dreamless sleep.
 &lt;p hidden&gt;
 Your mind switches to dream mode:...
@@ -6880,7 +6970,7 @@ if you are horny, you get wild dreams-
 if you cant sleep because disturbance-  
 &lt;/p&gt;
 &lt;a0 onclick=&#39;window.gm.checkMutation(&quot;wake&quot;),window.story.show(&quot;FI_Wakeup&quot;);&#39;&gt;Wake up&lt;/a&gt;
-&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="137" name="FI_BeachMasturbate" tags="" position="850,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;&lt;/br&gt;
+&lt;/article&gt;&lt;article id=&quot;LogPanel&quot;&gt;&lt;/article&gt;&lt;/section&gt;</tw-passagedata><tw-passagedata pid="139" name="FI_BeachMasturbate" tags="" position="1100,1725" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;)%&gt;&lt;/br&gt;
 For some time now your hardon is begging for some attention.&lt;/br&gt;
 Masturbation is not a foreign word for you, but usually you would do that in seclusivness of your private room or lavatory.&lt;/br&gt;
 So you have been walking around secretly looking for a secluded place to have a nice privat time. And this here seems as good as any other.&lt;/br&gt;
@@ -6927,7 +7017,7 @@ So you have been walking around secretly looking for a secluded place to have a 
     }
     window.gm.refreshSidePanel();
 }
-&lt;/script&gt;</tw-passagedata><tw-passagedata pid="138" name="Totem" tags="" position="975,1725" size="100,100">Eine seltsame Stele, möglicherweise von einheimischen Wilden hier aufgestellt.
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="140" name="Totem" tags="" position="1225,1725" size="100,100">Eine seltsame Stele, möglicherweise von einheimischen Wilden hier aufgestellt.
 It might depict a 
 Snake: Phalus
 Ape: 
@@ -6937,13 +7027,13 @@ Touch it:  triggers minor Transformations
 
 Whoreship: 
 
-Captured and tied to it: Badend?</tw-passagedata><tw-passagedata pid="139" name="skCooking" tags="" position="825,625" size="100,100">You can create tasty meals from basic ingredients. No need to rely on fastfood.
-[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="140" name="skSporty" tags="" position="725,625" size="100,100">You like to do sports.
-[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="141" name="skTechy" tags="" position="825,525" size="100,100">Tinkering and repairing gadgets is your thing.
-[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="142" name="skMoneymaker" tags="" position="725,525" size="100,100">You often find ways to increase your profit a little bit.
-[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="143" name="NewGamePlus" tags="" position="350,1850" size="100,100">You finished the game in some way but maybe you have missed something. &lt;/br&gt;
+Captured and tied to it: Badend?</tw-passagedata><tw-passagedata pid="141" name="skCooking" tags="" position="825,625" size="100,100">You can create tasty meals from basic ingredients. No need to rely on fastfood.
+[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="142" name="skSporty" tags="" position="725,625" size="100,100">You like to do sports.
+[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="143" name="skTechy" tags="" position="825,525" size="100,100">Tinkering and repairing gadgets is your thing.
+[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="144" name="skMoneymaker" tags="" position="725,525" size="100,100">You often find ways to increase your profit a little bit.
+[[Back|&lt;%=window.gm.player.location%&gt;]]</tw-passagedata><tw-passagedata pid="145" name="NewGamePlus" tags="" position="600,1850" size="100,100">You finished the game in some way but maybe you have missed something. &lt;/br&gt;
 Would you like to start a new game while taking some of your equipment/skills with you?&lt;/br&gt;
-&lt;a0 onclick=&#39;window.gm.newGamePlus()&#39;&gt;Start new game plus&lt;/a&gt;&lt;/br&gt;</tw-passagedata><tw-passagedata pid="144" name="TowerOfKinks" tags="" position="475,1850" size="100,100">ClitPiercing of Stamina
+&lt;a0 onclick=&#39;window.gm.newGamePlus()&#39;&gt;Start new game plus&lt;/a&gt;&lt;/br&gt;</tw-passagedata><tw-passagedata pid="146" name="TowerOfKinks" tags="" position="725,1850" size="100,100">ClitPiercing of Stamina
 
 resistance to   poisoned air, slime, cold
 
@@ -7012,7 +7102,7 @@ pyramids: chaste
     priest, acolythe, anubis, scarab
 
 underworld:
-    succubus, hellhound,</tw-passagedata><tw-passagedata pid="145" name="SucubusTrade" tags="" position="600,1850" size="100,100">&quot;I could help you and increase the size of your load.&quot;
+    succubus, hellhound,</tw-passagedata><tw-passagedata pid="147" name="SucubusTrade" tags="" position="850,1850" size="100,100">&quot;I could help you and increase the size of your load.&quot;
 &quot;Whats the catch?&quot;
 Your apple-sized gonads are heavy with spunk. Staying blueballed like this might set you at risk to give in to the next person offering you a good fuck.
 
