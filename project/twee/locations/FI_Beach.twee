@@ -57,12 +57,12 @@ Hörte sich nach Spaß am Strand und heißen Nächten an.
 Aber das Wasser-Flugzeug crasht. Nichtsdestotrotz soll die Fauna & Flora erkundet werden damit die Insel Schutzstatus bekommt. 
 Da müssen die Belange der Menschen zurückstehen, schließlich sind sie die Eindringlinge hier. Prof. Medea ist da strikt. -->
 
-    <p id="canvas">
+    <p id="canvas"></p><p>
       <span data-diagram="box" class="left"></span>
       I love boxes. Presents come in boxes.
       When I find a new box I'm always excited to find out what's inside.
     </p>
-    <p id="canvas2">
+    <p id="canvas2"></p><p>
       <span data-diagram="pyramid" class="right"></span>
       When I was a kid I dreamed of going on an expedition inside a pyramid
       and finding a undiscovered tomb full of mummies and treasure.
@@ -81,7 +81,9 @@ Maybe you should look for your friends and find out if there is someone on the i
 Will this be a fun or frightening adventure? <a0 onclick='window.story.show("FI_BeachStart")'>Lets find out.</a>
 </article><article id="LogPanel"></article></section>
 <script>
-function loaded(){window.three.setupScene("TestB","canvas",()=>{});window.three.setupScene("TestC","canvas2");window.three.addModel("TestB","assets/dude/RobotExpressive.glb");
+function addBot(viewid){}
+function loaded(){window.three.setupScene("TestB","canvas",{builder:()=>{},controls:()=>{}});window.three.addModel("TestB","assets/dude/RobotExpressive.glb");
+window.three.setupScene("TestC","canvas2",{builder2:()=>{}});
 }
 if (window.three)  {loaded();}
 else document.addEventListener("DOMContentLoaded", loaded);

@@ -2,7 +2,8 @@
 import * as THREE from './node_modules/three/build/three.module.js';
 import * as SkeletonUtils from './node_modules/three/examples/jsm/utils/SkeletonUtils.js';
 import { GUI } from './node_modules/three/examples/jsm/libs/lil-gui.module.min.js';
-import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
+import { ArcballControls } from './node_modules/three/examples/jsm/controls/ArcballControls.js';
+//import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from './node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 import { RGBELoader } from './node_modules/three/examples/jsm/loaders/RGBELoader.js';
 /// this wrapps some of Threejs to adapt it for Twine
@@ -147,7 +148,7 @@ import { RGBELoader } from './node_modules/three/examples/jsm/loaders/RGBELoader
 			window.three.leavePage();	//if we leave a page, the canvas will get invalid
 		});
 		$(window).on('sm.passage.showing', function(event, eventObject){
-			window.three.enterPage();	//if we leave a page, the canvas will get invalid
+			window.three.enterPage();	//if we enter a page, construct new canvas
 		});
 		//window.three.sceneElements = [];
         const api = { state: 'Idle' };
@@ -220,9 +221,19 @@ import { RGBELoader } from './node_modules/three/examples/jsm/loaders/RGBELoader
 	window.three.leavePage=function(){ //call this when leaving a passage to flush out scenes to render 
 		window.three.activeViews={};window.three.views={};
 	}
+	window.three.renderUpdate=function(time,rect){ //internally called to update camera and render
+		camera.aspect = rect.width / rect.height;
+		camera.updateProjectionMatrix();
+		renderer.render(scene, camera);
+	}
 	//creates a scene in a element-node with id=elemid(f.e. <p id="canvas">). The scene has to have a unique id.
 	//builder is a function that should add the model to your scene. If you suplly NULL, a red cube gets shown. You can also use addModel.
-    window.three.setupScene=function(id,elemid,builder=null){ //Warning ! you may only setup 8 or so renderers in a browser ! A workaround: https://threejs.org/manual/#en/multiple-scenes
+	//update is called on each frame to update camera and render; defaults to defaults to window.three.renderUpdate
+    window.three.setupScene=function(viewid,elemid,params){ //Warning ! you may only setup 8 or so renderers in a browser ! A workaround: https://threejs.org/manual/#en/multiple-scenes
+		let _params=params||{}
+		_params.builder = (params&&params.builder)?params.builder:null; //a function fn(viewid) to be called to add models to a scene
+		_params.controls = (params&&params.controls)?params.controls:null; //a function fn(viewid) to add arc/orbit-controls
+		_params.update = (params&&params.update)?params.update:null; //a function fn(time,rect) that is called on every render for updating camera and render; 
 		function makeScene() {
 			const scene = new THREE.Scene();
 			const fov = 45;
@@ -231,7 +242,6 @@ import { RGBELoader } from './node_modules/three/examples/jsm/loaders/RGBELoader
 			const far = 5;
 			const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
 			camera.position.set( 0, 1, 2 );
-			camera.position.z = 5,camera.position.y = 5;
 			camera.lookAt( 0, 0, 0 );
 			{
 				const color = 0xFFFFFF;
@@ -242,43 +252,40 @@ import { RGBELoader } from './node_modules/three/examples/jsm/loaders/RGBELoader
 			}
 			return { scene, camera };
 		}
-		if(window.three.views[id]){
-			window.three.activeViews[id]=window.three.views[id];
+		if(window.three.views[viewid]){
+			window.three.activeViews[viewid]=window.three.views[viewid];
 		}else{
 			let renderer=window.three.renderer;
-			//renderer.setScissorTest(true);
-			//renderer.setSize(width,height );//canvas.innerWidth, canvas.innerHeight );
-			//renderer.setPixelRatio( window.devicePixelRatio );
-			//renderer.outputEncoding = THREE.sRGBEncoding;
-
 			const {scene, camera} = makeScene();
-			if(builder==null){ //add box
-				const geometry = new THREE.BoxGeometry(1, 1, 1);
-				const material = new THREE.MeshPhongMaterial({color: 'red'});
-				const mesh = new THREE.Mesh(geometry, material);
-				scene.add(mesh);
-			}
-			const ctx = document.createElement('canvas').getContext('2d'); //append a canvas to the element where is drawn too
+			const elm2= document.createElement('canvas');
+			elm2.style.width="100%";elm2.style.height="100%";elm2.style.display="block"; //need this style for proper display
+			const ctx = elm2.getContext('2d'); //append a canvas to the element where is drawn too
 			const elem = document.getElementById(elemid)
 			elem.appendChild(ctx.canvas);
-			function renderUpdate(time,rect){
-				camera.aspect = rect.width / rect.height;
-				camera.updateProjectionMatrix();
-				renderer.render(scene, camera);
-			}
-
-			window.three.views[id]={scene:scene,
+			
+			window.three.views[viewid]={scene:scene,
 				elem:elem,
 				ctx:ctx,
-				renderUpdate:renderUpdate,
+				renderUpdate: _params.update?_params.update:window.three.renderUpdate,
 				camera:camera,
 				//renderer:renderer, 
 				mixers:{}, //contains for each object in the scene their mixer 
 				actions:{},//contains for each object in the scene a collection of actions  actions[modelid].[actionname]
 				morphs:{}}; //contains for each object in the scene a collection of morphs  morphs[modelid].[morphname].influence
-			window.three.activeViews[id]=window.three.views[id];
+			window.three.activeViews[viewid]=window.three.views[viewid];
+			if(_params.builder==null){ //add box for test
+				const geometry = new THREE.BoxGeometry(1, 1, 1);
+				const material = new THREE.MeshPhongMaterial({color: 'red'});
+				const mesh = new THREE.Mesh(geometry, material);
+				scene.add(mesh);
+			} else _params.builder(viewid);
+			if(_params.controls==null){ // TODO always arccontrol?
+				const controls = new ArcballControls( camera, elem, scene );
+				//controls.addEventListener( 'change', animate );  dont need onchange if we animate
+			} else _params.controls(viewid)
+			if(Object.keys(window.three.activeViews).length<=1) animate();
 		}
-        animate();
+
     }
 	//this uses animation to get into a pose; the duration is set to 0; make sure action is set to LoopOnce and clampWhenFinished
 	window.three.setAnimation=function(sceneid,modelid,poseid){
@@ -317,26 +324,30 @@ import { RGBELoader } from './node_modules/three/examples/jsm/loaders/RGBELoader
 	function animate() { //called to start the renderer
         const dt = window.three.clock.getDelta();
         const renderer=window.three.renderer;
-		resizeRendererToDisplaySize( renderer );
+		/*resizeRendererToDisplaySize( renderer );    outdated as we use ctx.drawImage
 		renderer.setScissorTest( false );
 		renderer.setClearColor( clearColor, 0 );
 		renderer.clear( true, true );
 		renderer.setScissorTest( true );
 		const transform = `translateY(${window.scrollY}px)`; //this makes the render scroll in sync with the html
-		renderer.domElement.style.transform = transform;
+		renderer.domElement.style.transform = transform;*/
 		const views=Object.keys(window.three.activeViews);
 		let view,mixer;
 		for(var x of views) { //there could be multiple pictures in a passage... 
 			view=window.three.activeViews[x];
 			const ctx=view.ctx;
-			//view.renderer.render( view.scene, view.camera );
 			const mixers=Object.keys(view.mixers);
 			for(var y of mixers) {
 				mixer=window.three.activeViews[x].mixers[y];
 				if(mixer) mixer.update( dt );
 			}
 			const rect = view.elem.getBoundingClientRect();
-			const {left, right, top, bottom, width, height} = rect;
+			const left=~~rect.left; //~~num to truncate to int
+			const right=~~rect.right;
+			const top=~~rect.top;
+			const bottom=~~rect.bottom;
+			const width=~~rect.width;
+			const height=~~rect.height;
 			const rendererCanvas = renderer.domElement;
 			const isOffscreen =	bottom < 0 ||
 				top > window.innerHeight ||
@@ -345,7 +356,7 @@ import { RGBELoader } from './node_modules/three/examples/jsm/loaders/RGBELoader
 			if ( ! isOffscreen ) {
 				// make sure the renderer's canvas is big enough
 				if (rendererCanvas.width < width || rendererCanvas.height < height) {
-					renderer.setSize(width+1, height+1, false);
+					renderer.setSize(width, height, false);
 				}
 				// make sure the canvas for this area is the same size as the area
 				if (ctx.canvas.width !== width || ctx.canvas.height !== height) {
@@ -366,7 +377,7 @@ import { RGBELoader } from './node_modules/three/examples/jsm/loaders/RGBELoader
         requestAnimationFrame( animate ); //this will cause animate to be called cyclical - we wouldnt need that except for animation
 		//todo only call animate or if there is a change in the scene
     };
-	function resizeRendererToDisplaySize( renderer ) {
+	/*function resizeRendererToDisplaySize( renderer ) {
 		const canvas = renderer.domElement;
 		const width = canvas.clientWidth;
 		const height = canvas.clientHeight;
@@ -375,8 +386,7 @@ import { RGBELoader } from './node_modules/three/examples/jsm/loaders/RGBELoader
 			renderer.setSize( width, height, false );
 		}
 		return needResize;
-	}
+	}*/
 	
 	window.three.init();
 })(window);
-//export {show };
