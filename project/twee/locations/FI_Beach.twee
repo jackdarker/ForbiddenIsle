@@ -46,6 +46,28 @@ else document.addEventListener("DOMContentLoaded", loaded);
 <section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
 <h2>Your unfortunate journey brought you here</h2> 
+<button id="Running" >;Running</button> <button id="Standing" >Standing</button>;</br>
+<button id="EmoteAngry">Angry Face-Morph</button><button id="EmoteNormal" >Normal Face-Morph&lt</button>;
+    <p id="canvas"></p>
+    <p id="canvas2"></p>
+</article><article id="LogPanel"></article></section>
+<script>
+function addBot(viewid){}
+function loaded(){window.three.setupScene("TestB","canvas",{builder:()=>{}});window.three.addModel("TestB","assets/dude/RobotExpressive.glb");//window.three.addModel("TestB","assets/dude/GLBTest.glb");
+window.three.setupScene("TestC","canvas2",{controls:()=>{},builder2:()=>{}});
+}
+if (window.three)  {loaded();}
+else document.addEventListener("DOMContentLoaded", loaded);
+document.getElementById("Running").addEventListener("click", function(){window.three.setAnimation("TestB","assets/dude/RobotExpressive.glb","Running");});
+		document.getElementById("Standing").addEventListener("click", function(){window.three.setAnimation("TestB","assets/dude/RobotExpressive.glb","Sitting");});
+		document.getElementById("EmoteAngry").addEventListener("click", function(){window.three.setMorph("TestB","assets/dude/RobotExpressive.glb","Angry",1.0);});
+		document.getElementById("EmoteNormal").addEventListener("click", function(){window.three.setMorph("TestB","assets/dude/RobotExpressive.glb","Angry",0.0);});
+</script>
+
+:: FI_Entry_old
+<section><aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+<h2>Your unfortunate journey brought you here</h2> 
 <!--<p class="done">You and your companion find yourself left on this island. 
 2 hours ago you set foot on this beach to climb a hill on this island to get 
 a better overview. The GPS on the boat is messed up and your friends arent that familiar navigating a ship with compass and map. 
@@ -82,8 +104,8 @@ Will this be a fun or frightening adventure? <a0 onclick='window.story.show("FI_
 </article><article id="LogPanel"></article></section>
 <script>
 function addBot(viewid){}
-function loaded(){window.three.setupScene("TestB","canvas",{builder:()=>{},controls:()=>{}});window.three.addModel("TestB","assets/dude/RobotExpressive.glb");
-window.three.setupScene("TestC","canvas2",{builder2:()=>{}});
+function loaded(){window.three.setupScene("TestB","canvas",{builder:()=>{}});window.three.addModel("TestB","assets/dude/GLBTest.glb");
+window.three.setupScene("TestC","canvas2",{controls:()=>{},builder2:()=>{}});
 }
 if (window.three)  {loaded();}
 else document.addEventListener("DOMContentLoaded", loaded);

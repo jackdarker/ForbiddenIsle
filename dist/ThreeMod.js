@@ -222,9 +222,9 @@ import { RGBELoader } from './node_modules/three/examples/jsm/loaders/RGBELoader
 		window.three.activeViews={};window.three.views={};
 	}
 	window.three.renderUpdate=function(time,rect){ //internally called to update camera and render
-		camera.aspect = rect.width / rect.height;
-		camera.updateProjectionMatrix();
-		renderer.render(scene, camera);
+		this.camera.aspect = rect.width / rect.height;
+		this.camera.updateProjectionMatrix();
+		window.three.renderer.render(this.scene, this.camera);
 	}
 	//creates a scene in a element-node with id=elemid(f.e. <p id="canvas">). The scene has to have a unique id.
 	//builder is a function that should add the model to your scene. If you suplly NULL, a red cube gets shown. You can also use addModel.
@@ -239,9 +239,9 @@ import { RGBELoader } from './node_modules/three/examples/jsm/loaders/RGBELoader
 			const fov = 45;
 			const aspect = 2; // the canvas default
 			const near = 0.1;
-			const far = 5;
+			const far = 1000;
 			const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-			camera.position.set( 0, 1, 2 );
+			camera.position.set( 0, 1.5, 10 );
 			camera.lookAt( 0, 0, 0 );
 			{
 				const color = 0xFFFFFF;
@@ -297,11 +297,12 @@ import { RGBELoader } from './node_modules/three/examples/jsm/loaders/RGBELoader
 			if(action.isRunning) action.fadeOut(0);
 		}
 		action = window.three.views[sceneid].actions[modelid][poseid];
-		
+		//mixer.addEventListener( 'loop', function( e ) { e.action.reset().play();} ); // properties of e: type, action and loopDelta 
+		//mixer.addEventListener( 'finished', function( e	) { …} ); // properties of e: type, action and direction
 		action.reset()
 		.setEffectiveTimeScale( 1 )
 		.setEffectiveWeight( 1 )
-		.setDuration(0) //if you set this to 1, full animation will play !
+		.setDuration(1) //if you set this to 1, full animation will play; 0 = jump to end !
 		//.fadeIn( 1 )
 		.play();
 	}
@@ -365,7 +366,7 @@ import { RGBELoader } from './node_modules/three/examples/jsm/loaders/RGBELoader
 				}
 				renderer.setScissor(0, 0, width, height);
 				renderer.setViewport(0, 0, width, height);
-				view.renderUpdate( dt, rect );
+				view.renderUpdate.call(view, dt, rect );
 				// copy the rendered scene to this element's canvas
 				ctx.globalCompositeOperation = 'copy';
 				ctx.drawImage(
