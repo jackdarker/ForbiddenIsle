@@ -1371,6 +1371,138 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
     };*/
     return(data);
   }
+  /**
+   * you have fill a bar by pressing the indicated button (wasd). If you press the wrong button, the bar gets drained somewhat. 
+   * the bar will slowly slide back to origin without proper input.
+   * When the bar is filled you win, when its empty you loose.
+   * options:
+   * combo steps: if >0: after that number of consecutive correct input, the combo multiplier is increased
+   * combo levels: how many times a combo multiplier an be increased
+   * combo boost: this factor gets added to the combo multiplier on increase; bar increase=pass fill*multiplier   
+   * time drain: how much the bar is drained over time (in %)
+   * miss drain: how much the bar is drained on wrong key (in %)
+   * pass fill: how much the bar is fill on correct key (in %)
+   * 
+   * @param {*} bar : the element to move
+   * @param {*} speed : recovery rate in ms 
+   * @param {*} stopCB 
+   * @param {*} startCB 
+   * 
+   */
+   window.gm.startReactTest3=function(bar, speed, stopCB, startCB,keyIds){   //todo timeout starts after first click
+    /**
+     * starts the game
+     */
+    function start(){ //todo instead left-right also up-down should be possible
+      data.stop();
+      data.run=true;data.miss=false;data.valid=false;data.drainTimer=0;
+      var width =window.getComputedStyle(data.bargraph).getPropertyValue('width');
+      var total = window.getComputedStyle(data.bargraph.parentNode).getPropertyValue('width');
+      //calculate barsize relative to total width (necessary if windowsize changed in between )
+      data.barsize=100*parseFloat(width.split('px'))/parseFloat(total.split('px')); 
+      //data.bargraph.style.transition = "left "+data.speed+"ms linear"; //configure transition for animation
+      if(data.startCB) data.startCB(); //called before transition-start!
+      //data.bargraph.ontransitionend(); //start transition
+      data.value=20, data.speed2 =50;
+      data.bargraph.style.left=data.value+'%';
+      randomizeKey();
+      tick();
+      data.intervalID = window.setInterval( tick,data.speed2);
+    }
+    /**
+     * this stops the game and returns the index of hit area; use click() instead !
+     */
+    function stop(){
+      if(data.intervalID) window.clearInterval(data.intervalID);
+      var computedStyle = window.getComputedStyle(data.bargraph);
+      var left = computedStyle.getPropertyValue('left');
+      data.bargraph.style.left=left;
+      data.bargraph.style.transition = null; // disable transition AFTER fetching computed value !
+      data.run=false;
+    }
+    function tick(){
+      data.drainTimer+=data.speed2;
+      data.nextTimer+=(data.nextTimer>=0)?data.speed2:0;
+      if(data.miss==true){
+        data.miss=false;
+        data.drainTimer=0;data.nextTimer=0;
+        data.value= Math.max(0,data.value-5*3);
+        data.bargraph.style.left=data.value+'%';
+        blipKey();
+      }else if(data.valid==true){
+        data.valid=false;
+        data.drainTimer=0;data.nextTimer=0;
+        data.value= Math.max(0,data.value+5);
+        data.bargraph.style.left=data.value+'%';
+        blipKey();
+      } else if(data.drainTimer>data.speed){
+        data.drainTimer=0;
+        data.value= Math.max(0,data.value-5);
+        data.bargraph.style.left=data.value+'%';
+      }
+      if(data.nextTimer>=200){
+        data.nextTimer=-1;
+        randomizeKey()
+      }
+      if(data.value<=0 || data.value>=100){
+        stop();
+        if(data.stopCB) data.stopCB(data.value); 
+      }
+    }
+    const KEYS = ['leftKey','rightKey',"upKey","downKey"]
+    function randomizeKey(){
+      data.validKey = KEYS[_.random(0,KEYS.length-1)];
+      data.leftKey.src="assets\\icons\\arrow_left"+(data.validKey==KEYS[0]?"_on":"")+".png";
+      data.rightKey.src="assets\\icons\\arrow_right"+(data.validKey==KEYS[1]?"_on":"")+".png";
+      data.upKey.src="assets\\icons\\arrow_up"+(data.validKey==KEYS[2]?"_on":"")+".png";
+      data.downKey.src="assets\\icons\\arrow_down"+(data.validKey==KEYS[3]?"_on":"")+".png";
+    }
+    function blipKey(){ //
+      data.leftKey.src="assets\\icons\\arrow_left.png";
+      data.rightKey.src="assets\\icons\\arrow_right.png";
+      data.upKey.src="assets\\icons\\arrow_up.png";
+      data.downKey.src="assets\\icons\\arrow_down.png";
+    }
+    /**
+     * this can be bound to eventhandler for user input detection to trigger stop and will call stop-CB
+     */
+    function click(evt){
+      if(!data.run) return;
+        if( (data.validKey==KEYS[0] && (evt.key==='a' || evt.key==='ArrowLeft'))|| 
+            (data.validKey==KEYS[1] && (evt.key==='d'|| evt.key==='ArrowRight'))||
+            (data.validKey==KEYS[2] && (evt.key==='w'|| evt.key==='ArrowUp'))||
+            (data.validKey==KEYS[3] && (evt.key==='s'|| evt.key==='ArrowDown'))
+        ){
+          data.valid=true;
+        } else { 
+          data.miss=true;
+        }
+    }
+    let data ={ //internal state of game
+      bargraph : document.getElementById(bar),
+      leftKey : document.getElementById(keyIds[0]),
+      rightKey : document.getElementById(keyIds[1]),
+      upKey : document.getElementById(keyIds[2]),
+      downKey : document.getElementById(keyIds[3]),
+      run:false, //game started?
+      value: 0, //actual setpoint in%
+      miss:false, //internal use
+      valid:false, //internal use
+      barsize: 5, //width of hitbox relative to total width in %
+      speed:speed, //time to triger drain
+      speed2 : 1,  //interval of tick
+      drainTimer : 0,  //internal use
+      nextTimer:0, //internal use
+      stopCB: stopCB, //callback after user trigger 
+      startCB: startCB, //callback after start
+      start: start, //ref to start-function
+      stop: stop, //ref to stop-func
+      click: click, //ref to click-func
+      intervalID: null, //internal use
+      validKey: '' //internal use
+    }
+    return(data);
+  }
   window.gm.startPong=function(){
     ///// fixed sample from https://svgjs.dev/ ////////
   // define document width and height

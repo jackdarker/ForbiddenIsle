@@ -232,8 +232,26 @@ document.getElementById('btStart').addEventListener("click", _game.start);
 document.querySelector('body').addEventListener("keyup", _game.click);
 </script>
 
+:: ReactionTest3
+<article style="background-color: antiquewhite;">
+<p>Click Start and then keypress displayed arrows to fill meter.</p>
+<p><span id="controls"><input id="upKey" type="image" src="assets/icons/arrow_up.png" />
+<input id="leftKey" type="image" src="assets/icons/arrow_left.png" /><input id="downKey" type="image" src="assets/icons/arrow_down.png" /><input id="rightKey" type="image" src="assets/icons/arrow_right.png" /></span>
+<div class="progressbar" id='clickHere' style='height:1em; width: 100%;'><div id='bar' style="position:relative; width:5%; height:100%; background-color:green;"></div></div>
+</p>
+<a0 id='btStart'>Start</a><p id='result'></p>
+<p><output id="losgelassen"><output></output></p>
+</article>
+<script>
+function onStop(value) {
+  document.getElementById('result').innerHTML='scored '+value;
+}
+var _game = window.gm.startReactTest3('bar',2000,onStop,null,["leftKey","rightKey","upKey","downKey"]);
+document.getElementById('btStart').addEventListener("click", _game.start);
+document.querySelector('body').addEventListener("keyup", _game.click);
+</script>
 
-:: Reactiontest3
+:: Reactiontest4
 <p>example on how to create reactive graphics from svg parts</p>
 * Define g-object with id in defs.
 * use-xlink to create instances of those objects
