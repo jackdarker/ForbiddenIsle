@@ -1372,42 +1372,72 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
     return(data);
   }
   /**
-   * you have fill a bar by pressing the indicated button (wasd). If you press the wrong button, the bar gets drained somewhat. 
+   * you have fill a bar by pressing the indicated button (wasd or arrows). If you press the wrong button, the bar gets drained somewhat. 
    * the bar will slowly slide back to origin without proper input.
    * When the bar is filled you win, when its empty you loose.
-   * options:
-   * combo steps: if >0: after that number of consecutive correct input, the combo multiplier is increased
-   * combo levels: how many times a combo multiplier an be increased
-   * combo boost: this factor gets added to the combo multiplier on increase; bar increase=pass fill*multiplier   
-   * time drain: how much the bar is drained over time (in %)
-   * miss drain: how much the bar is drained on wrong key (in %)
-   * pass fill: how much the bar is fill on correct key (in %)
+   * options: see _params
+   * Note: negate timeDrain,passFill,missDrain  to make bar move in opposite direction
    * 
-   * @param {*} bar : the element to move
+   * @param {*} bar : the element-id to move
    * @param {*} speed : recovery rate in ms 
    * @param {*} stopCB 
    * @param {*} startCB 
    * 
    */
-   window.gm.startReactTest3=function(bar, speed, stopCB, startCB,keyIds){   //todo timeout starts after first click
+   window.gm.startReactTest3=function(bar,keyIds, stopCB, startCB,comboUpCB,comboBreakCB){   //todo timeout starts after first click
+    let data ={ //internal state of game
+      bargraph : document.getElementById(bar),
+      leftKey : document.getElementById(keyIds[0]),
+      rightKey : document.getElementById(keyIds[1]),
+      upKey : document.getElementById(keyIds[2]),
+      downKey : document.getElementById(keyIds[3]),
+      run:false, //game started?
+      value: 0, //actual setpoint in%
+      miss:false, //internal use
+      valid:false, //internal use
+      comboStep:0,
+      comboLevel:0,
+      maxCombo:0,
+      params:null, //parameters
+      tickSpeed : 50,  //interval of tick
+      drainTimer : 0,  //internal use
+      nextTimer:0, //internal use
+      stopCB: stopCB, //callback after user trigger 
+      startCB: startCB, //callback after start
+      comboBreakCB:comboBreakCB,
+      comboUpCB:comboUpCB,
+      start: start, //ref to start-function
+      stop: stop, //ref to stop-func
+      click: click, //ref to input-func
+      intervalID: null, //internal use
+      validKey: '' //internal use
+    }
     /**
      * starts the game
      */
-    function start(){ //todo instead left-right also up-down should be possible
+    function start(params){ //
       data.stop();
-      data.run=true;data.miss=false;data.valid=false;data.drainTimer=0;
+      let _params=params||{}
+      _params.drainSpeed = (_params.drainSpeed)?? 2000;
+      _params.comboSteps = (_params.comboSteps)?? 0; //if >0: after that number of consecutive correct input, the combo multiplier is increased
+      _params.comboLevels= (_params.comboLevels)?? 1;//how many times a combo multiplier an be increased
+      _params.comboBoost = (_params.comboBoost)?? 0.2;//this factor gets added to the combo multiplier on increase; bar increase=pass fill*multiplier   
+      _params.timeDrain = (_params.timeDrain)?? 5;// how much the bar is drained over time (in %)
+      _params.missDrain = (_params.missDrain)?? _params.timeDrain*3;//how much the bar is drained on wrong key (in %)
+      _params.passFill = (_params.passFill)??_params.timeDrain*2;// how much the bar is fill on correct key (in %)
+      _params.startValue = (_params.startValue)?? 20; //how much the bar is filled (in %) at start
+      data.params=_params;
+      data.run=true;data.miss=false;data.valid=false;data.drainTimer=0;data.comboLevel=data.comboStep=data.maxCombo=0;
       var width =window.getComputedStyle(data.bargraph).getPropertyValue('width');
       var total = window.getComputedStyle(data.bargraph.parentNode).getPropertyValue('width');
-      //calculate barsize relative to total width (necessary if windowsize changed in between )
-      data.barsize=100*parseFloat(width.split('px'))/parseFloat(total.split('px')); 
       //data.bargraph.style.transition = "left "+data.speed+"ms linear"; //configure transition for animation
       if(data.startCB) data.startCB(); //called before transition-start!
       //data.bargraph.ontransitionend(); //start transition
-      data.value=20, data.speed2 =50;
+      data.value=data.params.startValue;
       data.bargraph.style.left=data.value+'%';
       randomizeKey();
       tick();
-      data.intervalID = window.setInterval( tick,data.speed2);
+      data.intervalID = window.setInterval( tick,data.tickSpeed);
     }
     /**
      * this stops the game and returns the index of hit area; use click() instead !
@@ -1421,23 +1451,36 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
       data.run=false;
     }
     function tick(){
-      data.drainTimer+=data.speed2;
-      data.nextTimer+=(data.nextTimer>=0)?data.speed2:0;
+      data.drainTimer+=data.tickSpeed;
+      data.nextTimer+=(data.nextTimer>=0)?data.tickSpeed:0;
       if(data.miss==true){
         data.miss=false;
+        if(data.comboBreakCB && data.comboLevel>0){
+          data.comboBreakCB(data.comboLevel);
+        }
+        data.comboStep=data.comboLevel=0;
         data.drainTimer=0;data.nextTimer=0;
-        data.value= Math.max(0,data.value-5*3);
+        data.value= Math.max(0,data.value-data.params.missDrain);
         data.bargraph.style.left=data.value+'%';
         blipKey();
       }else if(data.valid==true){
         data.valid=false;
         data.drainTimer=0;data.nextTimer=0;
-        data.value= Math.max(0,data.value+5);
+        data.comboStep+=1;
+        if(data.params.comboSteps>0 && data.comboStep>=data.params.comboSteps){
+          data.comboStep=0;
+          data.comboLevel=Math.min(data.comboLevel+1,data.params.comboLevels);
+          data.maxCombo=Math.max(data.maxCombo,data.comboLevel);
+          if(data.comboUpCB ){
+            data.comboUpCB(data.comboLevel);
+          }
+        }
+        data.value= Math.min(100,Math.max(0,data.value+(data.params.passFill*(1+data.comboLevel*data.params.comboBoost))));
         data.bargraph.style.left=data.value+'%';
         blipKey();
-      } else if(data.drainTimer>data.speed){
+      } else if(data.drainTimer>data.params.drainSpeed){
         data.drainTimer=0;
-        data.value= Math.max(0,data.value-5);
+        data.value= Math.max(0,data.value-data.params.timeDrain);
         data.bargraph.style.left=data.value+'%';
       }
       if(data.nextTimer>=200){
@@ -1446,7 +1489,7 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
       }
       if(data.value<=0 || data.value>=100){
         stop();
-        if(data.stopCB) data.stopCB(data.value); 
+        if(data.stopCB) data.stopCB(data.value,data.maxCombo); 
       }
     }
     const KEYS = ['leftKey','rightKey',"upKey","downKey"]
@@ -1478,29 +1521,7 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
           data.miss=true;
         }
     }
-    let data ={ //internal state of game
-      bargraph : document.getElementById(bar),
-      leftKey : document.getElementById(keyIds[0]),
-      rightKey : document.getElementById(keyIds[1]),
-      upKey : document.getElementById(keyIds[2]),
-      downKey : document.getElementById(keyIds[3]),
-      run:false, //game started?
-      value: 0, //actual setpoint in%
-      miss:false, //internal use
-      valid:false, //internal use
-      barsize: 5, //width of hitbox relative to total width in %
-      speed:speed, //time to triger drain
-      speed2 : 1,  //interval of tick
-      drainTimer : 0,  //internal use
-      nextTimer:0, //internal use
-      stopCB: stopCB, //callback after user trigger 
-      startCB: startCB, //callback after start
-      start: start, //ref to start-function
-      stop: stop, //ref to stop-func
-      click: click, //ref to click-func
-      intervalID: null, //internal use
-      validKey: '' //internal use
-    }
+    
     return(data);
   }
   window.gm.startPong=function(){

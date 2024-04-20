@@ -233,21 +233,49 @@ document.querySelector('body').addEventListener("keyup", _game.click);
 </script>
 
 :: ReactionTest3
-<article style="background-color: antiquewhite;">
-<p>Click Start and then keypress displayed arrows to fill meter.</p>
-<p><span id="controls"><input id="upKey" type="image" src="assets/icons/arrow_up.png" />
-<input id="leftKey" type="image" src="assets/icons/arrow_left.png" /><input id="downKey" type="image" src="assets/icons/arrow_down.png" /><input id="rightKey" type="image" src="assets/icons/arrow_right.png" /></span>
-<div class="progressbar" id='clickHere' style='height:1em; width: 100%;'><div id='bar' style="position:relative; width:5%; height:100%; background-color:green;"></div></div>
-</p>
-<a0 id='btStart'>Start</a><p id='result'></p>
-<p><output id="losgelassen"><output></output></p>
+<article style="background-color: antiquewhite;display:flex; flex-flow: row wrap;">
+<aside style="flex: 1 1 0%;"><p>Click Start and then keypress displayed arrows to fill meter.</p><a0 id='btStart'>Start</a></br>
+<input id="drainSpeed" type="number" title="time until drain" min="10" max="10000" value="500" />
+<input id="passFill" type="number" title="gain" min="1" max="10000" value="5" />
+<input id="comboSteps" type="number" title="comboSteps" min="2" max="10000" value="2" />
+<input id="comboLevels" type="number" title="comboLevels" min="0" max="10000" value="2" />
+<input id="comboBoost" type="number" title="comboBoost" min="0" step="0.1" max="2" value="1" />
+
+<p id='result'>
+</aside>
+<article style="flex: 3 1 0%;">
+    <div style="position: relative; place-content: center;display: flex;"><video playsinline autoplay muted loop src="assets/workout.mp4"></video>
+      <div id="controls" style="position: absolute;top: 50%;width: 100%;">
+      <p style="display: flex;	align-items: center; justify-content: center;margin: 0px;"><input id="upKey" type="image" src="assets/icons/arrow_up.png" /></p>
+      <p style="display: flex;	align-items: center; justify-content: center;margin: 0px;"><input id="leftKey" type="image" src="assets/icons/arrow_left.png" /><input id="downKey" type="image" src="assets/icons/arrow_down.png" /><input id="rightKey" type="image" src="assets/icons/arrow_right.png" /></p>
+    <div class="progressbar" id='clickHere' style='height:1em; width: 100%;'><div id='bar' style="position:relative; width:5%; height:100%; background-color:green;"></div></div>
+  </div>
+</article>
 </article>
 <script>
 function onStop(value) {
+  document.getElementById('controls').setAttribute('hidden',"")
   document.getElementById('result').innerHTML='scored '+value;
 }
-var _game = window.gm.startReactTest3('bar',2000,onStop,null,["leftKey","rightKey","upKey","downKey"]);
-document.getElementById('btStart').addEventListener("click", _game.start);
+function onStart() {
+  document.getElementById('result').innerHTML='GO !!';
+}
+function onComboUp(value) {
+  document.getElementById('result').innerHTML='combo-up '+value;
+}
+function onComboBreak(value) {
+  document.getElementById('result').innerHTML='combo broken !';
+}
+function start(){
+  _game.start({drainSpeed:parseInt(document.querySelector("#drainSpeed").value),
+    passFill:parseInt(document.querySelector("#passFill").value),
+    comboSteps:parseInt(document.querySelector("#comboSteps").value),
+    comboLevels:parseInt(document.querySelector("#comboLevels").value),
+    comboBoost:parseInt(document.querySelector("#comboBoost").value)
+     });
+}
+var _game = window.gm.startReactTest3('bar',["leftKey","rightKey","upKey","downKey"],onStop,onStart,onComboUp,onComboBreak);
+document.getElementById('btStart').addEventListener("click", start);
 document.querySelector('body').addEventListener("keyup", _game.click);
 </script>
 

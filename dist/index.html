@@ -1432,57 +1432,54 @@ gradient+='#80808000 0 '+n.a+'%, '+n.color+' '+n.a+'%,'+n.color+' '+n.b+'%,#8080
       data.value = (data.value===0)?100-data.barsize:0;
       data.bargraph.style.left=data.value+'%'; //this should trigger css-transition
     };*/return data;};/**
-   * you have fill a bar by pressing the indicated button (wasd). If you press the wrong button, the bar gets drained somewhat. 
+   * you have fill a bar by pressing the indicated button (wasd or arrows). If you press the wrong button, the bar gets drained somewhat. 
    * the bar will slowly slide back to origin without proper input.
    * When the bar is filled you win, when its empty you loose.
-   * options:
-   * combo steps: if >0: after that number of consecutive correct input, the combo multiplier is increased
-   * combo levels: how many times a combo multiplier an be increased
-   * combo boost: this factor gets added to the combo multiplier on increase; bar increase=pass fill*multiplier   
-   * time drain: how much the bar is drained over time (in %)
-   * miss drain: how much the bar is drained on wrong key (in %)
-   * pass fill: how much the bar is fill on correct key (in %)
+   * options: see _params
+   * Note: negate timeDrain,passFill,missDrain  to make bar move in opposite direction
    * 
-   * @param {*} bar : the element to move
+   * @param {*} bar : the element-id to move
    * @param {*} speed : recovery rate in ms 
    * @param {*} stopCB 
    * @param {*} startCB 
    * 
-   */window.gm.startReactTest3=function(bar,speed,stopCB,startCB,keyIds){//todo timeout starts after first click
-/**
-     * starts the game
-     */function start(){//todo instead left-right also up-down should be possible
-data.stop();data.run=true;data.miss=false;data.valid=false;data.drainTimer=0;data.bargraph.style.left=data.value+'%';//dont start in between; speed would be slowed down to maintain transition time
-var width=window.getComputedStyle(data.bargraph).getPropertyValue('width');var total=window.getComputedStyle(data.bargraph.parentNode).getPropertyValue('width');//calculate barsize relative to total width (necessary if windowsize changed in between )
-data.barsize=100*parseFloat(width.split('px'))/parseFloat(total.split('px'));//data.bargraph.style.transition = "left "+data.speed+"ms linear"; //configure transition for animation
-if(data.startCB)data.startCB();//called before transition-start!
-//data.bargraph.ontransitionend(); //start transition
-data.value=20,data.speed2=50;data.bargraph.style.left=data.value+'%';randomizeKey();tick();data.intervalID=window.setInterval(tick,data.speed2);}/**
-     * this stops the game and returns the index of hit area; use click() instead !
-     */function stop(){if(data.intervalID)window.clearInterval(data.intervalID);var computedStyle=window.getComputedStyle(data.bargraph);var left=computedStyle.getPropertyValue('left');data.bargraph.style.left=left;data.bargraph.style.transition=null;// disable transition AFTER fetching computed value !
-data.run=false;}function tick(){data.drainTimer+=data.speed2;data.nextTimer+=data.nextTimer>=0?data.speed2:0;if(data.miss==true){data.miss=false;data.drainTimer=0;data.nextTimer=0;data.value=Math.max(0,data.value-5*3);data.bargraph.style.left=data.value+'%';blipKey();}else if(data.valid==true){data.valid=false;data.drainTimer=0;data.nextTimer=0;data.value=Math.max(0,data.value+5);data.bargraph.style.left=data.value+'%';blipKey();}else if(data.drainTimer>data.speed){data.drainTimer=0;data.value=Math.max(0,data.value-5);data.bargraph.style.left=data.value+'%';}if(data.nextTimer>=200){data.nextTimer=-1;randomizeKey();}if(data.value<=0||data.value>=100){stop();if(data.stopCB)data.stopCB(data.value);}}var KEYS=['leftKey','rightKey',"upKey","downKey"];function randomizeKey(){data.validKey=KEYS[_.random(0,KEYS.length-1)];data.leftKey.src="assets\\icons\\arrow_left"+(data.validKey==KEYS[0]?"_on":"")+".png";data.rightKey.src="assets\\icons\\arrow_right"+(data.validKey==KEYS[1]?"_on":"")+".png";data.upKey.src="assets\\icons\\arrow_up"+(data.validKey==KEYS[2]?"_on":"")+".png";data.downKey.src="assets\\icons\\arrow_down"+(data.validKey==KEYS[3]?"_on":"")+".png";}function blipKey(){//
-data.leftKey.src="assets\\icons\\arrow_left.png";data.rightKey.src="assets\\icons\\arrow_right.png";data.upKey.src="assets\\icons\\arrow_up.png";data.downKey.src="assets\\icons\\arrow_down.png";}/**
-     * this can be bound to eventhandler for user input detection to trigger stop and will call stop-CB
-     */function click(evt){if(!data.run)return;if(data.validKey==KEYS[0]&&(evt.key==='a'||evt.key==='ArrowLeft')||data.validKey==KEYS[1]&&(evt.key==='d'||evt.key==='ArrowRight')||data.validKey==KEYS[2]&&(evt.key==='w'||evt.key==='ArrowUp')||data.validKey==KEYS[3]&&(evt.key==='s'||evt.key==='ArrowDown')){data.valid=true;}else{data.miss=true;}}var data={//internal state of game
+   */window.gm.startReactTest3=function(bar,keyIds,stopCB,startCB,comboUpCB,comboBreakCB){//todo timeout starts after first click
+var data={//internal state of game
 bargraph:document.getElementById(bar),leftKey:document.getElementById(keyIds[0]),rightKey:document.getElementById(keyIds[1]),upKey:document.getElementById(keyIds[2]),downKey:document.getElementById(keyIds[3]),run:false,//game started?
 value:0,//actual setpoint in%
-miss:false,valid:false,barsize:5,//width of hitbox relative to total width in %
-speed:speed,//transition time in ms
-speed2:1,//recovery speed in % of barwidth
+miss:false,//internal use
+valid:false,//internal use
+comboStep:0,comboLevel:0,params:null,//parameters
+tickSpeed:50,//interval of tick
 drainTimer:0,//internal use
-nextTimer:0,stopCB:stopCB,//callback after user trigger 
+nextTimer:0,//internal use
+stopCB:stopCB,//callback after user trigger 
 startCB:startCB,//callback after start
-start:start,//ref to start-function
+comboBreakCB:comboBreakCB,comboUpCB:comboUpCB,start:start,//ref to start-function
 stop:stop,//ref to stop-func
-click:click,//ref to click-func
+click:click,//ref to input-func
 intervalID:null,//internal use
 validKey:''//internal use
 };/**
-     * instead of using timers rely on css-transition handling and events
-     */ /*data.bargraph.ontransitionend = () => {
-      data.value = (data.value===0)?100-data.barsize:0;
-      data.bargraph.style.left=data.value+'%'; //this should trigger css-transition
-    };*/return data;};window.gm.startPong=function(){///// fixed sample from https://svgjs.dev/ ////////
+     * starts the game
+     */function start(params){var _params$drainSpeed,_params$comboSteps,_params$comboLevels,_params$comboBoost,_params$timeDrain,_params$missDrain,_params$passFill,_params$startValue;//
+data.stop();var _params=params||{};_params.drainSpeed=(_params$drainSpeed=_params.drainSpeed)!==null&&_params$drainSpeed!==void 0?_params$drainSpeed:2000;_params.comboSteps=(_params$comboSteps=_params.comboSteps)!==null&&_params$comboSteps!==void 0?_params$comboSteps:0;//if >0: after that number of consecutive correct input, the combo multiplier is increased
+_params.comboLevels=(_params$comboLevels=_params.comboLevels)!==null&&_params$comboLevels!==void 0?_params$comboLevels:1;//how many times a combo multiplier an be increased
+_params.comboBoost=(_params$comboBoost=_params.comboBoost)!==null&&_params$comboBoost!==void 0?_params$comboBoost:0.2;//this factor gets added to the combo multiplier on increase; bar increase=pass fill*multiplier   
+_params.timeDrain=(_params$timeDrain=_params.timeDrain)!==null&&_params$timeDrain!==void 0?_params$timeDrain:5;// how much the bar is drained over time (in %)
+_params.missDrain=(_params$missDrain=_params.missDrain)!==null&&_params$missDrain!==void 0?_params$missDrain:_params.timeDrain*3;//how much the bar is drained on wrong key (in %)
+_params.passFill=(_params$passFill=_params.passFill)!==null&&_params$passFill!==void 0?_params$passFill:_params.timeDrain*2;// how much the bar is fill on correct key (in %)
+_params.startValue=(_params$startValue=_params.startValue)!==null&&_params$startValue!==void 0?_params$startValue:20;//how much the bar is filled (in %) at start
+data.params=_params;data.run=true;data.miss=false;data.valid=false;data.drainTimer=0;data.comboLevel=data.comboStep=0;var width=window.getComputedStyle(data.bargraph).getPropertyValue('width');var total=window.getComputedStyle(data.bargraph.parentNode).getPropertyValue('width');//data.bargraph.style.transition = "left "+data.speed+"ms linear"; //configure transition for animation
+if(data.startCB)data.startCB();//called before transition-start!
+//data.bargraph.ontransitionend(); //start transition
+data.value=data.params.startValue;data.bargraph.style.left=data.value+'%';randomizeKey();tick();data.intervalID=window.setInterval(tick,data.tickSpeed);}/**
+     * this stops the game and returns the index of hit area; use click() instead !
+     */function stop(){if(data.intervalID)window.clearInterval(data.intervalID);var computedStyle=window.getComputedStyle(data.bargraph);var left=computedStyle.getPropertyValue('left');data.bargraph.style.left=left;data.bargraph.style.transition=null;// disable transition AFTER fetching computed value !
+data.run=false;}function tick(){data.drainTimer+=data.tickSpeed;data.nextTimer+=data.nextTimer>=0?data.tickSpeed:0;if(data.miss==true){data.miss=false;if(data.comboBreakCB&&data.comboLevel>0){data.comboBreakCB(data.comboLevel);}data.comboStep=data.comboLevel=0;data.drainTimer=0;data.nextTimer=0;data.value=Math.max(0,data.value-data.params.missDrain);data.bargraph.style.left=data.value+'%';blipKey();}else if(data.valid==true){data.valid=false;data.drainTimer=0;data.nextTimer=0;data.comboStep+=1;if(data.params.comboSteps>0&&data.comboStep>=data.params.comboSteps){data.comboStep=0;data.comboLevel=Math.min(data.comboLevel+1,data.params.comboLevels);if(data.comboUpCB){data.comboUpCB(data.comboLevel);}}data.value=Math.min(100,Math.max(0,data.value+data.params.passFill*(1+data.comboLevel*data.params.comboBoost)));data.bargraph.style.left=data.value+'%';blipKey();}else if(data.drainTimer>data.params.drainSpeed){data.drainTimer=0;data.value=Math.max(0,data.value-data.params.timeDrain);data.bargraph.style.left=data.value+'%';}if(data.nextTimer>=200){data.nextTimer=-1;randomizeKey();}if(data.value<=0||data.value>=100){stop();if(data.stopCB)data.stopCB(data.value);}}var KEYS=['leftKey','rightKey',"upKey","downKey"];function randomizeKey(){data.validKey=KEYS[_.random(0,KEYS.length-1)];data.leftKey.src="assets\\icons\\arrow_left"+(data.validKey==KEYS[0]?"_on":"")+".png";data.rightKey.src="assets\\icons\\arrow_right"+(data.validKey==KEYS[1]?"_on":"")+".png";data.upKey.src="assets\\icons\\arrow_up"+(data.validKey==KEYS[2]?"_on":"")+".png";data.downKey.src="assets\\icons\\arrow_down"+(data.validKey==KEYS[3]?"_on":"")+".png";}function blipKey(){//
+data.leftKey.src="assets\\icons\\arrow_left.png";data.rightKey.src="assets\\icons\\arrow_right.png";data.upKey.src="assets\\icons\\arrow_up.png";data.downKey.src="assets\\icons\\arrow_down.png";}/**
+     * this can be bound to eventhandler for user input detection to trigger stop and will call stop-CB
+     */function click(evt){if(!data.run)return;if(data.validKey==KEYS[0]&&(evt.key==='a'||evt.key==='ArrowLeft')||data.validKey==KEYS[1]&&(evt.key==='d'||evt.key==='ArrowRight')||data.validKey==KEYS[2]&&(evt.key==='w'||evt.key==='ArrowUp')||data.validKey==KEYS[3]&&(evt.key==='s'||evt.key==='ArrowDown')){data.valid=true;}else{data.miss=true;}}return data;};window.gm.startPong=function(){///// fixed sample from https://svgjs.dev/ ////////
 // define document width and height
 var width=450,height=300;// create SVG document and set its size
 var draw=SVG().addTo('#pong').size(width,height);draw.viewbox(0,0,450,300);// draw background
@@ -3789,7 +3786,7 @@ window.storage.registerConstructor(Stat);window.storage.registerConstructor(stHe
 window.storage.registerConstructor(effCallHelp);window.storage.registerConstructor(effCombatRecovery);window.storage.registerConstructor(effDamage);window.storage.registerConstructor(effDetermined);window.storage.registerConstructor(effHunger);window.storage.registerConstructor(effLibido);window.storage.registerConstructor(effSanity);window.storage.registerConstructor(effFlying);window.storage.registerConstructor(effBleed);window.storage.registerConstructor(effCombined);window.storage.registerConstructor(effFairyLight);window.storage.registerConstructor(effGrappled);window.storage.registerConstructor(effGrappling);window.storage.registerConstructor(effUngrappling);window.storage.registerConstructor(effEnergized);window.storage.registerConstructor(effNotTired);window.storage.registerConstructor(effPillEffect);window.storage.registerConstructor(effPoiseDamage);window.storage.registerConstructor(effTeaseDamage);window.storage.registerConstructor(effTired);window.storage.registerConstructor(effStunned);window.storage.registerConstructor(effTransformSelf);window.storage.registerConstructor(effGuard);window.storage.registerConstructor(effProtect);window.storage.registerConstructor(effHeal);window.storage.registerConstructor(effMasochist);window.storage.registerConstructor(effEnergyDrain);window.storage.registerConstructor(effHorsePower);window.storage.registerConstructor(effLapineSpeed);window.storage.registerConstructor(effMutateBunny);window.storage.registerConstructor(effMutateHorse);window.storage.registerConstructor(effMutateWolf);window.storage.registerConstructor(effMutateCat);window.storage.registerConstructor(effMutateHuman);window.storage.registerConstructor(effGrowBreast);window.storage.registerConstructor(effGrowVulva);window.storage.registerConstructor(effLewdMark);window.storage.registerConstructor(effInHeat);window.storage.registerConstructor(effInRut);window.storage.registerConstructor(effSpermDecay);window.storage.registerConstructor(effButtPlugged);window.storage.registerConstructor(effVaginalFertil);window.storage.registerConstructor(effVaginalPregnant);//non-combat skills
 window.storage.registerConstructor(Ability);StatsLib.Ability=Ability;return StatsLib;}(window.gm.StatsLib||{});
 /* twine-user-script #2: "Story JavaScript" */
-</script><tw-tag name="template" color="orange"></tw-tag><tw-tag name="_back_" color="gray"></tw-tag><tw-tag name="_nosave_" color="yellow"></tw-tag><tw-tag name="_nodeffered_" color="yellow"></tw-tag><tw-tag name="_isdeffered_" color="brown"></tw-tag><tw-tag name="_noshortkey_" color="brown"></tw-tag><tw-passagedata pid="1" name="EncounterStartTurn" tags="_nosave_" position="650,25" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;) %&gt;
+</script><tw-tag name="_back_" color="gray"></tw-tag><tw-tag name="_nosave_" color="yellow"></tw-tag><tw-tag name="_nodeffered_" color="yellow"></tw-tag><tw-tag name="_isdeffered_" color="brown"></tw-tag><tw-tag name="_noshortkey_" color="brown"></tw-tag><tw-tag name="template" color="orange"></tw-tag><tw-passagedata pid="1" name="EncounterStartTurn" tags="_nosave_" position="650,25" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;) %&gt;
 &lt;div id=&#39;canvas&#39;&gt;&lt;/div&gt;&lt;/br&gt;
 &lt;div id=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/br&gt; &lt;!--filled by statspanel--&gt;
 &lt;div id=&#39;output&#39;&gt;&lt;/div&gt;&lt;/br&gt;    &lt;!--message is rendered here--&gt;
@@ -5373,21 +5370,49 @@ function onStop(value) {
 var _game = window.gm.startReactTest2(&#39;bar&#39;,100,onStop,null,[{a:40,b:60,color:&#39;orange&#39;},{a:90,b:100,color:&#39;yellow&#39;}]);
 document.getElementById(&#39;btStart&#39;).addEventListener(&quot;click&quot;, _game.start);
 document.querySelector(&#39;body&#39;).addEventListener(&quot;keyup&quot;, _game.click);
-&lt;/script&gt;</tw-passagedata><tw-passagedata pid="65" name="ReactionTest3" tags="" position="600,850" size="100,100">&lt;article style=&quot;background-color: antiquewhite;&quot;&gt;
-&lt;p&gt;Click Start and then keypress displayed arrows to fill meter.&lt;/p&gt;
-&lt;p&gt;&lt;span id=&quot;controls&quot;&gt;&lt;input id=&quot;upKey&quot; type=&quot;image&quot; src=&quot;assets/icons/arrow_up.png&quot; /&gt;
-&lt;input id=&quot;leftKey&quot; type=&quot;image&quot; src=&quot;assets/icons/arrow_left.png&quot; /&gt;&lt;input id=&quot;downKey&quot; type=&quot;image&quot; src=&quot;assets/icons/arrow_down.png&quot; /&gt;&lt;input id=&quot;rightKey&quot; type=&quot;image&quot; src=&quot;assets/icons/arrow_right.png&quot; /&gt;&lt;/span&gt;
-&lt;div class=&quot;progressbar&quot; id=&#39;clickHere&#39; style=&#39;height:1em; width: 100%;&#39;&gt;&lt;div id=&#39;bar&#39; style=&quot;position:relative; width:5%; height:100%; background-color:green;&quot;&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;/p&gt;
-&lt;a0 id=&#39;btStart&#39;&gt;Start&lt;/a&gt;&lt;p id=&#39;result&#39;&gt;&lt;/p&gt;
-&lt;p&gt;&lt;output id=&quot;losgelassen&quot;&gt;&lt;output&gt;&lt;/output&gt;&lt;/p&gt;
+&lt;/script&gt;</tw-passagedata><tw-passagedata pid="65" name="ReactionTest3" tags="" position="600,850" size="100,100">&lt;article style=&quot;background-color: antiquewhite;display:flex; flex-flow: row wrap;&quot;&gt;
+&lt;aside style=&quot;flex: 1 1 0%;&quot;&gt;&lt;p&gt;Click Start and then keypress displayed arrows to fill meter.&lt;/p&gt;&lt;a0 id=&#39;btStart&#39;&gt;Start&lt;/a&gt;&lt;/br&gt;
+&lt;input id=&quot;drainSpeed&quot; type=&quot;number&quot; title=&quot;time until drain&quot; min=&quot;10&quot; max=&quot;10000&quot; value=&quot;500&quot; /&gt;
+&lt;input id=&quot;passFill&quot; type=&quot;number&quot; title=&quot;gain&quot; min=&quot;1&quot; max=&quot;10000&quot; value=&quot;5&quot; /&gt;
+&lt;input id=&quot;comboSteps&quot; type=&quot;number&quot; title=&quot;comboSteps&quot; min=&quot;2&quot; max=&quot;10000&quot; value=&quot;2&quot; /&gt;
+&lt;input id=&quot;comboLevels&quot; type=&quot;number&quot; title=&quot;comboLevels&quot; min=&quot;0&quot; max=&quot;10000&quot; value=&quot;2&quot; /&gt;
+&lt;input id=&quot;comboBoost&quot; type=&quot;number&quot; title=&quot;comboBoost&quot; min=&quot;0&quot; step=&quot;0.1&quot; max=&quot;2&quot; value=&quot;1&quot; /&gt;
+
+&lt;p id=&#39;result&#39;&gt;
+&lt;/aside&gt;
+&lt;article style=&quot;flex: 3 1 0%;&quot;&gt;
+    &lt;div style=&quot;position: relative; place-content: center;display: flex;&quot;&gt;&lt;video playsinline autoplay muted loop src=&quot;assets/workout.mp4&quot;&gt;&lt;/video&gt;
+      &lt;div id=&quot;controls&quot; style=&quot;position: absolute;top: 50%;width: 100%;&quot;&gt;
+      &lt;p style=&quot;display: flex;	align-items: center; justify-content: center;margin: 0px;&quot;&gt;&lt;input id=&quot;upKey&quot; type=&quot;image&quot; src=&quot;assets/icons/arrow_up.png&quot; /&gt;&lt;/p&gt;
+      &lt;p style=&quot;display: flex;	align-items: center; justify-content: center;margin: 0px;&quot;&gt;&lt;input id=&quot;leftKey&quot; type=&quot;image&quot; src=&quot;assets/icons/arrow_left.png&quot; /&gt;&lt;input id=&quot;downKey&quot; type=&quot;image&quot; src=&quot;assets/icons/arrow_down.png&quot; /&gt;&lt;input id=&quot;rightKey&quot; type=&quot;image&quot; src=&quot;assets/icons/arrow_right.png&quot; /&gt;&lt;/p&gt;
+    &lt;div class=&quot;progressbar&quot; id=&#39;clickHere&#39; style=&#39;height:1em; width: 100%;&#39;&gt;&lt;div id=&#39;bar&#39; style=&quot;position:relative; width:5%; height:100%; background-color:green;&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/article&gt;
 &lt;/article&gt;
 &lt;script&gt;
 function onStop(value) {
+  document.getElementById(&#39;controls&#39;).setAttribute(&#39;hidden&#39;,&quot;&quot;)
   document.getElementById(&#39;result&#39;).innerHTML=&#39;scored &#39;+value;
 }
-var _game = window.gm.startReactTest3(&#39;bar&#39;,2000,onStop,null,[&quot;leftKey&quot;,&quot;rightKey&quot;,&quot;upKey&quot;,&quot;downKey&quot;]);
-document.getElementById(&#39;btStart&#39;).addEventListener(&quot;click&quot;, _game.start);
+function onStart() {
+  document.getElementById(&#39;result&#39;).innerHTML=&#39;GO !!&#39;;
+}
+function onComboUp(value) {
+  document.getElementById(&#39;result&#39;).innerHTML=&#39;combo-up &#39;+value;
+}
+function onComboBreak(value) {
+  document.getElementById(&#39;result&#39;).innerHTML=&#39;combo broken !&#39;;
+}
+function start(){
+  _game.start({drainSpeed:parseInt(document.querySelector(&quot;#drainSpeed&quot;).value),
+    passFill:parseInt(document.querySelector(&quot;#passFill&quot;).value),
+    comboSteps:parseInt(document.querySelector(&quot;#comboSteps&quot;).value),
+    comboLevels:parseInt(document.querySelector(&quot;#comboLevels&quot;).value),
+    comboBoost:parseInt(document.querySelector(&quot;#comboBoost&quot;).value)
+     });
+}
+var _game = window.gm.startReactTest3(&#39;bar&#39;,[&quot;leftKey&quot;,&quot;rightKey&quot;,&quot;upKey&quot;,&quot;downKey&quot;],onStop,onStart,onComboUp,onComboBreak);
+document.getElementById(&#39;btStart&#39;).addEventListener(&quot;click&quot;, start);
 document.querySelector(&#39;body&#39;).addEventListener(&quot;keyup&quot;, _game.click);
 &lt;/script&gt;</tw-passagedata><tw-passagedata pid="66" name="Reactiontest4" tags="" position="725,850" size="100,100">&lt;p&gt;example on how to create reactive graphics from svg parts&lt;/p&gt;
 * Define g-object with id in defs.
