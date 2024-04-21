@@ -235,17 +235,18 @@ document.querySelector('body').addEventListener("keyup", _game.click);
 :: ReactionTest3
 <article style="background-color: antiquewhite;display:flex; flex-flow: row wrap;">
 <aside style="flex: 1 1 0%;"><p>Click Start and then keypress displayed arrows to fill meter.</p><a0 id='btStart'>Start</a></br>
-<input id="drainSpeed" type="number" title="time until drain" min="10" max="10000" value="500" />
-<input id="passFill" type="number" title="gain" min="1" max="10000" value="5" />
-<input id="comboSteps" type="number" title="comboSteps" min="2" max="10000" value="2" />
-<input id="comboLevels" type="number" title="comboLevels" min="0" max="10000" value="2" />
-<input id="comboBoost" type="number" title="comboBoost" min="0" step="0.1" max="2" value="1" />
+<label for="drainSpeed">drainSpeed</label><input id="drainSpeed" type="number" title="time until drain" min="10" max="10000" value="500" />
+<label for="passFill">passFill</label><input id="passFill" type="number" title="gain" min="1" max="10000" value="5" />
+<label for="comboSteps">comboSteps</label><input id="comboSteps" type="number" title="comboSteps" min="2" max="10000" value="3" />
+<label for="comboLevels">comboLevels</label><input id="comboLevels" type="number" title="comboLevels" min="0" max="10000" value="2" />
+<label for="comboBoost">comboBoost</label><input id="comboBoost" type="number" title="comboBoost" min="0" step="0.1" max="2" value="1" />
 
 <p id='result'>
 </aside>
 <article style="flex: 3 1 0%;">
-    <div style="position: relative; place-content: center;display: flex;"><video playsinline autoplay muted loop src="assets/workout.mp4"></video>
-      <div id="controls" style="position: absolute;top: 50%;width: 100%;">
+    <div style="position: relative; place-content: center;display: flex;">
+    <video controls playsinline muted loop id="myVideo" src="assets/Monsterhunter Now My first fight JR 9.mp4" width="100%"></video>
+      <div id="controls" style="position: absolute;top: 50%;width: 100%;" hidden>
       <p style="display: flex;	align-items: center; justify-content: center;margin: 0px;"><input id="upKey" type="image" src="assets/icons/arrow_up.png" /></p>
       <p style="display: flex;	align-items: center; justify-content: center;margin: 0px;"><input id="leftKey" type="image" src="assets/icons/arrow_left.png" /><input id="downKey" type="image" src="assets/icons/arrow_down.png" /><input id="rightKey" type="image" src="assets/icons/arrow_right.png" /></p>
     <div class="progressbar" id='clickHere' style='height:1em; width: 100%;'><div id='bar' style="position:relative; width:5%; height:100%; background-color:green;"></div></div>
@@ -253,20 +254,28 @@ document.querySelector('body').addEventListener("keyup", _game.click);
 </article>
 </article>
 <script>
+var ssvid= document.getElementById('myVideo');
+var track=0;
 function onStop(value) {
+  ssvid.pause();
   document.getElementById('controls').setAttribute('hidden',"")
-  document.getElementById('result').innerHTML='scored '+value;
+  document.getElementById('result').innerHTML=(value>99)?'You WON ! maxCombo='+value:"You FAILED !";
 }
 function onStart() {
+  ssvid.currentTime=0;track=1;
+  ssvid.play();
   document.getElementById('result').innerHTML='GO !!';
 }
 function onComboUp(value) {
-  document.getElementById('result').innerHTML='combo-up '+value;
+  if(value==0) document.getElementById('result').innerHTML='combo broken !';
+  else  document.getElementById('result').innerHTML='combo-up '+value;
 }
-function onComboBreak(value) {
-  document.getElementById('result').innerHTML='combo broken !';
+function onTrigger(valueNew,valueOld,combo) {
+  if(valueNew>valueOld)track=Math.floor(valueNew/30);
+  document.getElementById('result').innerHTML='track='+track;
 }
 function start(){
+  document.getElementById('controls').removeAttribute('hidden');
   _game.start({drainSpeed:parseInt(document.querySelector("#drainSpeed").value),
     passFill:parseInt(document.querySelector("#passFill").value),
     comboSteps:parseInt(document.querySelector("#comboSteps").value),
@@ -274,7 +283,22 @@ function start(){
     comboBoost:parseInt(document.querySelector("#comboBoost").value)
      });
 }
-var _game = window.gm.startReactTest3('bar',["leftKey","rightKey","upKey","downKey"],onStop,onStart,onComboUp,onComboBreak);
+ssvid.addEventListener('timeupdate', function(e) {
+  //since I cannot modify video.videoTracks directly, I fallback to currentTime. But timeUpdate might called every 250ms only.
+  //changing track will be delayed until current track is done
+    var time = ssvid.currentTime; 
+    if(track==0 && time>3.0){
+      ssvid.currentTime=1.0;
+    } else if(track==1 && time>5.0) {
+      ssvid.currentTime=3.0;
+    }
+  });
+//
+/*ssvid.addEventListener('pause', function(e) {
+    //when using timerange, we could listen to onpause and set the next src but
+    //if setting src="assets/workout.mp4#t=0,3.3" , this causes to reload the video and the video gets interrupted !
+  });*/
+var _game = window.gm.startReactTest3('bar',["leftKey","rightKey","upKey","downKey"],onStop,onStart,onComboUp,onTrigger);
 document.getElementById('btStart').addEventListener("click", start);
 document.querySelector('body').addEventListener("keyup", _game.click);
 </script>

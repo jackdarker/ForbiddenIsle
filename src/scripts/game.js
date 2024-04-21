@@ -476,6 +476,7 @@ window.gm.forwardTime=function(until){
 // use: child._parent = window.gm.util.refToParent(parent);
 window.gm.util.refToParent = function(me){ return function(){return(me);}};  //todo causes problem with replaceState??
 //since there is no builtin function to format numbers here is one: formatNumber(-1002.4353,2) -> 1,002.44  
+//round to dp
 window.gm.util.formatNumber = function(n, dp){
   var s = ''+(Math.floor(n)), d = Math.abs(n % 1), i = s.length, r = '';
   while ( (i -= 3) > 0 ){ r = ',' + s.substr(i, 3) + r; }  //todo . & , is hardcoded

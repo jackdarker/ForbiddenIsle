@@ -908,6 +908,7 @@ if(until<v.time){min=24*60-(h-h2)*60-(m-m2);}if(min===0){//if sleep from 700 to 
 min=24*60;}msg+="</br>"+min%60+" hours pass by.</br>";window.gm.addTime(min);window.gm.pushLog(msg);return{msg:msg,delta:min};};// use: child._parent = window.gm.util.refToParent(parent);
 window.gm.util.refToParent=function(me){return function(){return me;};};//todo causes problem with replaceState??
 //since there is no builtin function to format numbers here is one: formatNumber(-1002.4353,2) -> 1,002.44  
+//round to dp
 window.gm.util.formatNumber=function(n,dp){var s=''+Math.floor(n),d=Math.abs(n%1),i=s.length,r='';while((i-=3)>0){r=','+s.substr(i,3)+r;}//todo . & , is hardcoded
 return s.substr(0,i+3)+r+(dp>0?'.'+(d?Math.round(d*Math.pow(10,dp||2)):'0'.repeat(dp)):'');};//---------------------------------------------------------------------------------
 //TODO 
@@ -1443,19 +1444,19 @@ gradient+='#80808000 0 '+n.a+'%, '+n.color+' '+n.a+'%,'+n.color+' '+n.b+'%,#8080
    * @param {*} stopCB 
    * @param {*} startCB 
    * 
-   */window.gm.startReactTest3=function(bar,keyIds,stopCB,startCB,comboUpCB,comboBreakCB){//todo timeout starts after first click
+   */window.gm.startReactTest3=function(bar,keyIds,stopCB,startCB,comboChange,valueTrigger){//todo timeout starts after first click
 var data={//internal state of game
 bargraph:document.getElementById(bar),leftKey:document.getElementById(keyIds[0]),rightKey:document.getElementById(keyIds[1]),upKey:document.getElementById(keyIds[2]),downKey:document.getElementById(keyIds[3]),run:false,//game started?
 value:0,//actual setpoint in%
 miss:false,//internal use
 valid:false,//internal use
-comboStep:0,comboLevel:0,params:null,//parameters
+comboStep:0,comboLevel:0,maxCombo:0,params:null,//parameters
 tickSpeed:50,//interval of tick
 drainTimer:0,//internal use
 nextTimer:0,//internal use
 stopCB:stopCB,//callback after user trigger 
 startCB:startCB,//callback after start
-comboBreakCB:comboBreakCB,comboUpCB:comboUpCB,start:start,//ref to start-function
+valueTrigger:valueTrigger,comboChange:comboChange,start:start,//ref to start-function
 stop:stop,//ref to stop-func
 click:click,//ref to input-func
 intervalID:null,//internal use
@@ -1470,13 +1471,13 @@ _params.timeDrain=(_params$timeDrain=_params.timeDrain)!==null&&_params$timeDrai
 _params.missDrain=(_params$missDrain=_params.missDrain)!==null&&_params$missDrain!==void 0?_params$missDrain:_params.timeDrain*3;//how much the bar is drained on wrong key (in %)
 _params.passFill=(_params$passFill=_params.passFill)!==null&&_params$passFill!==void 0?_params$passFill:_params.timeDrain*2;// how much the bar is fill on correct key (in %)
 _params.startValue=(_params$startValue=_params.startValue)!==null&&_params$startValue!==void 0?_params$startValue:20;//how much the bar is filled (in %) at start
-data.params=_params;data.run=true;data.miss=false;data.valid=false;data.drainTimer=0;data.comboLevel=data.comboStep=0;var width=window.getComputedStyle(data.bargraph).getPropertyValue('width');var total=window.getComputedStyle(data.bargraph.parentNode).getPropertyValue('width');//data.bargraph.style.transition = "left "+data.speed+"ms linear"; //configure transition for animation
+data.params=_params;data.run=true;data.miss=false;data.valid=false;data.drainTimer=0;data.comboLevel=data.comboStep=data.maxCombo=0;var width=window.getComputedStyle(data.bargraph).getPropertyValue('width');var total=window.getComputedStyle(data.bargraph.parentNode).getPropertyValue('width');//data.bargraph.style.transition = "left "+data.speed+"ms linear"; //configure transition for animation
 if(data.startCB)data.startCB();//called before transition-start!
 //data.bargraph.ontransitionend(); //start transition
 data.value=data.params.startValue;data.bargraph.style.left=data.value+'%';randomizeKey();tick();data.intervalID=window.setInterval(tick,data.tickSpeed);}/**
      * this stops the game and returns the index of hit area; use click() instead !
      */function stop(){if(data.intervalID)window.clearInterval(data.intervalID);var computedStyle=window.getComputedStyle(data.bargraph);var left=computedStyle.getPropertyValue('left');data.bargraph.style.left=left;data.bargraph.style.transition=null;// disable transition AFTER fetching computed value !
-data.run=false;}function tick(){data.drainTimer+=data.tickSpeed;data.nextTimer+=data.nextTimer>=0?data.tickSpeed:0;if(data.miss==true){data.miss=false;if(data.comboBreakCB&&data.comboLevel>0){data.comboBreakCB(data.comboLevel);}data.comboStep=data.comboLevel=0;data.drainTimer=0;data.nextTimer=0;data.value=Math.max(0,data.value-data.params.missDrain);data.bargraph.style.left=data.value+'%';blipKey();}else if(data.valid==true){data.valid=false;data.drainTimer=0;data.nextTimer=0;data.comboStep+=1;if(data.params.comboSteps>0&&data.comboStep>=data.params.comboSteps){data.comboStep=0;data.comboLevel=Math.min(data.comboLevel+1,data.params.comboLevels);if(data.comboUpCB){data.comboUpCB(data.comboLevel);}}data.value=Math.min(100,Math.max(0,data.value+data.params.passFill*(1+data.comboLevel*data.params.comboBoost)));data.bargraph.style.left=data.value+'%';blipKey();}else if(data.drainTimer>data.params.drainSpeed){data.drainTimer=0;data.value=Math.max(0,data.value-data.params.timeDrain);data.bargraph.style.left=data.value+'%';}if(data.nextTimer>=200){data.nextTimer=-1;randomizeKey();}if(data.value<=0||data.value>=100){stop();if(data.stopCB)data.stopCB(data.value);}}var KEYS=['leftKey','rightKey',"upKey","downKey"];function randomizeKey(){data.validKey=KEYS[_.random(0,KEYS.length-1)];data.leftKey.src="assets\\icons\\arrow_left"+(data.validKey==KEYS[0]?"_on":"")+".png";data.rightKey.src="assets\\icons\\arrow_right"+(data.validKey==KEYS[1]?"_on":"")+".png";data.upKey.src="assets\\icons\\arrow_up"+(data.validKey==KEYS[2]?"_on":"")+".png";data.downKey.src="assets\\icons\\arrow_down"+(data.validKey==KEYS[3]?"_on":"")+".png";}function blipKey(){//
+data.run=false;}function tick(){var valueOld=data.value;data.drainTimer+=data.tickSpeed;data.nextTimer+=data.nextTimer>=0?data.tickSpeed:0;if(data.miss==true){data.miss=false;if(data.comboChange&&data.comboLevel>0){data.comboChange(0);}data.comboStep=data.comboLevel=0;data.drainTimer=0;data.nextTimer=0;data.value=Math.max(0,data.value-data.params.missDrain);data.bargraph.style.left=data.value+'%';blipKey();}else if(data.valid==true){data.valid=false;data.drainTimer=0;data.nextTimer=0;data.comboStep+=1;if(data.params.comboSteps>0&&data.comboStep>=data.params.comboSteps){data.comboStep=0;data.comboLevel=Math.min(data.comboLevel+1,data.params.comboLevels);data.maxCombo=Math.max(data.maxCombo,data.comboLevel);if(data.comboChange){data.comboChange(data.comboLevel);}}data.value=Math.min(100,Math.max(0,data.value+data.params.passFill*(1+data.comboLevel*data.params.comboBoost)));data.bargraph.style.left=data.value+'%';blipKey();}else if(data.drainTimer>data.params.drainSpeed){data.drainTimer=0;data.value=Math.max(0,data.value-data.params.timeDrain);data.bargraph.style.left=data.value+'%';}if(data.nextTimer>=200){data.nextTimer=-1;randomizeKey();}if(data.valueTrigger&&data.value!=valueOld)data.valueTrigger(data.value,valueOld,data.comboLevel);if(data.value<=0||data.value>=100){stop();if(data.stopCB)data.stopCB(data.value,data.maxCombo);}}var KEYS=['leftKey','rightKey',"upKey","downKey"];function randomizeKey(){data.validKey=KEYS[_.random(0,KEYS.length-1)];data.leftKey.src="assets\\icons\\arrow_left"+(data.validKey==KEYS[0]?"_on":"")+".png";data.rightKey.src="assets\\icons\\arrow_right"+(data.validKey==KEYS[1]?"_on":"")+".png";data.upKey.src="assets\\icons\\arrow_up"+(data.validKey==KEYS[2]?"_on":"")+".png";data.downKey.src="assets\\icons\\arrow_down"+(data.validKey==KEYS[3]?"_on":"")+".png";}function blipKey(){//
 data.leftKey.src="assets\\icons\\arrow_left.png";data.rightKey.src="assets\\icons\\arrow_right.png";data.upKey.src="assets\\icons\\arrow_up.png";data.downKey.src="assets\\icons\\arrow_down.png";}/**
      * this can be bound to eventhandler for user input detection to trigger stop and will call stop-CB
      */function click(evt){if(!data.run)return;if(data.validKey==KEYS[0]&&(evt.key==='a'||evt.key==='ArrowLeft')||data.validKey==KEYS[1]&&(evt.key==='d'||evt.key==='ArrowRight')||data.validKey==KEYS[2]&&(evt.key==='w'||evt.key==='ArrowUp')||data.validKey==KEYS[3]&&(evt.key==='s'||evt.key==='ArrowDown')){data.valid=true;}else{data.miss=true;}}return data;};window.gm.startPong=function(){///// fixed sample from https://svgjs.dev/ ////////
@@ -3786,7 +3787,7 @@ window.storage.registerConstructor(Stat);window.storage.registerConstructor(stHe
 window.storage.registerConstructor(effCallHelp);window.storage.registerConstructor(effCombatRecovery);window.storage.registerConstructor(effDamage);window.storage.registerConstructor(effDetermined);window.storage.registerConstructor(effHunger);window.storage.registerConstructor(effLibido);window.storage.registerConstructor(effSanity);window.storage.registerConstructor(effFlying);window.storage.registerConstructor(effBleed);window.storage.registerConstructor(effCombined);window.storage.registerConstructor(effFairyLight);window.storage.registerConstructor(effGrappled);window.storage.registerConstructor(effGrappling);window.storage.registerConstructor(effUngrappling);window.storage.registerConstructor(effEnergized);window.storage.registerConstructor(effNotTired);window.storage.registerConstructor(effPillEffect);window.storage.registerConstructor(effPoiseDamage);window.storage.registerConstructor(effTeaseDamage);window.storage.registerConstructor(effTired);window.storage.registerConstructor(effStunned);window.storage.registerConstructor(effTransformSelf);window.storage.registerConstructor(effGuard);window.storage.registerConstructor(effProtect);window.storage.registerConstructor(effHeal);window.storage.registerConstructor(effMasochist);window.storage.registerConstructor(effEnergyDrain);window.storage.registerConstructor(effHorsePower);window.storage.registerConstructor(effLapineSpeed);window.storage.registerConstructor(effMutateBunny);window.storage.registerConstructor(effMutateHorse);window.storage.registerConstructor(effMutateWolf);window.storage.registerConstructor(effMutateCat);window.storage.registerConstructor(effMutateHuman);window.storage.registerConstructor(effGrowBreast);window.storage.registerConstructor(effGrowVulva);window.storage.registerConstructor(effLewdMark);window.storage.registerConstructor(effInHeat);window.storage.registerConstructor(effInRut);window.storage.registerConstructor(effSpermDecay);window.storage.registerConstructor(effButtPlugged);window.storage.registerConstructor(effVaginalFertil);window.storage.registerConstructor(effVaginalPregnant);//non-combat skills
 window.storage.registerConstructor(Ability);StatsLib.Ability=Ability;return StatsLib;}(window.gm.StatsLib||{});
 /* twine-user-script #2: "Story JavaScript" */
-</script><tw-tag name="_back_" color="gray"></tw-tag><tw-tag name="_nosave_" color="yellow"></tw-tag><tw-tag name="_nodeffered_" color="yellow"></tw-tag><tw-tag name="_isdeffered_" color="brown"></tw-tag><tw-tag name="_noshortkey_" color="brown"></tw-tag><tw-tag name="template" color="orange"></tw-tag><tw-passagedata pid="1" name="EncounterStartTurn" tags="_nosave_" position="650,25" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;) %&gt;
+</script><tw-tag name="template" color="orange"></tw-tag><tw-tag name="_back_" color="gray"></tw-tag><tw-tag name="_nosave_" color="yellow"></tw-tag><tw-tag name="_nodeffered_" color="yellow"></tw-tag><tw-tag name="_isdeffered_" color="brown"></tw-tag><tw-tag name="_noshortkey_" color="brown"></tw-tag><tw-passagedata pid="1" name="EncounterStartTurn" tags="_nosave_" position="650,25" size="100,100">&lt;section&gt;&lt;aside id=&quot;sidebar&quot;&gt;&lt;/aside&gt;&lt;article&gt;&lt;%=window.story.render(&quot;CenterDialogs&quot;) %&gt;
 &lt;div id=&#39;canvas&#39;&gt;&lt;/div&gt;&lt;/br&gt;
 &lt;div id=&quot;panel&quot;&gt;&lt;/div&gt;&lt;/br&gt; &lt;!--filled by statspanel--&gt;
 &lt;div id=&#39;output&#39;&gt;&lt;/div&gt;&lt;/br&gt;    &lt;!--message is rendered here--&gt;
@@ -5372,17 +5373,18 @@ document.getElementById(&#39;btStart&#39;).addEventListener(&quot;click&quot;, _
 document.querySelector(&#39;body&#39;).addEventListener(&quot;keyup&quot;, _game.click);
 &lt;/script&gt;</tw-passagedata><tw-passagedata pid="65" name="ReactionTest3" tags="" position="600,850" size="100,100">&lt;article style=&quot;background-color: antiquewhite;display:flex; flex-flow: row wrap;&quot;&gt;
 &lt;aside style=&quot;flex: 1 1 0%;&quot;&gt;&lt;p&gt;Click Start and then keypress displayed arrows to fill meter.&lt;/p&gt;&lt;a0 id=&#39;btStart&#39;&gt;Start&lt;/a&gt;&lt;/br&gt;
-&lt;input id=&quot;drainSpeed&quot; type=&quot;number&quot; title=&quot;time until drain&quot; min=&quot;10&quot; max=&quot;10000&quot; value=&quot;500&quot; /&gt;
-&lt;input id=&quot;passFill&quot; type=&quot;number&quot; title=&quot;gain&quot; min=&quot;1&quot; max=&quot;10000&quot; value=&quot;5&quot; /&gt;
-&lt;input id=&quot;comboSteps&quot; type=&quot;number&quot; title=&quot;comboSteps&quot; min=&quot;2&quot; max=&quot;10000&quot; value=&quot;2&quot; /&gt;
-&lt;input id=&quot;comboLevels&quot; type=&quot;number&quot; title=&quot;comboLevels&quot; min=&quot;0&quot; max=&quot;10000&quot; value=&quot;2&quot; /&gt;
-&lt;input id=&quot;comboBoost&quot; type=&quot;number&quot; title=&quot;comboBoost&quot; min=&quot;0&quot; step=&quot;0.1&quot; max=&quot;2&quot; value=&quot;1&quot; /&gt;
+&lt;label for=&quot;drainSpeed&quot;&gt;drainSpeed&lt;/label&gt;&lt;input id=&quot;drainSpeed&quot; type=&quot;number&quot; title=&quot;time until drain&quot; min=&quot;10&quot; max=&quot;10000&quot; value=&quot;500&quot; /&gt;
+&lt;label for=&quot;passFill&quot;&gt;passFill&lt;/label&gt;&lt;input id=&quot;passFill&quot; type=&quot;number&quot; title=&quot;gain&quot; min=&quot;1&quot; max=&quot;10000&quot; value=&quot;5&quot; /&gt;
+&lt;label for=&quot;comboSteps&quot;&gt;comboSteps&lt;/label&gt;&lt;input id=&quot;comboSteps&quot; type=&quot;number&quot; title=&quot;comboSteps&quot; min=&quot;2&quot; max=&quot;10000&quot; value=&quot;3&quot; /&gt;
+&lt;label for=&quot;comboLevels&quot;&gt;comboLevels&lt;/label&gt;&lt;input id=&quot;comboLevels&quot; type=&quot;number&quot; title=&quot;comboLevels&quot; min=&quot;0&quot; max=&quot;10000&quot; value=&quot;2&quot; /&gt;
+&lt;label for=&quot;comboBoost&quot;&gt;comboBoost&lt;/label&gt;&lt;input id=&quot;comboBoost&quot; type=&quot;number&quot; title=&quot;comboBoost&quot; min=&quot;0&quot; step=&quot;0.1&quot; max=&quot;2&quot; value=&quot;1&quot; /&gt;
 
 &lt;p id=&#39;result&#39;&gt;
 &lt;/aside&gt;
 &lt;article style=&quot;flex: 3 1 0%;&quot;&gt;
-    &lt;div style=&quot;position: relative; place-content: center;display: flex;&quot;&gt;&lt;video playsinline autoplay muted loop src=&quot;assets/workout.mp4&quot;&gt;&lt;/video&gt;
-      &lt;div id=&quot;controls&quot; style=&quot;position: absolute;top: 50%;width: 100%;&quot;&gt;
+    &lt;div style=&quot;position: relative; place-content: center;display: flex;&quot;&gt;
+    &lt;video controls playsinline muted loop id=&quot;myVideo&quot; src=&quot;assets/Monsterhunter Now My first fight JR 9.mp4&quot; width=&quot;100%&quot;&gt;&lt;/video&gt;
+      &lt;div id=&quot;controls&quot; style=&quot;position: absolute;top: 50%;width: 100%;&quot; hidden&gt;
       &lt;p style=&quot;display: flex;	align-items: center; justify-content: center;margin: 0px;&quot;&gt;&lt;input id=&quot;upKey&quot; type=&quot;image&quot; src=&quot;assets/icons/arrow_up.png&quot; /&gt;&lt;/p&gt;
       &lt;p style=&quot;display: flex;	align-items: center; justify-content: center;margin: 0px;&quot;&gt;&lt;input id=&quot;leftKey&quot; type=&quot;image&quot; src=&quot;assets/icons/arrow_left.png&quot; /&gt;&lt;input id=&quot;downKey&quot; type=&quot;image&quot; src=&quot;assets/icons/arrow_down.png&quot; /&gt;&lt;input id=&quot;rightKey&quot; type=&quot;image&quot; src=&quot;assets/icons/arrow_right.png&quot; /&gt;&lt;/p&gt;
     &lt;div class=&quot;progressbar&quot; id=&#39;clickHere&#39; style=&#39;height:1em; width: 100%;&#39;&gt;&lt;div id=&#39;bar&#39; style=&quot;position:relative; width:5%; height:100%; background-color:green;&quot;&gt;&lt;/div&gt;&lt;/div&gt;
@@ -5390,20 +5392,28 @@ document.querySelector(&#39;body&#39;).addEventListener(&quot;keyup&quot;, _game
 &lt;/article&gt;
 &lt;/article&gt;
 &lt;script&gt;
+var ssvid= document.getElementById(&#39;myVideo&#39;);
+var track=0;
 function onStop(value) {
+  ssvid.pause();
   document.getElementById(&#39;controls&#39;).setAttribute(&#39;hidden&#39;,&quot;&quot;)
-  document.getElementById(&#39;result&#39;).innerHTML=&#39;scored &#39;+value;
+  document.getElementById(&#39;result&#39;).innerHTML=(value&gt;99)?&#39;You WON ! maxCombo=&#39;+value:&quot;You FAILED !&quot;;
 }
 function onStart() {
+  ssvid.currentTime=0;track=1;
+  ssvid.play();
   document.getElementById(&#39;result&#39;).innerHTML=&#39;GO !!&#39;;
 }
 function onComboUp(value) {
-  document.getElementById(&#39;result&#39;).innerHTML=&#39;combo-up &#39;+value;
+  if(value==0) document.getElementById(&#39;result&#39;).innerHTML=&#39;combo broken !&#39;;
+  else  document.getElementById(&#39;result&#39;).innerHTML=&#39;combo-up &#39;+value;
 }
-function onComboBreak(value) {
-  document.getElementById(&#39;result&#39;).innerHTML=&#39;combo broken !&#39;;
+function onTrigger(valueNew,valueOld,combo) {
+  if(valueNew&gt;valueOld)track=Math.floor(valueNew/30);
+  document.getElementById(&#39;result&#39;).innerHTML=&#39;track=&#39;+track;
 }
 function start(){
+  document.getElementById(&#39;controls&#39;).removeAttribute(&#39;hidden&#39;);
   _game.start({drainSpeed:parseInt(document.querySelector(&quot;#drainSpeed&quot;).value),
     passFill:parseInt(document.querySelector(&quot;#passFill&quot;).value),
     comboSteps:parseInt(document.querySelector(&quot;#comboSteps&quot;).value),
@@ -5411,7 +5421,22 @@ function start(){
     comboBoost:parseInt(document.querySelector(&quot;#comboBoost&quot;).value)
      });
 }
-var _game = window.gm.startReactTest3(&#39;bar&#39;,[&quot;leftKey&quot;,&quot;rightKey&quot;,&quot;upKey&quot;,&quot;downKey&quot;],onStop,onStart,onComboUp,onComboBreak);
+ssvid.addEventListener(&#39;timeupdate&#39;, function(e) {
+  //since I cannot modify video.videoTracks directly, I fallback to currentTime. But timeUpdate might called every 250ms only.
+  //changing track will be delayed until current track is done
+    var time = ssvid.currentTime; 
+    if(track==0 &amp;&amp; time&gt;3.0){
+      ssvid.currentTime=1.0;
+    } else if(track==1 &amp;&amp; time&gt;5.0) {
+      ssvid.currentTime=3.0;
+    }
+  });
+//
+/*ssvid.addEventListener(&#39;pause&#39;, function(e) {
+    //when using timerange, we could listen to onpause and set the next src but
+    //if setting src=&quot;assets/workout.mp4#t=0,3.3&quot; , this causes to reload the video and the video gets interrupted !
+  });*/
+var _game = window.gm.startReactTest3(&#39;bar&#39;,[&quot;leftKey&quot;,&quot;rightKey&quot;,&quot;upKey&quot;,&quot;downKey&quot;],onStop,onStart,onComboUp,onTrigger);
 document.getElementById(&#39;btStart&#39;).addEventListener(&quot;click&quot;, start);
 document.querySelector(&#39;body&#39;).addEventListener(&quot;keyup&quot;, _game.click);
 &lt;/script&gt;</tw-passagedata><tw-passagedata pid="66" name="Reactiontest4" tags="" position="725,850" size="100,100">&lt;p&gt;example on how to create reactive graphics from svg parts&lt;/p&gt;

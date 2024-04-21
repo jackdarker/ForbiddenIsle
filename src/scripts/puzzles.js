@@ -1384,7 +1384,7 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
    * @param {*} startCB 
    * 
    */
-   window.gm.startReactTest3=function(bar,keyIds, stopCB, startCB,comboUpCB,comboBreakCB){   //todo timeout starts after first click
+   window.gm.startReactTest3=function(bar,keyIds, stopCB, startCB,comboChange,valueTrigger){   //todo timeout starts after first click
     let data ={ //internal state of game
       bargraph : document.getElementById(bar),
       leftKey : document.getElementById(keyIds[0]),
@@ -1404,8 +1404,8 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
       nextTimer:0, //internal use
       stopCB: stopCB, //callback after user trigger 
       startCB: startCB, //callback after start
-      comboBreakCB:comboBreakCB,
-      comboUpCB:comboUpCB,
+      valueTrigger:valueTrigger,
+      comboChange:comboChange,
       start: start, //ref to start-function
       stop: stop, //ref to stop-func
       click: click, //ref to input-func
@@ -1451,12 +1451,13 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
       data.run=false;
     }
     function tick(){
+      let valueOld=data.value;
       data.drainTimer+=data.tickSpeed;
       data.nextTimer+=(data.nextTimer>=0)?data.tickSpeed:0;
       if(data.miss==true){
         data.miss=false;
-        if(data.comboBreakCB && data.comboLevel>0){
-          data.comboBreakCB(data.comboLevel);
+        if(data.comboChange && data.comboLevel>0){
+          data.comboChange(0);
         }
         data.comboStep=data.comboLevel=0;
         data.drainTimer=0;data.nextTimer=0;
@@ -1471,8 +1472,8 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
           data.comboStep=0;
           data.comboLevel=Math.min(data.comboLevel+1,data.params.comboLevels);
           data.maxCombo=Math.max(data.maxCombo,data.comboLevel);
-          if(data.comboUpCB ){
-            data.comboUpCB(data.comboLevel);
+          if(data.comboChange ){
+            data.comboChange(data.comboLevel);
           }
         }
         data.value= Math.min(100,Math.max(0,data.value+(data.params.passFill*(1+data.comboLevel*data.params.comboBoost))));
@@ -1487,6 +1488,7 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
         data.nextTimer=-1;
         randomizeKey()
       }
+      if(data.valueTrigger && data.value!=valueOld) data.valueTrigger(data.value,valueOld,data.comboLevel);
       if(data.value<=0 || data.value>=100){
         stop();
         if(data.stopCB) data.stopCB(data.value,data.maxCombo); 
