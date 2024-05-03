@@ -1384,13 +1384,14 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
    * @param {*} startCB 
    * 
    */
-   window.gm.startReactTest3=function(bar,keyIds, stopCB, startCB,comboChange,valueTrigger){   //todo timeout starts after first click
+   window.gm.startReactTest3=function(bar,keyIds,specialKeyIds, stopCB, startCB,comboChange,valueTrigger){   //todo timeout starts after first click
     let data ={ //internal state of game
       bargraph : document.getElementById(bar),
       leftKey : document.getElementById(keyIds[0]),
       rightKey : document.getElementById(keyIds[1]),
       upKey : document.getElementById(keyIds[2]),
       downKey : document.getElementById(keyIds[3]),
+      specialKeys: [],
       run:false, //game started?
       value: 0, //actual setpoint in%
       miss:false, //internal use
@@ -1412,6 +1413,9 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
       intervalID: null, //internal use
       validKey: '' //internal use
     }
+    specialKeyIds.forEach(element => { 
+      data.specialKeys.push(document.getElementById(element))    
+    });
     /**
      * starts the game
      */
@@ -1497,16 +1501,19 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
     const KEYS = ['leftKey','rightKey',"upKey","downKey"]
     function randomizeKey(){
       data.validKey = KEYS[_.random(0,KEYS.length-1)];
+      data.validKey2 = -1;//TODO _.random(-1,data.specialKeys.length-1);
       data.leftKey.src="assets\\icons\\arrow_left"+(data.validKey==KEYS[0]?"_on":"")+".png";
       data.rightKey.src="assets\\icons\\arrow_right"+(data.validKey==KEYS[1]?"_on":"")+".png";
       data.upKey.src="assets\\icons\\arrow_up"+(data.validKey==KEYS[2]?"_on":"")+".png";
       data.downKey.src="assets\\icons\\arrow_down"+(data.validKey==KEYS[3]?"_on":"")+".png";
+      data.specialKeys.forEach(function(element,index){element.src="assets\\icons\\"+((index==data.validKey2)?"arrow_up_on":"none")+".png";});      
     }
     function blipKey(){ //
       data.leftKey.src="assets\\icons\\arrow_left.png";
       data.rightKey.src="assets\\icons\\arrow_right.png";
       data.upKey.src="assets\\icons\\arrow_up.png";
       data.downKey.src="assets\\icons\\arrow_down.png";
+      data.specialKeys.forEach(element => {element.src="assets\\icons\\none.png";});
     }
     /**
      * this can be bound to eventhandler for user input detection to trigger stop and will call stop-CB
@@ -1519,11 +1526,249 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
             (data.validKey==KEYS[3] && (evt.key==='s'|| evt.key==='ArrowDown'))
         ){
           data.valid=true;
+        } else if (data.validKey2==0 && evt.key===' '){ //ShiftRight ShiftLeft
+          alert()
         } else { 
           data.miss=true;
         }
     }
     
+    return(data);
+  }
+  window.gm.startActionComboCombat=function(canvasid,stopCB, startCB){
+    let data ={ //internal state of game
+      canvas:canvasid,
+      run:false, //game started?
+      params:null, //parameters
+      tickSpeed:50,
+      stopCB: stopCB, //callback after user trigger 
+      startCB: startCB, //callback after start
+      start: start, //ref to start-function
+      stop: stop, //ref to stop-func
+      click: click, //ref to input-func
+      players:[],
+      active: null,
+      state:""
+    }
+    /**
+     * start playing
+     *
+     * @param {*} players
+     * @param {*} params
+     */
+    function start(players,params){ //
+      data.stop();
+      let _params=params||{}
+      _params.drainSpeed = (_params.drainSpeed)?? 2000;
+      data.params=_params;
+      data.players=players, data.state="";
+      data.run=true;
+
+      if(data.startCB) data.startCB(); //called before transition-start!
+
+      tick(0)
+    }
+    /**
+     * this stops the game! Calle internally.
+     */
+    function stop(){
+      //if(data.intervalID) window.clearInterval(data.intervalID);
+      cancelAnimationFrame(animFrame)
+      data.run=false;
+    }
+    ///estimates who moves next 
+    function whoNext(dt) {
+      let _char;
+      //if only one group alive - finish
+      let group=[0,0];
+      data.players.forEach(function(item){if(item.hp>0){group[item.group]+=1;}});
+      if(group[0]==0 || group[1]==0){
+        data.active=null;
+        return(true)
+      }
+      //else drain bar and search player with zero actionbar
+      _char=data.players.filter(function(char){ 
+        char.timer=Math.max(0,char.timer-dt);
+        if(char.timer<=0){char.timer=char.speed;return(true)};
+        return(false)});
+      if(_char.length>0){
+        data.active=_char[0];
+        return(true);
+      }
+      //else NOP
+      return(false)
+    }
+    /**
+     * setup player images and background
+     *
+     */
+    function draw(){
+      if(data.state=="init"){ //show pics
+        group0?.remove(),group1?.remove();
+        group0=canvas.group().translate(20,20),group1=canvas.group().translate(width-picsize-20,20);
+        var i0=1,i1=1;
+        canvas.rect(picsize+40,picsize+40).fill("#888888").center(0,0).addClass('marker');
+        data.players.forEach(function(item){
+          var gr = (item.group==0)?group0:group1;
+          var x=canvas.rect(picsize,picsize).fill("#111111").x(0).y((picsize+20)*i0).addTo(gr);
+          canvas.rect(picsize,bheight/2).fill("#FFFFFF").x(0).y((2*picsize+20-bheight/2)*i0).attr("id",item.id).addClass("abar").addTo(gr);
+
+        });
+      }
+      if(data.state=="next"){ //update timebar
+        var bars = group0.find(".abar").concat(group1.find(".abar"));
+        bars.forEach( function(item){
+          var pl = data.players.find((elem=>{return(elem.id==item.id())})); //why id()?
+          item.width(picsize*(pl.timer/pl.speed));
+        })
+      }
+      if(data.state=="menu"){ //indicate player, show menu
+        var bars = group0.find(".abar").concat(group1.find(".abar"));
+        var marker = canvas.findOne('.marker'); 
+        bars.forEach( function(item){
+          if(item.id()==data.active.id) {
+            item.parent().add(marker);
+            marker.x(item.x()-(marker.width()-picsize)),
+            marker.y(item.y()+item.height()-picsize-(marker.height()-picsize));
+          }
+        })
+      }
+    }
+    // configure and start actionbar 
+    function animateBar(dt){
+      var mover=abar.findOne(".mover"),back=new SVG.List(abar.find(".back"));
+      back.remove();
+      mover?.remove();
+      canvas.rect(bwidth*20,bheight).fill('#FFFFFF').data('hit',0.5).addTo(abar).addClass("back");/*.x(width/2-50).cy(height/2)*/
+      canvas.rect(bwidth*3,bheight).cx(100).fill('limegreen').data('hit',1).addTo(abar).addClass("back");
+      mover = canvas.rect(bwidth,bheight).fill('#555555').addTo(abar).addClass("mover");
+      mover.x(0);
+      data.runner=mover.animate(1000,0,'now').ease('-').loop(true,true).dx(200);
+    }
+    let handleInput = nopHandler; //inputs are forwared to the active handler
+    function nopHandler(key){}
+    function menuHandler(key) {
+      if(key=='enter'){
+        data.state="startaction";
+      }
+    }
+    var result;
+    function actionHandler(key) {
+      if(true){
+        data.runner.timeline().pause();
+        var pos=data.runner.element().cx();
+        data.runner.unschedule();
+        var back=new SVG.List(abar.find(".back"));
+        result=0;
+        back.each(function(item){ 
+          if(item.inside(pos,bheight/2)){
+            result=item.data('hit');
+          }
+        })
+        data.state="finishaction";
+      }
+    }
+    function continueHandler(key) {
+      if(data.state=='postaction'){
+        data.state="next";
+      }
+    }
+    //register this to keyboard event
+    function click(evt){
+      if(!data.run || (data.state!="menuinput" && data.state!="runaction" && data.state!="postaction")) return;
+      let key;
+      switch(evt.key){
+        case "a":
+        case 'ArrowLeft': key='l';
+          break;
+        case "d":
+        case 'ArrowRight': key='r';
+          break;
+        case "w":
+        case 'ArrowUp': key='u';
+          break;
+        case "s":
+        case 'ArrowDown': key='d';
+          break;
+        case "space":
+        case " ": key='enter';
+          break;
+        case "Escape": key='esc';
+          break;
+        default:
+          break;
+      }
+      handleInput(key);
+    }
+    var lastTime, animFrame
+    function tick(ms){
+      // we get passed a timestamp in milliseconds
+      // we use it to determine how much time has passed since the last call
+      if (lastTime){
+        update((ms-lastTime))
+      }
+      lastTime = ms
+      animFrame = requestAnimationFrame(tick)
+    }
+    function update(dt){
+      switch(data.state){
+        case "":
+          data.state="init";
+          break;
+        case "init":
+          myText.clear(),canvas.text("init").addTo(myText);
+          data.state="next";
+          break;
+        case "next"://who is next //update pictures
+          if(!whoNext(dt)){ //wait for full actionbar
+          } else if(data.active==null) {
+            data.state="finish";  
+          } else {
+            data.state="menu";
+          }
+          break;
+        case "menu": //show menu to select move
+          data.state="menuinput";
+          myText.clear(),canvas.text("choose action with up/down + space").addTo(myText);
+          handleInput=menuHandler;
+          break;
+        case "menuinput":
+          break;
+        case "startaction":  //start combobar
+          animateBar(dt);
+          handleInput=actionHandler;
+          data.state="runaction";
+          break;
+        case "runaction":  //animate
+  
+          break;
+        case "finishaction"://evaluate result
+          handleInput=continueHandler;
+          myText.clear(),canvas.text("result "+result.toString()).addTo(myText);
+          data.state="postaction";
+          break;
+        case "postaction"://
+          break;
+        case "finish"://final result and quit
+          myText.clear(),canvas.text("Match ended.").addTo(myText);;
+          stop();
+          break;
+          default:
+            debugger;
+      }
+      draw();
+    }
+    
+    // define document width and height
+    var width = 800, height = 600,picsize = 128, bheight=40, bwidth=10;
+    // create SVG document and set its size
+    var canvas = SVG().addTo('#'+canvasid).size(width, height)
+    canvas.viewbox(0,0,width, height)
+    canvas.rect(width, height).fill('#dde3e1') //background
+    let abar=canvas.group(); //group for actionbar
+    abar.translate(width/2-bwidth*10,height/2);
+    let myText=canvas.group(),group0,group1;
+    myText.translate(width/2-200,height-100);
     return(data);
   }
   window.gm.startPong=function(){
