@@ -1548,7 +1548,8 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
       click: click, //ref to input-func
       players:[],
       active: null,
-      state:""
+      state:"",
+      substate:""
     }
     /**
      * start playing
@@ -1598,6 +1599,13 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
       //else NOP
       return(false)
     }
+    function scaleSVGtRect(width,height,node){
+      var scaleW = node.width()/(width), scaleH=node.height()/(height);
+      if(scaleW>0.9 || scaleH>0.9 ){
+        if(scaleW>scaleH) node.scale(0.5,0.5,0,0);//node.width(node.width()/(1.2*scaleW));
+        else node.scale(0.5,0.5,0,0);//node.height(node.height()/(1.2*scaleH));
+      }
+    }
     /**
      * setup player images and background
      *
@@ -1605,15 +1613,19 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
     function draw(){
       if(data.state=="init"){ //show pics
         group0?.remove(),group1?.remove();
-        group0=canvas.group().translate(20,20),group1=canvas.group().translate(width-picsize-20,20);
-        var i0=1,i1=1;
-        canvas.rect(picsize+40,picsize+40).fill("#888888").center(0,0).addClass('marker');
+        group0=canvas.group().translate(20,40),group1=canvas.group().translate(width-picsize-20,40);
+        var i0=0,i1=0;
+        canvas.rect(picsize+40,picsize+40).fill("gold").center(0,0).attr({display:"none"}).addClass('marker'); //marks who is next
         data.players.forEach(function(item){
           var gr = (item.group==0)?group0:group1;
-          var x=canvas.rect(picsize,picsize).fill("#111111").x(0).y((picsize+20)*i0).addTo(gr);
-          canvas.rect(picsize,bheight/2).fill("#FFFFFF").x(0).y((2*picsize+20-bheight/2)*i0).attr("id",item.id).addClass("abar").addTo(gr);
-
+          var x=canvas.rect(picsize,picsize).fill("lightgray").x(0).y((picsize+20)*i0).addTo(gr);
+          var node = SVG(window.gm.images["Bear1"]());
+          scaleSVGtRect(picsize,picsize,node);
+          node.x(0).y(x.y()).addTo(gr);
+          canvas.rect(picsize,bheight/4).fill("#FFFFFF").x(0).y(x.y()+picsize-bheight/4).attr("id",item.id).addClass("abar").addTo(gr);
+          canvas.rect(picsize,bheight/4).fill("darkgreen").x(0).y(x.y()+picsize-bheight/2).attr("id",item.id).addClass("hp").addTo(gr);
         });
+        SVG(window.gm.images["Grin1"]()).rotate(45).addTo(group0);;
       }
       if(data.state=="next"){ //update timebar
         var bars = group0.find(".abar").concat(group1.find(".abar"));
@@ -1625,13 +1637,24 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
       if(data.state=="menu"){ //indicate player, show menu
         var bars = group0.find(".abar").concat(group1.find(".abar"));
         var marker = canvas.findOne('.marker'); 
+        abar.attr({display:"none"});
         bars.forEach( function(item){
           if(item.id()==data.active.id) {
             item.parent().add(marker);
-            marker.x(item.x()-(marker.width()-picsize)),
-            marker.y(item.y()+item.height()-picsize-(marker.height()-picsize));
+            marker.x(item.x()-(marker.width()-picsize)/2).y((item.y()+bheight/4-picsize)-(marker.height()-picsize)/2);
+            marker.back().attr({display:"unset"});
           }
         })
+        if(true || data.substate=="action"){
+          myMenu.clear();
+          const btWidth=100,bHeight=30
+          let bt;
+          //buttons for player actions
+          bt = canvas.rect(btWidth,bHeight).fill(cActive).addClass("btActive").data({"id":"attack"}).addTo(myMenu)
+          canvas.text("attack").center(bt.cx(),bt.cy()).addTo(myMenu);
+          bt = canvas.rect(btWidth,bHeight).y(bHeight+5).addClass("btInactive").fill(cInactive).data({"id":"guard"}).addTo(myMenu)
+          canvas.text("guard").center(bt.cx(),bt.cy()).addTo(myMenu);
+        }
       }
     }
     // configure and start actionbar 
@@ -1639,17 +1662,39 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
       var mover=abar.findOne(".mover"),back=new SVG.List(abar.find(".back"));
       back.remove();
       mover?.remove();
-      canvas.rect(bwidth*20,bheight).fill('#FFFFFF').data('hit',0.5).addTo(abar).addClass("back");/*.x(width/2-50).cy(height/2)*/
-      canvas.rect(bwidth*3,bheight).cx(100).fill('limegreen').data('hit',1).addTo(abar).addClass("back");
+      canvas.rect(bwidth*20,bheight).fill('#FFFFFF').data('hit',0.0).addTo(abar).addClass("back");
+      canvas.rect(bwidth*4,bheight).cx(100).fill('yellow').data('hit',1).addTo(abar).addClass("back");
+      canvas.rect(bwidth*2,bheight).cx(100).fill('limegreen').data('hit',2).addTo(abar).addClass("back");
       mover = canvas.rect(bwidth,bheight).fill('#555555').addTo(abar).addClass("mover");
       mover.x(0);
-      data.runner=mover.animate(1000,0,'now').ease('-').loop(true,true).dx(200);
+      abar.attr({display:"unset"});
+      data.runner=mover.animate(1000,0,'now').ease('-').loop(true,true).dx(bwidth*(20-1));
     }
     let handleInput = nopHandler; //inputs are forwared to the active handler
     function nopHandler(key){}
     function menuHandler(key) {
-      if(key=='enter'){
-        data.state="startaction";
+      if(data.substate="action") {
+        if(key=="u" || key=="d"){ //
+          let n=false,k,bts = myMenu.children();
+          for(var i=bts.length-1;i>=0;i--){
+            k=(key=="d")?bts.length-1-i:i;
+            if(bts[k].hasClass("btActive")){
+              bts[k].removeClass("btActive").addClass("btInactive").fill(cInactive);
+              n=true;
+            } else if(n==true && bts[k].hasClass("btInactive")){
+              bts[k].removeClass("btInactive").addClass("btActive").fill(cActive);
+              n=false;
+            }
+          }
+        } else if(key=='enter'){
+          data.action="";
+          myMenu.each(function(i,children){
+            if(this.hasClass("btActive")){
+              data.action=this.data("id");
+            }
+          })
+          data.state="startaction";
+        }
       }
     }
     var result;
@@ -1729,6 +1774,7 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
           break;
         case "menu": //show menu to select move
           data.state="menuinput";
+          data.substate="action"  
           myText.clear(),canvas.text("choose action with up/down + space").addTo(myText);
           handleInput=menuHandler;
           break;
@@ -1736,6 +1782,7 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
           break;
         case "startaction":  //start combobar
           animateBar(dt);
+          myText.clear(),canvas.text("release space to stop the moving bar in green field").addTo(myText);
           handleInput=actionHandler;
           data.state="runaction";
           break;
@@ -1758,7 +1805,7 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
       }
       draw();
     }
-    
+    const cActive="gold",cInactive="gray";
     // define document width and height
     var width = 800, height = 600,picsize = 128, bheight=40, bwidth=10;
     // create SVG document and set its size
@@ -1767,8 +1814,9 @@ window.gm.startReactTest=function(bar, speed, stopCB, startCB,areas){
     canvas.rect(width, height).fill('#dde3e1') //background
     let abar=canvas.group(); //group for actionbar
     abar.translate(width/2-bwidth*10,height/2);
-    let myText=canvas.group(),group0,group1;
-    myText.translate(width/2-200,height-100);
+    let myText=canvas.group(),myMenu=canvas.group(),group0,group1;
+    myMenu.translate(width/2-200,height/2-200);
+    myText.translate(20,height-50);
     return(data);
   }
   window.gm.startPong=function(){
